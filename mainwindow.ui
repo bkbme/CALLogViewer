@@ -1,0 +1,638 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1016</width>
+    <height>674</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>CALLogViewer</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QHBoxLayout" name="horizontalLayout_2">
+    <item>
+     <widget class="CALLogView" name="wvLogView">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+        <horstretch>1</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="url">
+       <url>
+        <string>about:blank</string>
+       </url>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QVBoxLayout" name="vlToolBar">
+      <item>
+       <widget class="QGroupBox" name="gbConnection">
+        <property name="title">
+         <string>Real Time Log</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <item>
+          <layout class="QHBoxLayout" name="hlHost">
+           <item>
+            <widget class="QLabel" name="lHost">
+             <property name="text">
+              <string>ASC</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLineEdit" name="leHost">
+             <property name="toolTip">
+              <string>ASC IP address or hostname (e.g. calservice)</string>
+             </property>
+             <property name="text">
+              <string>10.100.0.181</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="hlScrollBuffer">
+           <item>
+            <widget class="QLabel" name="lScrollBuffer">
+             <property name="text">
+              <string>Scroll Buffer</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="sbScrollBuffer">
+             <property name="minimumSize">
+              <size>
+               <width>60</width>
+               <height>0</height>
+              </size>
+             </property>
+             <property name="toolTip">
+              <string>max. number of log messages (lines) keept (0  = unlimited)</string>
+             </property>
+             <property name="suffix">
+              <string/>
+             </property>
+             <property name="maximum">
+              <number>99999</number>
+             </property>
+             <property name="singleStep">
+              <number>100</number>
+             </property>
+             <property name="value">
+              <number>2500</number>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QPushButton" name="pbConnect">
+           <property name="text">
+            <string>Connect</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="gbLogFilter">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="title">
+         <string>Log Filter</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_3">
+         <item>
+          <widget class="QCheckBox" name="cbFilterError">
+           <property name="text">
+            <string>Error</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbFilterWarning">
+           <property name="text">
+            <string>Warning</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbFilterInfo">
+           <property name="text">
+            <string>Information</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbFilterState">
+           <property name="text">
+            <string>Statemachine</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbFilterSoapIn">
+           <property name="text">
+            <string>Soap Incoming</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbFilterSoapOut">
+           <property name="text">
+            <string>Soap Outgoing</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbFilterDebug">
+           <property name="text">
+            <string>Debug</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbFilterNonCAL">
+           <property name="text">
+            <string>Non CAL</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="gbMarker">
+        <property name="title">
+         <string>Highlight Text</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QLineEdit" name="leMarker"/>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout">
+           <item>
+            <widget class="QPushButton" name="pbClear">
+             <property name="text">
+              <string>Clear</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pbAddMarker">
+             <property name="text">
+              <string>Add</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <spacer name="vsToolBar">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeType">
+         <enum>QSizePolicy::Expanding</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1016</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionOpen_Logfile"/>
+    <addaction name="separator"/>
+    <addaction name="actionQuit"/>
+   </widget>
+   <widget class="QMenu" name="menuServices">
+    <property name="enabled">
+     <bool>false</bool>
+    </property>
+    <property name="title">
+     <string>Services</string>
+    </property>
+    <widget class="QMenu" name="menuArges_Firmware">
+     <property name="title">
+      <string>Arges Firmware</string>
+     </property>
+     <addaction name="actionFWStart"/>
+     <addaction name="actionFWStop"/>
+     <addaction name="actionFWRestart"/>
+     <addaction name="actionFWStatus"/>
+    </widget>
+    <widget class="QMenu" name="menuCAL">
+     <property name="title">
+      <string>CAL</string>
+     </property>
+     <addaction name="actionCALStart"/>
+     <addaction name="actionCALStop"/>
+     <addaction name="actionCALRestart"/>
+     <addaction name="actionCALStatus"/>
+    </widget>
+    <addaction name="menuCAL"/>
+    <addaction name="menuArges_Firmware"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuServices"/>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionCALStart">
+   <property name="text">
+    <string>Start</string>
+   </property>
+   <property name="toolTip">
+    <string>Start CAL</string>
+   </property>
+  </action>
+  <action name="actionCALStop">
+   <property name="text">
+    <string>Stop</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop CAL</string>
+   </property>
+  </action>
+  <action name="actionCALRestart">
+   <property name="text">
+    <string>Restart</string>
+   </property>
+   <property name="toolTip">
+    <string>Restart CAL</string>
+   </property>
+  </action>
+  <action name="actionCALStatus">
+   <property name="text">
+    <string>Status</string>
+   </property>
+   <property name="toolTip">
+    <string>Query CAL Status</string>
+   </property>
+  </action>
+  <action name="actionFWStart">
+   <property name="text">
+    <string>Start</string>
+   </property>
+   <property name="toolTip">
+    <string>Start Arges Firmware</string>
+   </property>
+  </action>
+  <action name="actionFWStop">
+   <property name="text">
+    <string>Stop</string>
+   </property>
+   <property name="toolTip">
+    <string>Stop Arges Firmware</string>
+   </property>
+  </action>
+  <action name="actionFWRestart">
+   <property name="text">
+    <string>Restart</string>
+   </property>
+   <property name="toolTip">
+    <string>Restart Arges Firmware</string>
+   </property>
+  </action>
+  <action name="actionOpen_Logfile">
+   <property name="text">
+    <string>Open Logfile</string>
+   </property>
+  </action>
+  <action name="actionQuit">
+   <property name="text">
+    <string>Quit</string>
+   </property>
+  </action>
+  <action name="actionFWStatus">
+   <property name="text">
+    <string>Status</string>
+   </property>
+   <property name="toolTip">
+    <string>Query Arges Firmware Status</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QWebView</class>
+   <extends>QWidget</extends>
+   <header>QtWebKit/QWebView</header>
+  </customwidget>
+  <customwidget>
+   <class>CALLogView</class>
+   <extends>QWebView</extends>
+   <header>callogview.h</header>
+   <slots>
+    <signal>statusMessage(QString,int)</signal>
+    <slot>setScrollBufferMaxLength(int)</slot>
+    <slot>setErrorLevelVisible(bool)</slot>
+    <slot>setWarningLevelVisible(bool)</slot>
+    <slot>setInfoLevelVisible(bool)</slot>
+    <slot>setStateMachineLevelVisible(bool)</slot>
+    <slot>setSoapInLevelVisible(bool)</slot>
+    <slot>setSoapOutLevelVisible(bool)</slot>
+    <slot>setDebugLevelVisible(bool)</slot>
+    <slot>setNonCalLevelVisible(bool)</slot>
+    <slot>clearAllMarkers()</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>leHost</sender>
+   <signal>returnPressed()</signal>
+   <receiver>pbConnect</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>902</x>
+     <y>74</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>902</x>
+     <y>132</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>sbScrollBuffer</sender>
+   <signal>valueChanged(int)</signal>
+   <receiver>wvLogView</receiver>
+   <slot>setScrollBufferMaxLength(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>985</x>
+     <y>109</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>803</x>
+     <y>596</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbFilterError</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>wvLogView</receiver>
+   <slot>setErrorLevelVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>864</x>
+     <y>198</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>810</x>
+     <y>441</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbFilterWarning</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>wvLogView</receiver>
+   <slot>setWarningLevelVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>886</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>810</x>
+     <y>461</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbFilterInfo</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>wvLogView</receiver>
+   <slot>setInfoLevelVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>906</x>
+     <y>249</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>810</x>
+     <y>480</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbFilterState</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>wvLogView</receiver>
+   <slot>setStateMachineLevelVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>922</x>
+     <y>273</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>810</x>
+     <y>499</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbFilterSoapOut</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>wvLogView</receiver>
+   <slot>setSoapOutLevelVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>929</x>
+     <y>324</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>810</x>
+     <y>518</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbFilterSoapIn</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>wvLogView</receiver>
+   <slot>setSoapInLevelVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>939</x>
+     <y>299</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>810</x>
+     <y>537</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbFilterDebug</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>wvLogView</receiver>
+   <slot>setDebugLevelVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>953</x>
+     <y>349</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>810</x>
+     <y>557</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbFilterNonCAL</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>wvLogView</receiver>
+   <slot>setNonCalLevelVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>969</x>
+     <y>372</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>810</x>
+     <y>577</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionQuit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>499</x>
+     <y>326</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>leMarker</sender>
+   <signal>returnPressed()</signal>
+   <receiver>pbAddMarker</receiver>
+   <slot>click()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>977</x>
+     <y>426</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>975</x>
+     <y>449</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pbClear</sender>
+   <signal>clicked()</signal>
+   <receiver>wvLogView</receiver>
+   <slot>clearAllMarkers()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>892</x>
+     <y>452</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>806</x>
+     <y>619</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>wvLogView</sender>
+   <signal>statusMessage(QString,int)</signal>
+   <receiver>statusBar</receiver>
+   <slot>showMessage(QString,int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>630</x>
+     <y>610</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>630</x>
+     <y>634</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>
