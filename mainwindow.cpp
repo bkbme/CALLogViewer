@@ -165,8 +165,8 @@ void MainWindow::on_actionFWStatus_triggered()
 void MainWindow::loadSettings()
 {
 	QSettings settings("TPV-ARGES", "LogView");
-	ui->leHost->setText(settings.value("ip").toString());
-	ui->sbScrollBuffer->setValue(settings.value("scrollBuffer").toInt());
+    ui->leHost->setText(settings.value("ip", "calservice").toString());
+    ui->sbScrollBuffer->setValue(settings.value("scrollBuffer", 2500).toInt());
 
 	QList<QCheckBox*> logFilter = getLogFilter();
 
@@ -175,7 +175,7 @@ void MainWindow::loadSettings()
 	for(int i=0; i<logFilter.size(); i++) {
 		cb = logFilter.at(i);
 		settings.setArrayIndex(i);
-		cb->setChecked(settings.value(cb->objectName()).toBool());
+        cb->setChecked(settings.value(cb->objectName(), true).toBool());
 	}
 	settings.endArray();
 }
