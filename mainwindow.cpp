@@ -17,6 +17,14 @@ MainWindow::MainWindow(QWidget *parent) :
 {
 	ui->setupUi(this);
 
+	//setup actions
+	ui->tbCALStart->setDefaultAction(ui->actionCALStart);
+	ui->tbCALStop->setDefaultAction(ui->actionCALStop);
+	ui->tbCALRestart->setDefaultAction(ui->actionCALRestart);
+	ui->tbFWStart->setDefaultAction(ui->actionFWStart);
+	ui->tbFWStop->setDefaultAction(ui->actionFWStop);
+	ui->tbFWRestart->setDefaultAction(ui->actionFWRestart);
+
 	QNetworkAccessManager *netMgr = new QNetworkAccessManager(this);
 	m_logLoader = new SysLogLoader(netMgr, this);
 	m_serviceMgr = new ServiceManager(netMgr, this);
@@ -51,6 +59,7 @@ void MainWindow::onLogOpened()
 	//ui->leHost->setEnabled(true);
 	m_serviceMgr->setHost(ui->leHost->text());
 	ui->menuServices->setEnabled(true);
+	ui->gbServices->setEnabled(true);
 }
 
 void MainWindow::onLogClosed()
@@ -60,6 +69,7 @@ void MainWindow::onLogClosed()
 	ui->sbScrollBuffer->setEnabled(true);
 	ui->leHost->setEnabled(true);
 	ui->menuServices->setEnabled(false);
+	ui->gbServices->setEnabled(false);
 }
 
 void MainWindow::on_pbConnect_clicked()

@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/icons">
+        <file>icons/service_restart.png</file>
+        <file>icons/service_start.png</file>
+        <file>icons/service_stop.png</file>
+    </qresource>
+</RCC>
