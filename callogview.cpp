@@ -252,7 +252,7 @@ void CALLogView::addMarker(const QString &text)
 		}
 	}
 
-	emit statusMessage(QString("found %1 matches (%2 log messges)").arg(matchesTotal).arg(matchingLines), 0);
+	emit statusMessage(QString("found %1 matches (%2/%3 log messges)").arg(matchesTotal).arg(matchingLines).arg(m_logs.count()), 5000);
 }
 
 void CALLogView::clearAllMarkers()
@@ -282,8 +282,8 @@ int CALLogView::applyMarkers(QString &msg) const
 	int matches = 0;
 	foreach (const QString &marker, m_markers)
 	{
+		matches += msg.count(marker);
 		msg.replace(marker, "<div class='marked'>" + marker + "</div>");
-		++matches;
 	}
 
 	return matches;

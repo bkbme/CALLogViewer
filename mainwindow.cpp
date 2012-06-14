@@ -4,7 +4,7 @@
 #include "servicemanager.h"
 
 #include <QNetworkAccessManager>
-#include <QMessageBox>
+//#include <QMessageBox>
 #include <QFileDialog>
 #include <QDir>
 #include <QSettings>
@@ -87,7 +87,7 @@ void MainWindow::on_pbConnect_clicked()
 void MainWindow::on_actionOpen_Logfile_triggered()
 {
 	const QString filter = (m_logLoader->canHandleTarArchive() ?
-								"Syslog (messages messages.* syslog);; Support Info (support_info_*.tar.gz);; All Files (*)" :
+								"Syslog (Support Info (support_info_*.tar.gz);; messages messages.* syslog);; All Files (*)" :
 								"Syslog (messages messages.* syslog);; All Files (*)");
 	QString logFile = QFileDialog::getOpenFileName(this, "Open Logfile", QDir::homePath(), filter);
 
@@ -165,8 +165,8 @@ void MainWindow::on_actionFWStatus_triggered()
 void MainWindow::loadSettings()
 {
 	QSettings settings("TPV-ARGES", "LogView");
-    ui->leHost->setText(settings.value("ip", "calservice").toString());
-    ui->sbScrollBuffer->setValue(settings.value("scrollBuffer", 2500).toInt());
+	ui->leHost->setText(settings.value("ip", "calservice").toString());
+	ui->sbScrollBuffer->setValue(settings.value("scrollBuffer", 2500).toInt());
 
 	QList<QCheckBox*> logFilter = getLogFilter();
 
@@ -175,7 +175,7 @@ void MainWindow::loadSettings()
 	for(int i=0; i<logFilter.size(); i++) {
 		cb = logFilter.at(i);
 		settings.setArrayIndex(i);
-        cb->setChecked(settings.value(cb->objectName(), true).toBool());
+		cb->setChecked(settings.value(cb->objectName(), true).toBool());
 	}
 	settings.endArray();
 }

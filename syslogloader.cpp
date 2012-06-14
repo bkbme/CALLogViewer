@@ -7,15 +7,25 @@
 #include <QDebug>
 #include <QProcess>
 #include <QFile>
+#include <QDir>
+#include <QCoreApplication>
 
-const QString TAR_EXEC = "/bin/tar";
+#ifdef Q_WS_WIN
+QString TAR_EXEC = "tar.exe";
+QString GZIP_EXEC = "gzip.exe";
+#else
+	const QString TAR_EXEC = "/bin/tar";
+#endif
 
 SysLogLoader::SysLogLoader(QNetworkAccessManager *netMgr, QObject *parent) :
 	QObject(parent),
 	m_net(netMgr),
 	m_log(0)
 {
-
+#ifdef Q_WS_WIN
+		TAR_EXEC = QCoreApplication::applicationDirPath() + QDir::separator() + TAR_EXEC;
+		GZIP_EXEC = QCoreApplication::applicationDirPath() + QDir::separator() + GZIP_EXEC;
+#endif
 }
 
 void SysLogLoader::openLog(const QUrl &url)
@@ -50,25 +60,48 @@ void SysLogLoader::openLog(const QString &filename)
 		if (!canHandleTarArchive())
 		{
 			qDebug() << "Failed to extract support info archive: '" << TAR_EXEC << "'' doesn't exist";
-			statusMessage(QString("Failed to extract support info archive: %1 doesn't exist!").arg(TAR_EXEC), 0);
+			if (!QFile::exists(TAR_EXEC))
+			{
+				statusMessage(QString("Failed to extract support info archive: %1 doesn't exist!").arg(TAR_EXEC), 0);
+			}
+#ifdef Q_WS_WIN
+			if (!QFile::exists(GZIP_EXEC))
+			{
+				statusMessage(QString("Failed to extract support info archive: %1 doesn't exist!").arg(GZIP_EXEC), 0);
+			}
+#endif
 			return;
 		}
 
 		QStringList args;
-		args << "Oxf" << filename << "var/log/messages";
 		QProcess *tar = new QProcess(this);
 		connect(tar, SIGNAL(readyRead()), this, SLOT(onReadyRead()));
 		connect(tar, SIGNAL(finished(int)), this, SLOT(closeLog()));
-		tar->start(TAR_EXEC, args, QIODevice::ReadOnly);
+
+#ifdef Q_WS_WIN
+		args << "Ox";
+
+		QStringList gzip_args;
+		gzip_args << "-dc" << filename;
+		QProcess *gzip = new QProcess(tar);
+		gzip->setStandardOutputProcess(tar); // tar.exe doesn't support on-the-fly gzip extraction :(
+		gzip->start(GZIP_EXEC, gzip_args);
+#else
+		args << "Oxf" << filename;
+#endif
+		args << "var/log/messages";
+		tar->start(TAR_EXEC, args);
 		m_log = tar;
 		emit logOpened();
 		return;
 	}
 
 	// parse regular file
-	m_log = new QFile(filename, this);
-	if (m_log->open(QIODevice::ReadOnly))
+	QFile *logFile = new QFile(filename, this);
+	m_log = logFile;
+	if (logFile->open(QIODevice::ReadOnly))
 	{
+		qDebug() << "file opened: " << filename;
 		emit logOpened();
 		onReadyRead();
 	}
@@ -105,7 +138,7 @@ void SysLogLoader::closeLog()
 
 void SysLogLoader::onReadyRead()
 {
-	while (m_log && m_log->canReadLine())
+	while (m_log && !m_log->atEnd() && (!m_log->isSequential() || m_log->canReadLine()))
 	{
 		emit newLogMessage(parseLogMessage(m_log->readLine()));
 	}
@@ -168,5 +201,9 @@ bool SysLogLoader::isLogOpen() const
 
 bool SysLogLoader::canHandleTarArchive() const
 {
-	return QFile::exists(TAR_EXEC); /// @todo make this more intelligent later (and possibly support Windows as well)
+#ifdef Q_WS_WIN
+	return (QFile::exists(TAR_EXEC) && QFile::exists(GZIP_EXEC));
+#else
+	return QFile::exists(TAR_EXEC);
+#endif
 }
