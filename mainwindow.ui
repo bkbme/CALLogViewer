@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1016</width>
-    <height>674</height>
+    <width>1000</width>
+    <height>653</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -101,6 +101,121 @@
             <string>Connect</string>
            </property>
           </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="gbServices">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+        <property name="title">
+         <string>Services</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_5">
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_3">
+           <item>
+            <widget class="QLabel" name="lServiceCAL">
+             <property name="text">
+              <string>CAL</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="tbCALStart">
+             <property name="text">
+              <string>&gt;</string>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>12</width>
+               <height>12</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="tbCALStop">
+             <property name="text">
+              <string>|</string>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>12</width>
+               <height>12</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="tbCALRestart">
+             <property name="text">
+              <string>|&gt;</string>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>12</width>
+               <height>12</height>
+              </size>
+             </property>
+             <property name="arrowType">
+              <enum>Qt::NoArrow</enum>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_5">
+           <item>
+            <widget class="QLabel" name="lServiceArgesFW">
+             <property name="text">
+              <string>Arges FW</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="tbFWStart">
+             <property name="text">
+              <string>&gt;</string>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>12</width>
+               <height>12</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="tbFWStop">
+             <property name="text">
+              <string>|</string>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>12</width>
+               <height>12</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QToolButton" name="tbFWRestart">
+             <property name="text">
+              <string>|&gt;</string>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>12</width>
+               <height>12</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -304,8 +419,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1016</width>
-     <height>21</height>
+     <width>1000</width>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -357,6 +472,11 @@
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <action name="actionCALStart">
+   <property name="icon">
+    <iconset>
+     <normalon>:/icons/icons/service_start.png</normalon>
+    </iconset>
+   </property>
    <property name="text">
     <string>Start</string>
    </property>
@@ -365,6 +485,10 @@
    </property>
   </action>
   <action name="actionCALStop">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/service_stop.png</normaloff>:/icons/icons/service_stop.png</iconset>
+   </property>
    <property name="text">
     <string>Stop</string>
    </property>
@@ -373,6 +497,10 @@
    </property>
   </action>
   <action name="actionCALRestart">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/service_restart.png</normaloff>:/icons/icons/service_restart.png</iconset>
+   </property>
    <property name="text">
     <string>Restart</string>
    </property>
@@ -389,6 +517,10 @@
    </property>
   </action>
   <action name="actionFWStart">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/service_start.png</normaloff>:/icons/icons/service_start.png</iconset>
+   </property>
    <property name="text">
     <string>Start</string>
    </property>
@@ -397,6 +529,10 @@
    </property>
   </action>
   <action name="actionFWStop">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/service_stop.png</normaloff>:/icons/icons/service_stop.png</iconset>
+   </property>
    <property name="text">
     <string>Stop</string>
    </property>
@@ -405,6 +541,10 @@
    </property>
   </action>
   <action name="actionFWRestart">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/icons/icons/service_restart.png</normaloff>:/icons/icons/service_restart.png</iconset>
+   </property>
    <property name="text">
     <string>Restart</string>
    </property>
@@ -461,7 +601,9 @@
    </slots>
   </customwidget>
  </customwidgets>
- <resources/>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>leHost</sender>
@@ -502,8 +644,8 @@
    <slot>setErrorLevelVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>864</x>
-     <y>198</y>
+     <x>987</x>
+     <y>293</y>
     </hint>
     <hint type="destinationlabel">
      <x>810</x>
@@ -518,8 +660,8 @@
    <slot>setWarningLevelVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>886</x>
-     <y>224</y>
+     <x>987</x>
+     <y>318</y>
     </hint>
     <hint type="destinationlabel">
      <x>810</x>
@@ -534,8 +676,8 @@
    <slot>setInfoLevelVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>906</x>
-     <y>249</y>
+     <x>987</x>
+     <y>343</y>
     </hint>
     <hint type="destinationlabel">
      <x>810</x>
@@ -550,8 +692,8 @@
    <slot>setStateMachineLevelVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>922</x>
-     <y>273</y>
+     <x>987</x>
+     <y>368</y>
     </hint>
     <hint type="destinationlabel">
      <x>810</x>
@@ -566,8 +708,8 @@
    <slot>setSoapOutLevelVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>929</x>
-     <y>324</y>
+     <x>987</x>
+     <y>418</y>
     </hint>
     <hint type="destinationlabel">
      <x>810</x>
@@ -582,8 +724,8 @@
    <slot>setSoapInLevelVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>939</x>
-     <y>299</y>
+     <x>987</x>
+     <y>393</y>
     </hint>
     <hint type="destinationlabel">
      <x>810</x>
@@ -598,8 +740,8 @@
    <slot>setDebugLevelVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>953</x>
-     <y>349</y>
+     <x>987</x>
+     <y>443</y>
     </hint>
     <hint type="destinationlabel">
      <x>810</x>
@@ -614,8 +756,8 @@
    <slot>setNonCalLevelVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>969</x>
-     <y>372</y>
+     <x>987</x>
+     <y>468</y>
     </hint>
     <hint type="destinationlabel">
      <x>810</x>
@@ -646,12 +788,12 @@
    <slot>click()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>977</x>
-     <y>426</y>
+     <x>987</x>
+     <y>530</y>
     </hint>
     <hint type="destinationlabel">
-     <x>975</x>
-     <y>449</y>
+     <x>986</x>
+     <y>558</y>
     </hint>
    </hints>
   </connection>
@@ -662,8 +804,8 @@
    <slot>clearAllMarkers()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>892</x>
-     <y>452</y>
+     <x>916</x>
+     <y>558</y>
     </hint>
     <hint type="destinationlabel">
      <x>806</x>

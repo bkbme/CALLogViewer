@@ -73,7 +73,9 @@ void CALLogView::newLogMessage(const LogMessage &log)
          (m_logFacilityVisibility.contains(log.facility()) && !m_logFacilityVisibility[log.facility()]) )
 	{
 		oStream << " hidden";
-    } else if (log.application().startsWith("fw["))
+    }
+
+    if (log.application().startsWith("fw["))
     {
         oStream << " fw";
     } else if (log.application().startsWith("kernel"))
@@ -273,7 +275,7 @@ void CALLogView::addMarker(const QString &text)
 		}
 	}
 
-	emit statusMessage(QString("found %1 matches (%2 log messges)").arg(matchesTotal).arg(matchingLines), 0);
+	emit statusMessage(QString("found %1 matches (%2/%3 log messges)").arg(matchesTotal).arg(matchingLines).arg(m_logs.count()), 5000);
 }
 
 void CALLogView::clearAllMarkers()
@@ -303,8 +305,8 @@ int CALLogView::applyMarkers(QString &msg) const
 	int matches = 0;
 	foreach (const QString &marker, m_markers)
 	{
+		matches += msg.count(marker);
 		msg.replace(marker, "<div class='marked'>" + marker + "</div>");
-		++matches;
 	}
 
 	return matches;

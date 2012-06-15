@@ -44,9 +44,9 @@ private:
 	unsigned int m_id;
 	LogLevel m_level;
 	QString m_msg;
-	QString m_app;
-    LogFacility m_facility;
+    QString m_app;
 	QDateTime m_timestamp;
+    LogFacility m_facility;
 };
 
 #endif // LOGMESSAGE_H
