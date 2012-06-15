@@ -20,11 +20,11 @@ QString GZIP_EXEC = "gzip.exe";
 SysLogLoader::SysLogLoader(QNetworkAccessManager *netMgr, QObject *parent) :
 	QObject(parent),
 	m_net(netMgr),
-	m_log(0)
+    m_log(0)
 {
 #ifdef Q_WS_WIN
-		TAR_EXEC = QCoreApplication::applicationDirPath() + QDir::separator() + TAR_EXEC;
-		GZIP_EXEC = QCoreApplication::applicationDirPath() + QDir::separator() + GZIP_EXEC;
+        TAR_EXEC = QCoreApplication::applicationDirPath() + QDir::separator() + TAR_EXEC;
+        GZIP_EXEC = QCoreApplication::applicationDirPath() + QDir::separator() + GZIP_EXEC;
 #endif
 }
 
