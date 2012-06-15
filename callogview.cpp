@@ -8,6 +8,7 @@
 #include <QWebElement>
 #include <QMetaObject>
 #include <QTextStream>
+#include <QDropEvent>
 
 const QString MSG_FORMAT = "<div id='log_%6' class='%2'>%3 %4: %1%5</div>";
 
@@ -46,6 +47,7 @@ CALLogView::CALLogView(QWidget *parent) :
 {
 	settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true); // enable web-inspector
 	QMetaObject::invokeMethod(this, "init", Qt::QueuedConnection);
+    setAcceptDrops(true);
 }
 
 void CALLogView::init()
@@ -311,3 +313,12 @@ int CALLogView::applyMarkers(QString &msg) const
 
 	return matches;
 }
+
+void CALLogView::dropEvent(QDropEvent* ev)
+{
+    if(ev->mimeData()->hasUrls()) {
+        qDebug() << ev->mimeData()->urls().at(0).toString();
+        emit supportInfoDropped(ev->mimeData()->urls().at(0));
+    }
+}
+

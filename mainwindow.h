@@ -2,6 +2,8 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
+#include <QUrl>
+#include <QDebug>
 
 namespace Ui {
 	class MainWindow;
@@ -27,7 +29,8 @@ private slots:
 	void onServiceStarted(const QString &service);
 	void onServiceStopped(const QString &service);
 	void on_pbConnect_clicked();
-	void on_actionOpen_Logfile_triggered();
+    void on_actionOpen_Logfile_triggered();
+    void onSupportInfoDropped(const QUrl& url);
 	void on_pbAddMarker_clicked();
 	void on_actionCALStart_triggered();
 	void on_actionCALStop_triggered();

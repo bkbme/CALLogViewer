@@ -38,9 +38,15 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(m_serviceMgr, SIGNAL(serviceStarted(QString)), this, SLOT(onServiceStarted(QString)));
 	connect(m_serviceMgr, SIGNAL(serviceStopped(QString)), this, SLOT(onServiceStopped(QString)));
 
+    connect(ui->wvLogView, SIGNAL(supportInfoDropped(QUrl)), this, SLOT(onSupportInfoDropped(QUrl)));
+
 	ui->wvLogView->setScrollBufferMaxLength(ui->sbScrollBuffer->value());
 
 	loadSettings();
+
+    if(QApplication::arguments().size() > 1) {
+        m_logLoader->openLog(QApplication::arguments().at(1));
+    }
 }
 
 MainWindow::~MainWindow()
@@ -111,7 +117,15 @@ void MainWindow::on_actionOpen_Logfile_triggered()
 		m_logLoader->closeLog();
 	}
 
-	m_logLoader->openLog(logFile);
+    m_logLoader->openLog(logFile);
+}
+
+void MainWindow::onSupportInfoDropped(const QUrl &url)
+{
+    if(url.isLocalFile()) {
+        qDebug() << url.toLocalFile();
+        m_logLoader->openLog(url.toLocalFile());
+    }
 }
 
 void MainWindow::on_pbAddMarker_clicked()

@@ -25,6 +25,7 @@ public slots:
 
 signals:
 	void statusMessage(const QString &msg, int timeout);
+    void supportInfoDropped(const QUrl& url);
 
 private slots:
 	void init();
@@ -44,6 +45,8 @@ private slots:
     void setKernelFacilityVisible(bool visible) { setLogFacilityVisible(LogMessage::Kernel, visible); }
     void setOtherFacilityVisible(bool visible) { setLogFacilityVisible(LogMessage::Other, visible); }
 
+protected:
+    virtual void dropEvent(QDropEvent *);
 
 private:
 	QString jsLogLevel(LogMessage::LogLevel level) const;
