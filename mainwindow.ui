@@ -201,6 +201,55 @@
        </widget>
       </item>
       <item>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="title">
+         <string>Log Facility</string>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_4">
+         <item>
+          <widget class="QCheckBox" name="cbLfInscriptFw">
+           <property name="text">
+            <string>Inscript FW</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbLfKernel">
+           <property name="text">
+            <string>Kernel</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbLfCal">
+           <property name="text">
+            <string>CAL</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="cbLfOther">
+           <property name="text">
+            <string>Other</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </item>
+      <item>
        <widget class="QGroupBox" name="gbMarker">
         <property name="title">
          <string>Highlight Text</string>
@@ -256,7 +305,7 @@
      <x>0</x>
      <y>0</y>
      <width>1016</width>
-     <height>23</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -405,6 +454,10 @@
     <slot>setDebugLevelVisible(bool)</slot>
     <slot>setNonCalLevelVisible(bool)</slot>
     <slot>clearAllMarkers()</slot>
+    <slot>setInscriptFwFacilityVisible(bool)</slot>
+    <slot>setKernelFacilityVisible(bool)</slot>
+    <slot>setCalFacilityVisible(bool)</slot>
+    <slot>setOtherFacilityVisible(bool)</slot>
    </slots>
   </customwidget>
  </customwidgets>
@@ -631,6 +684,70 @@
     <hint type="destinationlabel">
      <x>630</x>
      <y>634</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbLfInscriptFw</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>wvLogView</receiver>
+   <slot>setInscriptFwFacilityVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>915</x>
+     <y>409</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>413</x>
+     <y>343</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbLfCal</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>wvLogView</receiver>
+   <slot>setCalFacilityVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>915</x>
+     <y>455</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>413</x>
+     <y>343</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbLfKernel</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>wvLogView</receiver>
+   <slot>setKernelFacilityVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>915</x>
+     <y>432</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>413</x>
+     <y>343</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbLfOther</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>wvLogView</receiver>
+   <slot>setOtherFacilityVisible(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>915</x>
+     <y>478</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>413</x>
+     <y>343</y>
     </hint>
    </hints>
   </connection>

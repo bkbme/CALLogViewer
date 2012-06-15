@@ -68,18 +68,18 @@ void CALLogView::newLogMessage(const LogMessage &log)
 	QTextStream oStream(&html, QIODevice::WriteOnly);
 
 	oStream << "<div id='log_" << log.id() << "' class='" << jsLogLevel(log.level());
-	if (log.application().startsWith("fw["))
-	{
-		oStream << " fw";
-	}
-	if (log.application().startsWith("kernel"))
-	{
-		oStream << " kernel";
-	}
-	if (m_logLevelVisibility.contains(log.level()) && !m_logLevelVisibility[log.level()])
+
+    if ( (m_logLevelVisibility.contains(log.level()) && !m_logLevelVisibility[log.level()] ) ||
+         (m_logFacilityVisibility.contains(log.facility()) && !m_logFacilityVisibility[log.facility()]) )
 	{
 		oStream << " hidden";
-	}
+    } else if (log.application().startsWith("fw["))
+    {
+        oStream << " fw";
+    } else if (log.application().startsWith("kernel"))
+    {
+        oStream << " kernel";
+    }
 
 	QString msg(log2Html(log));
 	applyMarkers(msg);
@@ -157,6 +157,27 @@ void CALLogView::setLogLevelVisible(LogMessage::LogLevel level, bool visible)
 
 	m_logLevelVisibility[level] = visible;
 }
+
+void CALLogView::setLogFacilityVisible(LogMessage::LogFacility facility, bool visible)
+{
+    if (!page() || !page()->mainFrame())
+    {
+        return;
+    }
+
+    QWebFrame *frame = page()->mainFrame();
+    QWebElement body = frame->documentElement().findFirst("body");
+    foreach (const LogMessage &log, m_logs)
+    {
+        if (log.facility() == facility)
+        {
+            QWebElement div = body.findFirst(QString("#log_%1").arg(log.id()));
+            visible ? div.removeClass("hidden") : div.addClass("hidden");
+        }
+    }
+    m_logFacilityVisibility[facility] = visible;
+}
+
 
 QString CALLogView::log2Html(const LogMessage &log) const
 {

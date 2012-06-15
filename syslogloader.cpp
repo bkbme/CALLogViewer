@@ -114,6 +114,7 @@ void SysLogLoader::onReadyRead()
 LogMessage SysLogLoader::parseLogMessage(const QString &message) const
 {
 	LogMessage::LogLevel level = LogMessage::NonCAL;
+    LogMessage::LogFacility facility = LogMessage::Other;
 	QDateTime timestamp(QDateTime::currentDateTime());
 	QString host, app, msg;
 
@@ -124,6 +125,15 @@ LogMessage SysLogLoader::parseLogMessage(const QString &message) const
 		timestamp = QDateTime::fromString(msgChunks.takeFirst().mid(0, 23), "yyyy-MM-ddTHH:mm:ss.zzz");
 		host = msgChunks.takeFirst();
 		app = msgChunks.takeFirst().remove(":");
+
+        if (app.contains("fw[")) {
+            facility = LogMessage::InscriptFw;
+        } else if(app.contains("CAL")) {
+            facility = LogMessage::CAL;
+        } else if(app.contains("kernel")) {
+            facility = LogMessage::Kernel;
+        }
+
 		if (app == "CAL")
 		{
 			// parse loglevel
@@ -158,7 +168,7 @@ LogMessage SysLogLoader::parseLogMessage(const QString &message) const
 		qDebug() << "failed to parse message: " << message;
 	}
 
-	return LogMessage(level, timestamp, app, msg);
+    return LogMessage(level, facility, timestamp, app, msg);
 }
 
 bool SysLogLoader::isLogOpen() const

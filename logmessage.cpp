@@ -10,12 +10,13 @@ LogMessage::LogMessage() :
 {
 }
 
-LogMessage::LogMessage(LogLevel level, const QDateTime &timestamp, const QString &application, const QString &message) :
+LogMessage::LogMessage(LogLevel level, LogFacility facility, const QDateTime &timestamp, const QString &application, const QString &message) :
 	m_id(s_id++),
 	m_level(level),
 	m_msg(message),
 	m_app(application),
-	m_timestamp(timestamp)
+    m_timestamp(timestamp),
+    m_facility(facility)
 {
 }
 

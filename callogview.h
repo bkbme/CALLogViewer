@@ -15,6 +15,7 @@ public:
 	explicit CALLogView(QWidget *parent = 0);
 	int scrollBufferMaxLength() const { return m_maxScrollBufferLength; }
 	void setLogLevelVisible(LogMessage::LogLevel level, bool visible);
+    void setLogFacilityVisible(LogMessage::LogFacility facility, bool visible);
 
 public slots:
 	void newLogMessage(const LogMessage &msg);
@@ -38,6 +39,11 @@ private slots:
 	void setSoapOutLevelVisible(bool visible) { setLogLevelVisible(LogMessage::SoapOut, visible); }
 	void setDebugLevelVisible(bool visible) { setLogLevelVisible(LogMessage::Debug, visible); }
 	void setNonCalLevelVisible(bool visible) { setLogLevelVisible(LogMessage::NonCAL, visible); }
+    void setInscriptFwFacilityVisible(bool visible) { setLogFacilityVisible(LogMessage::InscriptFw, visible); }
+    void setCalFacilityVisible(bool visible) { setLogFacilityVisible(LogMessage::CAL, visible); }
+    void setKernelFacilityVisible(bool visible) { setLogFacilityVisible(LogMessage::Kernel, visible); }
+    void setOtherFacilityVisible(bool visible) { setLogFacilityVisible(LogMessage::Other, visible); }
+
 
 private:
 	QString jsLogLevel(LogMessage::LogLevel level) const;
@@ -49,6 +55,7 @@ private:
 	int m_maxScrollBufferLength;
 	QQueue<LogMessage> m_logs;
 	QMap<LogMessage::LogLevel, bool> m_logLevelVisibility;
+    QMap<LogMessage::LogFacility, bool> m_logFacilityVisibility;
 	QVector<QString> m_markers;
 };
 
