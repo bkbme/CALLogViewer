@@ -257,12 +257,12 @@ void FemtecTester::saveSettings()
 
 int FemtecTester::randomTimerInterval(const TimingLimits &limit) const
 {
-	if (limit.first >= limit.second || limit.second == 0)
+	if (limit.first >= limit.second)
 	{
-		return (limit.first);
+		return (limit.first * 1000);
 	}
 
-	return ((qrand() + static_cast<int>(limit.first * 1000)) % static_cast<int>(limit.second * 1000));
+	return (static_cast<int>(limit.first * 1000) + (qrand() % static_cast<int>((limit.second - limit.first) * 1000)));
 }
 
 void FemtecTester::showCountdown(const QString& msgFormat, int length, int interval)
