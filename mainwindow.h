@@ -9,9 +9,12 @@ namespace Ui {
 	class MainWindow;
 }
 
+class FemtecTester;
+class LogAnalyzer;
 class SysLogLoader;
 class ServiceManager;
 class QCheckBox;
+class QLabel;
 
 class MainWindow : public QMainWindow
 {
@@ -40,6 +43,11 @@ private slots:
 	void on_actionFWStop_triggered();
 	void on_actionFWRestart_triggered();
 	void on_actionFWStatus_triggered();
+	void on_actionFemtecTesterSettings_triggered();
+//	void on_actionFemtecTesterEnabled_toggled(bool enabled);
+	
+	void onCALStarted();
+	void onCALStoped(int exitCode);
 
 protected:
 	virtual void closeEvent(QCloseEvent *event);
@@ -49,9 +57,11 @@ private:
 	QList<QCheckBox*> getLogFilter();
 
 	Ui::MainWindow *ui;
+	LogAnalyzer *m_analyzer;
 	SysLogLoader *m_logLoader;
 	ServiceManager *m_serviceMgr;
-
+	QLabel *m_lStatus;
+	FemtecTester *m_test;
 };
 
 #endif // MAINWINDOW_H

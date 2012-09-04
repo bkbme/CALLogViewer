@@ -2,9 +2,11 @@
 #include "ui_mainwindow.h"
 #include "syslogloader.h"
 #include "servicemanager.h"
+#include "loganalyzer.h"
+#include "femtectester.h"
+#include "femtectesterdialog.h"
 
 #include <QNetworkAccessManager>
-//#include <QMessageBox>
 #include <QFileDialog>
 #include <QDir>
 #include <QSettings>
@@ -12,10 +14,15 @@
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow),
+	m_analyzer(new LogAnalyzer(this)),
 	m_logLoader(0),
-	m_serviceMgr(0)
+	m_serviceMgr(0),
+	m_lStatus(new QLabel(this)),
+	m_test(new FemtecTester())
 {
 	ui->setupUi(this);
+	statusBar()->addPermanentWidget(m_lStatus);
+	m_lStatus->setText("<img height='14' src=':/icons/icons/status_unknown.png'>");
 
 	//setup actions
 	ui->tbCALStart->setDefaultAction(ui->actionCALStart);
@@ -35,18 +42,34 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(m_logLoader, SIGNAL(newLogMessage(LogMessage)), ui->wvLogView, SLOT(newLogMessage(LogMessage)));
 	connect(m_logLoader, SIGNAL(statusMessage(QString,int)), ui->statusBar, SLOT(showMessage(QString,int)));
 
+	connect(m_logLoader, SIGNAL(newLogMessage(LogMessage)), m_analyzer, SLOT(analyzeMessage(LogMessage)));
+	connect(m_analyzer, SIGNAL(calStarted()), this, SLOT(onCALStarted()));
+	connect(m_analyzer, SIGNAL(calStopped(int)), this, SLOT(onCALStoped(int)));
+	
+	connect(m_analyzer, SIGNAL(treatmentStarted()), m_test, SLOT(pressProcedureFootswitchDelayed()));
+	connect(m_analyzer, SIGNAL(treatmentFinished()), m_test, SLOT(releaseProcedureFootswitch()));
+	connect(m_analyzer, SIGNAL(treatmentAborted()), m_test, SLOT(releaseProcedureFootswitch()));
+	connect(m_analyzer, SIGNAL(calStopped(int)), m_test, SLOT(releaseProcedureFootswitch()));
+	connect(m_analyzer, SIGNAL(executingTreatment()), m_test, SLOT(pauseTreatment()));
+
 	connect(m_serviceMgr, SIGNAL(serviceStarted(QString)), this, SLOT(onServiceStarted(QString)));
 	connect(m_serviceMgr, SIGNAL(serviceStopped(QString)), this, SLOT(onServiceStopped(QString)));
 
-    connect(ui->wvLogView, SIGNAL(supportInfoDropped(QUrl)), this, SLOT(onSupportInfoDropped(QUrl)));
+	connect(ui->wvLogView, SIGNAL(supportInfoDropped(QUrl)), this, SLOT(onSupportInfoDropped(QUrl)));
+
+	connect(ui->pbProcedureFS, SIGNAL(pressed()), m_test, SLOT(pressProcedureFootswitch()));
+	connect(ui->pbProcedureFS, SIGNAL(released()), m_test, SLOT(releaseProcedureFootswitch()));
+	connect(ui->actionFemtecTesterEnabled, SIGNAL(toggled(bool)), m_test, SLOT(setEnabled(bool)));
+	connect(m_test, SIGNAL(enabledStateChanged(bool)), ui->actionFemtecTesterEnabled, SLOT(setChecked(bool)));
+	connect(m_test, SIGNAL(statusMessage(QString,int)), statusBar(), SLOT(showMessage(QString, int)));
 
 	ui->wvLogView->setScrollBufferMaxLength(ui->sbScrollBuffer->value());
 
 	loadSettings();
 
-    if(QApplication::arguments().size() > 1) {
-        m_logLoader->openLog(QApplication::arguments().at(1));
-    }
+	if(QApplication::arguments().size() > 1) {
+		m_logLoader->openLog(QApplication::arguments().at(1));
+	}
 }
 
 MainWindow::~MainWindow()
@@ -55,6 +78,7 @@ MainWindow::~MainWindow()
 	m_logLoader->disconnect();
 
 	delete ui;
+	delete m_test;
 }
 
 void MainWindow::onLogOpened()
@@ -76,6 +100,9 @@ void MainWindow::onLogClosed()
 	ui->leHost->setEnabled(true);
 	ui->menuServices->setEnabled(false);
 	ui->gbServices->setEnabled(false);
+
+	m_lStatus->setText("<img height='14' src=':/icons/icons/status_unknown.png'>");
+	m_lStatus->setToolTip("");
 }
 
 void MainWindow::on_pbConnect_clicked()
@@ -122,10 +149,10 @@ void MainWindow::on_actionOpen_Logfile_triggered()
 
 void MainWindow::onSupportInfoDropped(const QUrl &url)
 {
-    if(url.isLocalFile()) {
-        qDebug() << url.toLocalFile();
-        m_logLoader->openLog(url.toLocalFile());
-    }
+	if(url.isLocalFile()) {
+		qDebug() << url.toLocalFile();
+		m_logLoader->openLog(url.toLocalFile());
+	}
 }
 
 void MainWindow::on_pbAddMarker_clicked()
@@ -138,12 +165,20 @@ void MainWindow::onServiceStarted(const QString &service)
 {
 	//QMessageBox::information(this, QString("%1 status").arg(service), QString("%1 is running.").arg(service));
 	this->statusBar()->showMessage(QString("%1 is running.").arg(service));
+	if (service == "cal")
+	{
+		onCALStarted();
+	}
 }
 
 void MainWindow::onServiceStopped(const QString &service)
 {
 	//QMessageBox::information(this, QString("%1 status").arg(service), QString("%1 is stopped.").arg(service));
 	this->statusBar()->showMessage(QString("%1 is stopped.").arg(service));
+	if (service == "cal")
+	{
+		onCALStoped(0);
+	}
 }
 
 void MainWindow::on_actionCALStart_triggered()
@@ -202,6 +237,8 @@ void MainWindow::loadSettings()
 		cb->setChecked(settings.value(cb->objectName(), true).toBool());
 	}
 	settings.endArray();
+	
+	ui->actionFemtecTesterEnabled->setChecked(settings.value("FemtecTesterEnabled", false).toBool());
 }
 
 QList<QCheckBox*> MainWindow::getLogFilter()
@@ -235,4 +272,25 @@ void MainWindow::closeEvent(QCloseEvent * /*event*/)
 		settings.setValue(cb->objectName(), cb->isChecked());
 	}
 	settings.endArray();
+	
+	settings.setValue("FemtecTesterEnabled", ui->actionFemtecTesterEnabled->isChecked());
 }
+
+void MainWindow::onCALStarted()
+{
+	m_lStatus->setText("<img height='14' src=':/icons/icons/status_running.png'>");
+	m_lStatus->setToolTip("CAL is running");
+}
+
+void MainWindow::onCALStoped(int exitCode)
+{
+	m_lStatus->setText("<img height='14' src=':/icons/icons/status_stopped.png'>");
+	m_lStatus->setToolTip(QString("CAL stopped (exit code: %1)").arg(exitCode));
+}
+
+void MainWindow::on_actionFemtecTesterSettings_triggered()
+{
+	FemtecTesterDialog diag(m_test);
+	diag.exec();
+}
+

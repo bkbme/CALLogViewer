@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FemtecTesterDialog</class>
+ <widget class="QDialog" name="FemtecTesterDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>517</width>
+    <height>294</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Dialog</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3">
+   <item>
+    <widget class="QGroupBox" name="gbHardwareSetup">
+     <property name="title">
+      <string>Hardware Setup</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <item>
+         <widget class="QLabel" name="lComPort">
+          <property name="text">
+           <string>Serial Port</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="cbComPort"/>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="gbFootswitch">
+     <property name="title">
+      <string>Footswitch Behaviour</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="1" column="1">
+         <widget class="QDoubleSpinBox" name="dsTrmDelayMin"/>
+        </item>
+        <item row="4" column="2">
+         <widget class="QDoubleSpinBox" name="dsPauseDelayMax"/>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="lTrmDelay">
+          <property name="text">
+           <string>Delay Treatment Start</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="lMax">
+          <property name="text">
+           <string>max (sec)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QDoubleSpinBox" name="dsTrmDelayMax"/>
+        </item>
+        <item row="4" column="0">
+         <widget class="QLabel" name="lPauseDelay">
+          <property name="text">
+           <string>Delay Pause (after reaching 'ExecutingTrm')</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="lMin">
+          <property name="text">
+           <string>min (sec)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="0">
+         <widget class="QLabel" name="lPauseLength">
+          <property name="text">
+           <string>Pause length (sec)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QDoubleSpinBox" name="dsPauseDelayMin"/>
+        </item>
+        <item row="5" column="1">
+         <widget class="QDoubleSpinBox" name="dsPauseLengthMin"/>
+        </item>
+        <item row="5" column="2">
+         <widget class="QDoubleSpinBox" name="dsPauseLengthMax"/>
+        </item>
+        <item row="2" column="1">
+         <widget class="QDoubleSpinBox" name="dsIntermediateMin"/>
+        </item>
+        <item row="2" column="2">
+         <widget class="QDoubleSpinBox" name="dsIntermediateMax"/>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="lIntermediateLength">
+          <property name="text">
+           <string>Intermediate state length (sec)</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QCheckBox" name="cbFakeTrmPause">
+          <property name="text">
+           <string>Fake Treatment Pause</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <spacer name="verticalSpacer">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>20</width>
+          <height>40</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="Line" name="line">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>FemtecTesterDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>252</x>
+     <y>289</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>FemtecTesterDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>320</x>
+     <y>289</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbFakeTrmPause</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dsPauseDelayMin</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>198</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>254</x>
+     <y>152</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbFakeTrmPause</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dsPauseLengthMin</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>234</x>
+     <y>224</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>252</x>
+     <y>180</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbFakeTrmPause</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dsPauseDelayMax</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>370</x>
+     <y>234</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>398</x>
+     <y>159</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>cbFakeTrmPause</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>dsPauseLengthMax</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>412</x>
+     <y>226</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>412</x>
+     <y>185</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

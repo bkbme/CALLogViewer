@@ -3,5 +3,10 @@
         <file>icons/service_restart.png</file>
         <file>icons/service_start.png</file>
         <file>icons/service_stop.png</file>
+        <file>icons/action_add.png</file>
+        <file>icons/status_running.png</file>
+        <file>icons/status_stopped.png</file>
+        <file>icons/status_unknown.png</file>
+        <file>icons/trash.png</file>
     </qresource>
 </RCC>
