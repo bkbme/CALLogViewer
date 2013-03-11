@@ -1,19 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>FemtecTesterDialog</class>
- <widget class="QDialog" name="FemtecTesterDialog">
+ <class>TesterSettingsPage</class>
+ <widget class="QWidget" name="TesterSettingsPage">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>517</width>
-    <height>294</height>
+    <width>473</width>
+    <height>297</height>
    </rect>
   </property>
-  <property name="windowTitle">
-   <string>Dialog</string>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
+    <horstretch>1</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
-  <layout class="QVBoxLayout" name="verticalLayout_3">
+  <property name="windowTitle">
+   <string>Tester Settings</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true"/>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_3" stretch="0,0">
+   <property name="spacing">
+    <number>1</number>
+   </property>
    <item>
     <widget class="QGroupBox" name="gbHardwareSetup">
      <property name="title">
@@ -139,59 +151,10 @@
      </layout>
     </widget>
    </item>
-   <item>
-    <widget class="Line" name="line">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
-     </property>
-     <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-     </property>
-    </widget>
-   </item>
   </layout>
  </widget>
  <resources/>
  <connections>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>accepted()</signal>
-   <receiver>FemtecTesterDialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>252</x>
-     <y>289</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>157</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>buttonBox</sender>
-   <signal>rejected()</signal>
-   <receiver>FemtecTesterDialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>320</x>
-     <y>289</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>286</x>
-     <y>274</y>
-    </hint>
-   </hints>
-  </connection>
   <connection>
    <sender>cbFakeTrmPause</sender>
    <signal>toggled(bool)</signal>
@@ -199,12 +162,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>198</x>
-     <y>224</y>
+     <x>210</x>
+     <y>189</y>
     </hint>
     <hint type="destinationlabel">
-     <x>254</x>
-     <y>152</y>
+     <x>370</x>
+     <y>215</y>
     </hint>
    </hints>
   </connection>
@@ -215,12 +178,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>234</x>
-     <y>224</y>
+     <x>236</x>
+     <y>189</y>
     </hint>
     <hint type="destinationlabel">
-     <x>252</x>
-     <y>180</y>
+     <x>370</x>
+     <y>241</y>
     </hint>
    </hints>
   </connection>
@@ -231,12 +194,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>370</x>
-     <y>234</y>
+     <x>236</x>
+     <y>189</y>
     </hint>
     <hint type="destinationlabel">
-     <x>398</x>
-     <y>159</y>
+     <x>504</x>
+     <y>215</y>
     </hint>
    </hints>
   </connection>
@@ -247,12 +210,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>412</x>
-     <y>226</y>
+     <x>236</x>
+     <y>189</y>
     </hint>
     <hint type="destinationlabel">
-     <x>412</x>
-     <y>185</y>
+     <x>504</x>
+     <y>241</y>
     </hint>
    </hints>
   </connection>

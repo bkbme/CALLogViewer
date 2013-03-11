@@ -1,16 +1,19 @@
 #include "femtectester.h"
 
+#include <syslogparser.h>
+#include <logmessage.h>
 
 #include <QTimer>
-//#include <QDebug>
+#include <QDebug>
 #include <QByteArray>
 #include <QDateTime>
 #include <QSettings>
 
 
-FemtecTester::FemtecTester(QObject *parent) :
+FemtecTester::FemtecTester(SysLogParser *logParser, QObject *parent) :
 	QObject(parent),
 	m_serialPort(new QextSerialPort()),
+	m_logParser(logParser),
 	m_currentProcedureFSState(Intermediate),
 	m_targetProcedureFSState(PedalUp),
 	m_pauseState(NoPause),
@@ -30,6 +33,15 @@ FemtecTester::FemtecTester(QObject *parent) :
 	qsrand(QDateTime::currentDateTime().toTime_t());
 
 	loadSettings();
+
+	connect(m_logParser, SIGNAL(treatmentStarted()), this, SLOT(pressProcedureFootswitchDelayed()));
+	connect(m_logParser, SIGNAL(treatmentFinished()), this, SLOT(releaseProcedureFootswitch()));
+	connect(m_logParser, SIGNAL(treatmentAborted()), this, SLOT(releaseProcedureFootswitch()));
+	connect(m_logParser, SIGNAL(calStopped(int)), this, SLOT(releaseProcedureFootswitch()));
+	connect(m_logParser, SIGNAL(executingTreatment()), this, SLOT(pauseTreatment()));
+	// power check
+	connect(m_logParser, SIGNAL(powerCheckStarted()), this, SLOT(pressProcedureFootswitch()));
+	//connect(m_logParser, SIGNAL(procShutterOpened()), this, SLOT(onProcShutterOpen()));
 }
 
 void FemtecTester::setEnabled(bool enabled)
@@ -79,6 +91,11 @@ void FemtecTester::setPort(const QString &portName)
 
 void FemtecTester::pressProcedureFootswitch()
 {
+	if (!m_enabled)
+	{
+		return;
+	}
+
 	m_targetProcedureFSState = PedalDown;
 
 	if (m_currentProcedureFSState == PedalUp)
@@ -90,6 +107,11 @@ void FemtecTester::pressProcedureFootswitch()
 
 void FemtecTester::pressProcedureFootswitchDelayed()
 {
+	if (!m_enabled)
+	{
+		return;
+	}
+
 	m_targetProcedureFSState = PedalDown;
 
 	if (m_currentProcedureFSState == PedalUp) // if Intermediate, fs is pressed immediately
@@ -103,6 +125,11 @@ void FemtecTester::pressProcedureFootswitchDelayed()
 
 void FemtecTester::releaseProcedureFootswitch()
 {
+	if (!m_enabled)
+	{
+		return;
+	}
+
 	m_pauseState = NoPause;
 	m_targetProcedureFSState = PedalUp;
 
@@ -126,12 +153,14 @@ void FemtecTester::setFSState(FootswitchState state)
 			m_serialPort->setDtr(false);
 			m_serialPort->setRts(true);
 			//qDebug() << "footswitch released";
+			emit logMessage(LogMessage(LogMessage::Info, LogMessage::Other, QDateTime::currentDateTimeUtc(), "CALLogView", "footswitch released"));
 			emit statusMessage("footswitch released");
 			break;
 		case PedalDown:
 			m_serialPort->setRts(false);
 			m_serialPort->setDtr(true);
 			//qDebug() << "footswitch pressed";
+			emit logMessage(LogMessage(LogMessage::Info, LogMessage::Other, QDateTime::currentDateTimeUtc(), "CALLogView", "footswitch pressed"));
 			emit statusMessage("footswitch pressed");
 			break;
 		case Intermediate:
@@ -139,6 +168,7 @@ void FemtecTester::setFSState(FootswitchState state)
 			m_serialPort->setRts(false);
 			m_serialPort->setDtr(false);
 			//qDebug() << "footswitch in state 'Intermediate'";
+			emit logMessage(LogMessage(LogMessage::Info, LogMessage::Other, QDateTime::currentDateTimeUtc(), "CALLogView", "footswitch intermediate"));
 			emit statusMessage("footswitch in state 'Intermediate'");
 			break;
 		default:
@@ -153,6 +183,11 @@ void FemtecTester::setFSState(FootswitchState state)
 
 void FemtecTester::pauseTreatment()
 {
+	if (!m_enabled)
+	{
+		return;
+	}
+
 	if (m_fakeTrmPause && m_targetProcedureFSState == PedalDown && m_pauseState == NoPause)
 	{
 		int pauseDelay = randomTimerInterval(m_pauseDelay);
@@ -214,10 +249,10 @@ void FemtecTester::pauseTimerElapsed()
 
 void FemtecTester::loadSettings()
 {
-	QSettings settings("TPV-ARGES", "LogView");
+	QSettings settings;
 	settings.beginGroup("FemtecTester");
 
-	bool enabled = settings.value("enabled", false).toBool();
+	//bool enabled = settings.value("enabled", false).toBool();
 	m_fakeTrmPause = settings.value("fakeTrmPause", false).toBool();
 	m_treatmentDelay.first = settings.value("treatmentDelayMin", 0).toDouble();
 	m_treatmentDelay.second = settings.value("treatmentDelayMax", 30).toDouble();
@@ -232,15 +267,15 @@ void FemtecTester::loadSettings()
 
 	settings.endGroup();
 
-	setEnabled(enabled);
+	//setEnabled(enabled);
 }
 
 void FemtecTester::saveSettings()
 {
-	QSettings settings("TPV-ARGES", "LogView");
+	QSettings settings;
 	settings.beginGroup("FemtecTester");
 
-	settings.setValue("enabled", m_enabled);
+	//settings.setValue("enabled", m_enabled);
 	settings.setValue("fakeTrmPause", m_fakeTrmPause);
 	settings.setValue("treatmentDelayMin", m_treatmentDelay.first);
 	settings.setValue("treatmentDelayMax", m_treatmentDelay.second);
@@ -281,5 +316,18 @@ void FemtecTester::updateStatusMessage()
 	}
 
 	emit statusMessage(m_statusMessageFormat.arg(static_cast<double>(m_statusMessageCountdown) / 1000));
+}
+
+void FemtecTester::onProcShutterOpen()
+{
+	if (!m_enabled)
+	{
+		return;
+	}
+
+	int timeout = randomTimerInterval(TimingLimits(2.5, 4));
+	showCountdown("aborting powercheck in %1 seconds...", timeout, 100);
+	emit logMessage(LogMessage(LogMessage::Info, LogMessage::Other, QDateTime::currentDateTimeUtc(), "CALLogView", QString("aborting PwrCheck in %1 msec...").arg(timeout)));
+	QTimer::singleShot(timeout, this, SLOT(releaseProcedureFootswitch()));
 }
 

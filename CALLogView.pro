@@ -4,36 +4,58 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network webkit
+QT += core gui network webkit
 
 include(qtextserial/qextserialport.pri)
-INCLUDEPATH += qtextserial
+INCLUDEPATH += qtextserial test log misc
 
 TARGET = CALLogView
 TEMPLATE = app
 
 
-SOURCES += main.cpp\
+SOURCES += \
+	main.cpp\
 	mainwindow.cpp \
-    callogview.cpp \
-    logmessage.cpp \
-    syslogloader.cpp \
-    servicemanager.cpp \
-    loganalyzer.cpp \
-	femtectester.cpp \
-    femtectesterdialog.cpp
+	servicemanager.cpp \
+	log/callogview.cpp \
+	log/logmessage.cpp \
+	log/syslogparser.cpp \
+	test/femtectester.cpp \
+	log/calsession.cpp \
+	log/calsessionmodel.cpp \
+	log/calsessionview.cpp \
+	misc/animatedsplitter.cpp \
+	log/supportinfoopendialog.cpp \
+	misc/settingsdialog.cpp \
+	test/testersettingspage.cpp \
+    misc/searchwidget.cpp \
+    misc/calstatuswidget.cpp
 
-HEADERS  += mainwindow.h \
-    callogview.h \
-    logmessage.h \
-    syslogloader.h \
-    servicemanager.h \
-    loganalyzer.h \
-	femtectester.h \
-    femtectesterdialog.h
+HEADERS  += \
+	mainwindow.h \
+	servicemanager.h \
+	log/callogview.h \
+	log/logmessage.h \
+	log/syslogparser.h \
+	test/femtectester.h \
+	log/calsession.h \
+	log/calsessionmodel.h \
+	log/calsessionview.h \
+	misc/animatedsplitter.h \
+	log/supportinfoopendialog.h \
+	config.h \
+	misc/settingsdialog.h \
+	misc/abstractsettingspage.h \
+	test/testersettingspage.h \
+    misc/searchwidget.h \
+    misc/calstatuswidget.h
 
-FORMS    += mainwindow.ui \
-    femtectesterdialog.ui
+FORMS += \
+	mainwindow.ui \
+	log/supportinfoopendialog.ui \
+	misc/settingsdialog.ui \
+	test/testersettingspage.ui \
+    misc/searchwidget.ui
 
 RESOURCES += \
-    icons.qrc
+	icons.qrc

@@ -1,93 +1,112 @@
 #include "mainwindow.h"
-#include "ui_mainwindow.h"
-#include "syslogloader.h"
-#include "servicemanager.h"
-#include "loganalyzer.h"
-#include "femtectester.h"
-#include "femtectesterdialog.h"
+
+#include <config.h>
+#include <searchwidget.h>
+#include <ui_mainwindow.h>
+#include <servicemanager.h>
+#include <syslogparser.h>
+#include <femtectester.h>
+#include <calsessionmodel.h>
+#include <calstatuswidget.h>
+#include <settingsdialog.h>
+#include <testersettingspage.h>
+#include <supportinfoopendialog.h>
 
 #include <QNetworkAccessManager>
 #include <QFileDialog>
 #include <QDir>
 #include <QSettings>
+#include <QLineEdit>
+#include <QApplication>
+#include <QStringListModel>
+
+const int MAX_HISTORY_ASC = 10;
 
 MainWindow::MainWindow(QWidget *parent) :
 	QMainWindow(parent),
 	ui(new Ui::MainWindow),
-	m_analyzer(new LogAnalyzer(this)),
-	m_logLoader(0),
+	m_logParser(0),
 	m_serviceMgr(0),
-	m_lStatus(new QLabel(this)),
-	m_test(new FemtecTester())
+	m_test(0),
+	m_splitterHandle(0),
+	m_ascHistoryModel(new QStringListModel(this))
 {
+	QNetworkAccessManager *netMgr = new QNetworkAccessManager(this);
+	m_logParser = new SysLogParser(netMgr, this);
+	m_serviceMgr = new ServiceManager(netMgr, this);
+	m_test = new FemtecTester(m_logParser, this);
+
 	ui->setupUi(this);
-	statusBar()->addPermanentWidget(m_lStatus);
-	m_lStatus->setText("<img height='14' src=':/icons/icons/status_unknown.png'>");
+	statusBar()->addPermanentWidget(new CALStatusWidget(m_logParser, this));
 
 	//setup actions
-	ui->tbCALStart->setDefaultAction(ui->actionCALStart);
-	ui->tbCALStop->setDefaultAction(ui->actionCALStop);
-	ui->tbCALRestart->setDefaultAction(ui->actionCALRestart);
-	ui->tbFWStart->setDefaultAction(ui->actionFWStart);
-	ui->tbFWStop->setDefaultAction(ui->actionFWStop);
-	ui->tbFWRestart->setDefaultAction(ui->actionFWRestart);
+	ui->tbCALStart->setDefaultAction(ui->actionService_cal_start);
+	ui->tbCALStop->setDefaultAction(ui->actionService_cal_stop);
+	ui->tbCALRestart->setDefaultAction(ui->actionService_cal_restart);
+	ui->tbFWStart->setDefaultAction(ui->actionService_argesfw_start);
+	ui->tbFWStop->setDefaultAction(ui->actionService_argesfw_stop);
+	ui->tbFWRestart->setDefaultAction(ui->actionService_argesfw_restart);
 
-	QNetworkAccessManager *netMgr = new QNetworkAccessManager(this);
-	m_logLoader = new SysLogLoader(netMgr, this);
-	m_serviceMgr = new ServiceManager(netMgr, this);
-
-	connect(m_logLoader, SIGNAL(logClosed()), this, SLOT(onLogClosed()));
-	connect(m_logLoader, SIGNAL(logOpened()), this, SLOT(onLogOpened()));
-	connect(m_logLoader, SIGNAL(logOpened()), ui->wvLogView, SLOT(clear()));
-	connect(m_logLoader, SIGNAL(newLogMessage(LogMessage)), ui->wvLogView, SLOT(newLogMessage(LogMessage)));
-	connect(m_logLoader, SIGNAL(statusMessage(QString,int)), ui->statusBar, SLOT(showMessage(QString,int)));
-
-	connect(m_logLoader, SIGNAL(newLogMessage(LogMessage)), m_analyzer, SLOT(analyzeMessage(LogMessage)));
-	connect(m_analyzer, SIGNAL(calStarted()), this, SLOT(onCALStarted()));
-	connect(m_analyzer, SIGNAL(calStopped(int)), this, SLOT(onCALStoped(int)));
-	
-	connect(m_analyzer, SIGNAL(treatmentStarted()), m_test, SLOT(pressProcedureFootswitchDelayed()));
-	connect(m_analyzer, SIGNAL(treatmentFinished()), m_test, SLOT(releaseProcedureFootswitch()));
-	connect(m_analyzer, SIGNAL(treatmentAborted()), m_test, SLOT(releaseProcedureFootswitch()));
-	connect(m_analyzer, SIGNAL(calStopped(int)), m_test, SLOT(releaseProcedureFootswitch()));
-	connect(m_analyzer, SIGNAL(executingTreatment()), m_test, SLOT(pauseTreatment()));
+	// setup signal/slots
+	connect(m_logParser, SIGNAL(logClosed()), this, SLOT(onLogClosed()));
+	connect(m_logParser, SIGNAL(logOpened(bool)), this, SLOT(onLogOpened(bool)));
+	connect(m_logParser, SIGNAL(logOpened(bool)), ui->wvLogView, SLOT(clear()));
+	connect(m_logParser, SIGNAL(statusMessage(QString,int)), ui->statusBar, SLOT(showMessage(QString,int)));
 
 	connect(m_serviceMgr, SIGNAL(serviceStarted(QString)), this, SLOT(onServiceStarted(QString)));
 	connect(m_serviceMgr, SIGNAL(serviceStopped(QString)), this, SLOT(onServiceStopped(QString)));
 
 	connect(ui->wvLogView, SIGNAL(supportInfoDropped(QUrl)), this, SLOT(onSupportInfoDropped(QUrl)));
+	connect(ui->tvSessionView, SIGNAL(supportInfoDropped(QUrl)), this, SLOT(onSupportInfoDropped(QUrl)));
+	connect(ui->cbHost->lineEdit(), SIGNAL(returnPressed()), ui->pbConnect, SIGNAL(clicked()));
 
 	connect(ui->pbProcedureFS, SIGNAL(pressed()), m_test, SLOT(pressProcedureFootswitch()));
 	connect(ui->pbProcedureFS, SIGNAL(released()), m_test, SLOT(releaseProcedureFootswitch()));
 	connect(ui->actionFemtecTesterEnabled, SIGNAL(toggled(bool)), m_test, SLOT(setEnabled(bool)));
+
+	connect(ui->wSearch, SIGNAL(newSearch(QString,Qt::CaseSensitivity)), ui->wvLogView, SLOT(search(QString,Qt::CaseSensitivity)));
+	connect(ui->wSearch, SIGNAL(continueSearch(SearchDirection)), ui->wvLogView, SLOT(continueSearch(SearchDirection)));
+	connect(ui->wSearch, SIGNAL(closed()), ui->wvLogView, SLOT(clearSearch()));
+
 	connect(m_test, SIGNAL(enabledStateChanged(bool)), ui->actionFemtecTesterEnabled, SLOT(setChecked(bool)));
 	connect(m_test, SIGNAL(statusMessage(QString,int)), statusBar(), SLOT(showMessage(QString, int)));
+/// @todo fix logging from Tester
+//	connect(m_test, SIGNAL(logMessage(LogMessage)), ui->wvLogView, SLOT(newLogMessage(LogMessage)));
 
-	ui->wvLogView->setScrollBufferMaxLength(ui->sbScrollBuffer->value());
+	CALSessionModel *sessionModel = new CALSessionModel(m_logParser, this);
+	ui->tvSessionView->setModel(sessionModel);
+
+	ui->cbHost->setModel(m_ascHistoryModel);
 
 	loadSettings();
 
 	if(QApplication::arguments().size() > 1) {
-		m_logLoader->openLog(QApplication::arguments().at(1));
+		const QString filename = QApplication::arguments().at(1);
+		if (filename.endsWith(".tar.gz"))
+		{
+			onSupportInfoDropped(filename);
+		} else
+		{
+			m_logParser->openLog(filename);
+		}
 	}
 }
 
 MainWindow::~MainWindow()
 {
 	m_serviceMgr->disconnect();
-	m_logLoader->disconnect();
+	m_logParser->disconnect();
 
 	delete ui;
 	delete m_test;
 }
 
-void MainWindow::onLogOpened()
+void MainWindow::onLogOpened(bool continuous)
 {
-	ui->pbConnect->setText("Disconnect");
+	ui->pbConnect->setText(continuous ? "Disconnect" : "Cancel loading...");
 	ui->pbConnect->setEnabled(true);
-	ui->sbScrollBuffer->setEnabled(true);
-	//ui->leHost->setEnabled(true);
-	m_serviceMgr->setHost(ui->leHost->text());
+	ui->cbHost->setEnabled(false);
+	m_serviceMgr->setHost(ui->cbHost->currentText());
 	ui->menuServices->setEnabled(true);
 	ui->gbServices->setEnabled(true);
 }
@@ -96,42 +115,55 @@ void MainWindow::onLogClosed()
 {
 	ui->pbConnect->setText("Connect");
 	ui->pbConnect->setEnabled(true);
-	ui->sbScrollBuffer->setEnabled(true);
-	ui->leHost->setEnabled(true);
+	ui->cbHost->setEnabled(true);
 	ui->menuServices->setEnabled(false);
 	ui->gbServices->setEnabled(false);
 
-	m_lStatus->setText("<img height='14' src=':/icons/icons/status_unknown.png'>");
-	m_lStatus->setToolTip("");
+	if (m_logParser->isLogContinuous())
+	{
+		setWindowTitle(windowTitle() + " (Disconnected)");
+	}
 }
 
 void MainWindow::on_pbConnect_clicked()
 {
 	ui->pbConnect->setEnabled(false);
-	ui->sbScrollBuffer->setEnabled(false);
-	ui->leHost->setEnabled(false);
+	ui->cbHost->setEnabled(false);
 
-	if (m_logLoader->isLogOpen())
+	if (m_logParser->isLogOpen())
 	{
-		m_logLoader->closeLog();
+		m_logParser->closeLog();
 	} else
 	{
-		QUrl url(QString("http://%1:81/syslog.sh").arg(ui->leHost->text()));
-		int maxHistoryLength = ui->sbScrollBuffer->value();
-		if (maxHistoryLength > 0)
+		const QString host = ui->cbHost->currentText().toLower().trimmed();
+		if (!m_ascHistoryModel->stringList().contains(host))
 		{
-			url.addQueryItem("maxLength", QString::number(maxHistoryLength));
+			m_ascHistoryModel->insertRows(0, 1);
+			m_ascHistoryModel->setData(m_ascHistoryModel->index(0), host);
+			if (m_ascHistoryModel->rowCount() > MAX_HISTORY_ASC)
+			{
+				m_ascHistoryModel->removeRows(m_ascHistoryModel->rowCount() - 1, 1);
+			}
+			ui->cbHost->setCurrentIndex(0);
 		}
 
-		m_logLoader->openLog(QUrl(url));
+		QUrl url(QString("http://%1:81/syslog.sh").arg(host));
+		//QUrl url(QString("http://%1:81/syslog.sh").arg(ui->cbHost->currentText()));
+		//int maxHistoryLength = ui->sbScrollBuffer->value();
+		//if (maxHistoryLength > 0)
+		//{
+		//	url.addQueryItem("maxLength", QString::number(maxHistoryLength));
+		//}
+		url.addQueryItem("maxLength", QString::number(20000)); // todo: add to settings dialog
+
+		m_logParser->openLog(QUrl(url));
+		setWindowTitle(QString("%1 - %2").arg(APPLICATION_NAME, url.host()));
 	}
 }
 
 void MainWindow::on_actionOpen_Logfile_triggered()
 {
-	const QString filter = (m_logLoader->canHandleTarArchive() ?
-								"Syslog (Support Info (support_info_*.tar.gz);; messages messages.* syslog);; All Files (*)" :
-								"Syslog (messages messages.* syslog);; All Files (*)");
+	const QString filter = ("Syslog (messages messages.* syslog);; All Files (*)");
 	QString logFile = QFileDialog::getOpenFileName(this, "Open Logfile", QDir::homePath(), filter);
 
 	if (logFile.isNull())
@@ -139,93 +171,75 @@ void MainWindow::on_actionOpen_Logfile_triggered()
 		return; // user pressed cancel button
 	}
 
-	if (m_logLoader->isLogOpen())
+	if (m_logParser->isLogOpen())
 	{
-		m_logLoader->closeLog();
+		m_logParser->closeLog();
 	}
 
-    m_logLoader->openLog(logFile);
+	m_logParser->openLog(logFile);
+	setWindowTitle(QString("%1 - %2").arg(APPLICATION_NAME, QFileInfo(logFile).fileName()));
+}
+
+void MainWindow::on_actionOpen_SupportInfo_triggered()
+{
+	onSupportInfoDropped(QUrl());
 }
 
 void MainWindow::onSupportInfoDropped(const QUrl &url)
 {
-	if(url.isLocalFile()) {
-		qDebug() << url.toLocalFile();
-		m_logLoader->openLog(url.toLocalFile());
-	}
-}
+	SupportInfoOpenDialog dialog(m_logParser, url);
+	if (dialog.exec() == QDialog::Accepted)
+	{
+		if (m_logParser->isLogOpen())
+		{
+			m_logParser->closeLog();
+		}
 
-void MainWindow::on_pbAddMarker_clicked()
-{
-	ui->wvLogView->addMarker(ui->leMarker->text());
-	ui->leMarker->clear();
+		m_logParser->openSupportInfo(dialog.selectedSupportInfoFile(), dialog.selectedLogfiles());
+		setWindowTitle(QString("%1 - %2").arg(APPLICATION_NAME, QFileInfo(dialog.selectedSupportInfoFile()).fileName()));
+	}
 }
 
 void MainWindow::onServiceStarted(const QString &service)
 {
-	//QMessageBox::information(this, QString("%1 status").arg(service), QString("%1 is running.").arg(service));
 	this->statusBar()->showMessage(QString("%1 is running.").arg(service));
-	if (service == "cal")
-	{
-		onCALStarted();
-	}
 }
 
 void MainWindow::onServiceStopped(const QString &service)
 {
-	//QMessageBox::information(this, QString("%1 status").arg(service), QString("%1 is stopped.").arg(service));
 	this->statusBar()->showMessage(QString("%1 is stopped.").arg(service));
-	if (service == "cal")
+}
+
+void MainWindow::onServiceActionTriggered()
+{
+	QStringList senderInfo(sender() ? sender()->objectName().split('_', QString::SkipEmptyParts) : QStringList());
+	if (senderInfo.count() == 3 && senderInfo.at(0) == "actionService")
 	{
-		onCALStoped(0);
+		m_serviceMgr->invoke(senderInfo.at(1), senderInfo.at(2));
 	}
-}
-
-void MainWindow::on_actionCALStart_triggered()
-{
-	m_serviceMgr->startService("cal");
-}
-
-void MainWindow::on_actionCALStop_triggered()
-{
-	m_serviceMgr->stopService("cal");
-}
-
-void MainWindow::on_actionCALRestart_triggered()
-{
-	m_serviceMgr->restartService("cal");
-}
-
-void MainWindow::on_actionCALStatus_triggered()
-{
-	m_serviceMgr->queryService("cal");
-}
-
-void MainWindow::on_actionFWStart_triggered()
-{
-	m_serviceMgr->startService("argesfw");
-}
-
-void MainWindow::on_actionFWStop_triggered()
-{
-	m_serviceMgr->stopService("argesfw");
-}
-
-void MainWindow::on_actionFWRestart_triggered()
-{
-	m_serviceMgr->restartService("argesfw");
-}
-
-void MainWindow::on_actionFWStatus_triggered()
-{
-	m_serviceMgr->queryService("argesfw");
 }
 
 void MainWindow::loadSettings()
 {
-	QSettings settings("TPV-ARGES", "LogView");
-	ui->leHost->setText(settings.value("ip", "calservice").toString());
-	ui->sbScrollBuffer->setValue(settings.value("scrollBuffer", 2500).toInt());
+	QSettings settings;
+	QStringList ascHistory;
+
+	settings.beginGroup("ASC");
+	int size = settings.beginReadArray("History");
+	for (int i = 0; i < size; ++i)
+	{
+		settings.setArrayIndex(i);
+		ascHistory << settings.value("host").toString();
+	}
+	settings.endArray();
+
+	if (ascHistory.isEmpty())
+	{
+		ascHistory << "calservice";
+	}
+	m_ascHistoryModel->setStringList(ascHistory);
+	ui->cbHost->setCurrentIndex(settings.value("selectedIndex", 0).toInt());
+	settings.endGroup();
 
 	QList<QCheckBox*> logFilter = getLogFilter();
 
@@ -250,20 +264,28 @@ QList<QCheckBox*> MainWindow::getLogFilter()
 	logFilter.append(ui->cbFilterState);
 	logFilter.append(ui->cbFilterSoapIn);
 	logFilter.append(ui->cbFilterSoapOut);
-	logFilter.append(ui->cbFilterDebug);
-	logFilter.append(ui->cbFilterNonCAL); //Only append to list!
+	logFilter.append(ui->cbFilterDebug); //Only append to list!
 
 	return logFilter;
 }
 
 void MainWindow::closeEvent(QCloseEvent * /*event*/)
 {
-	QSettings settings("TPV-ARGES", "LogView");
-	settings.setValue("ip", ui->leHost->text());
-	settings.setValue("scrollBuffer", ui->sbScrollBuffer->value());
+	QSettings settings;
+	const QStringList ascHistory = m_ascHistoryModel->stringList();
+
+	settings.beginGroup("ASC");
+	settings.setValue("selectedIndex", qMax(ui->cbHost->currentIndex(), 0));
+	settings.beginWriteArray("History", ascHistory.count());
+	for (int i = 0; i < ascHistory.count(); ++i)
+	{
+		settings.setArrayIndex(i);
+		settings.setValue("host", ascHistory.at(i));
+	}
+	settings.endArray();
+	settings.endGroup();
 
 	QList<QCheckBox*> logFilter = getLogFilter();
-
 	settings.beginWriteArray("filter");
 	QCheckBox* cb;
 	for(int i=0; i<logFilter.size(); i++) {
@@ -276,21 +298,9 @@ void MainWindow::closeEvent(QCloseEvent * /*event*/)
 	settings.setValue("FemtecTesterEnabled", ui->actionFemtecTesterEnabled->isChecked());
 }
 
-void MainWindow::onCALStarted()
+void MainWindow::on_actionSettings_triggered()
 {
-	m_lStatus->setText("<img height='14' src=':/icons/icons/status_running.png'>");
-	m_lStatus->setToolTip("CAL is running");
+	SettingsDialog dialog(this);
+	dialog.addPage(new TesterSettingsPage(m_test));
+	dialog.exec();
 }
-
-void MainWindow::onCALStoped(int exitCode)
-{
-	m_lStatus->setText("<img height='14' src=':/icons/icons/status_stopped.png'>");
-	m_lStatus->setToolTip(QString("CAL stopped (exit code: %1)").arg(exitCode));
-}
-
-void MainWindow::on_actionFemtecTesterSettings_triggered()
-{
-	FemtecTesterDialog diag(m_test);
-	diag.exec();
-}
-

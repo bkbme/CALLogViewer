@@ -13,26 +13,6 @@ ServiceManager::ServiceManager(QNetworkAccessManager *netMgr, QObject *parent) :
 {
 }
 
-void ServiceManager::startService(const QString &service)
-{
-	invoke(service, "start");
-}
-
-void ServiceManager::stopService(const QString &service)
-{
-	invoke(service, "stop");
-}
-
-void ServiceManager::restartService(const QString &service)
-{
-	invoke(service, "restart");
-}
-
-void ServiceManager::queryService(const QString &service)
-{
-	invoke(service, "status");
-}
-
 void ServiceManager::requestFinished()
 {
 	QNetworkReply *reply = qobject_cast<QNetworkReply*>(sender());

@@ -1,11 +1,15 @@
 #include <QtGui/QApplication>
-#include "mainwindow.h"
+#include <mainwindow.h>
+#include <config.h>
 
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
-    MainWindow w;
-    w.show();
+	QApplication app(argc, argv);
+	app.setOrganizationName(ORGANIZATION_NAME);
+	app.setApplicationName(APPLICATION_NAME);
 
-    return a.exec();
+	MainWindow w;
+	w.show();
+
+	return app.exec();
 }

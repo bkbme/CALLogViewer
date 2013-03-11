@@ -3,9 +3,12 @@
 
 #include <QObject>
 #include <QPair>
-#include "qextserialport.h"
+#include <QFlags>
+#include <qextserialport.h>
 
 class QTimer;
+class LogMessage;
+class SysLogParser;
 
 typedef QPair<double, double> TimingLimits;
 
@@ -13,6 +16,7 @@ class FemtecTester : public QObject
 {
 	Q_OBJECT
 
+public:
 	enum FootswitchState
 	{
 		PedalDown,
@@ -27,8 +31,7 @@ class FemtecTester : public QObject
 		Pausing
 	};
 
-public:
-	explicit FemtecTester(QObject *parent = 0);
+	explicit FemtecTester(SysLogParser *logParser, QObject *parent = 0);
 
 	bool enabled() const { return m_enabled; }
 	bool fakeTreatmentPause() const { return m_fakeTrmPause; }
@@ -42,8 +45,10 @@ signals:
 	void procedureFootswitchStateChanged(FootswitchState state);
 	void statusMessage(const QString &msg, int timeout = 0);
 	void enabledStateChanged(bool);
+	void logMessage(const LogMessage& msg);
 
 public slots:
+	void onProcShutterOpen();
 	void pressProcedureFootswitch();
 	void pressProcedureFootswitchDelayed();
 	void releaseProcedureFootswitch();
@@ -72,6 +77,7 @@ private:
 	void showCountdown(const QString& msgFormat, int length, int interval = 1000);
 
 	QextSerialPort* m_serialPort;
+	SysLogParser* m_logParser;
 	FootswitchState m_currentProcedureFSState;
 	FootswitchState m_targetProcedureFSState;
 	PauseState m_pauseState;

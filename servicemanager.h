@@ -20,16 +20,12 @@ signals:
 
 public slots:
 	void setHost(const QString &host) { m_host = host; }
-	void startService(const QString &service);
-	void stopService(const QString &service);
-	void restartService(const QString &service);
-	void queryService(const QString &service);
+	void invoke(const QString &service, const QString &command);
 
 private slots:
 	void requestFinished();
 
 private:
-	void invoke(const QString &service, const QString &command);
 	QNetworkAccessManager *m_net;
 	QString m_host;
 };

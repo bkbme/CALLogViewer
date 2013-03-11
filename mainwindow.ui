@@ -6,32 +6,140 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1004</width>
-    <height>815</height>
+    <width>1167</width>
+    <height>841</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>CALLogViewer</string>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout_2">
+   <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,0">
+    <property name="leftMargin">
+     <number>4</number>
+    </property>
+    <property name="topMargin">
+     <number>2</number>
+    </property>
+    <property name="rightMargin">
+     <number>4</number>
+    </property>
+    <property name="bottomMargin">
+     <number>2</number>
+    </property>
     <item>
-     <widget class="CALLogView" name="wvLogView">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-        <horstretch>1</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
+     <layout class="QVBoxLayout" name="vLogView" stretch="0,0">
+      <property name="spacing">
+       <number>-1</number>
       </property>
-      <property name="url">
-       <url>
-        <string>about:blank</string>
-       </url>
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
       </property>
-     </widget>
+      <item>
+       <widget class="AnimatedSplitter" name="splitter">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="MinimumExpanding">
+          <horstretch>2</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+        <widget class="CALSessionView" name="tvSessionView">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+           <horstretch>10</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="acceptDrops">
+          <bool>true</bool>
+         </property>
+         <property name="toolTip">
+          <string notr="true"/>
+         </property>
+         <property name="statusTip">
+          <string/>
+         </property>
+         <property name="whatsThis">
+          <string/>
+         </property>
+         <property name="accessibleName">
+          <string/>
+         </property>
+         <property name="accessibleDescription">
+          <string/>
+         </property>
+         <property name="horizontalScrollBarPolicy">
+          <enum>Qt::ScrollBarAlwaysOff</enum>
+         </property>
+         <property name="rootIsDecorated">
+          <bool>false</bool>
+         </property>
+         <property name="uniformRowHeights">
+          <bool>true</bool>
+         </property>
+         <property name="itemsExpandable">
+          <bool>false</bool>
+         </property>
+         <property name="animated">
+          <bool>false</bool>
+         </property>
+         <property name="allColumnsShowFocus">
+          <bool>true</bool>
+         </property>
+         <property name="wordWrap">
+          <bool>false</bool>
+         </property>
+         <property name="expandsOnDoubleClick">
+          <bool>false</bool>
+         </property>
+        </widget>
+        <widget class="CALLogView" name="wvLogView">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="MinimumExpanding" vsizetype="Expanding">
+           <horstretch>10</horstretch>
+           <verstretch>10</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="url">
+          <url>
+           <string>about:blank</string>
+          </url>
+         </property>
+        </widget>
+       </widget>
+      </item>
+      <item>
+       <widget class="SearchWidget" name="wSearch" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
+          <horstretch>10</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>30</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </item>
     <item>
      <layout class="QVBoxLayout" name="vlToolBar">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
       <item>
        <widget class="QGroupBox" name="gbConnection">
         <property name="title">
@@ -48,48 +156,24 @@
             </widget>
            </item>
            <item>
-            <widget class="QLineEdit" name="leHost">
-             <property name="toolTip">
-              <string>ASC IP address or hostname (e.g. calservice)</string>
-             </property>
-             <property name="text">
-              <string>10.100.0.181</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="hlScrollBuffer">
-           <item>
-            <widget class="QLabel" name="lScrollBuffer">
-             <property name="text">
-              <string>Scroll Buffer</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QSpinBox" name="sbScrollBuffer">
-             <property name="minimumSize">
-              <size>
-               <width>60</width>
-               <height>0</height>
-              </size>
+            <widget class="QComboBox" name="cbHost">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>max. number of log messages (lines) keept (0  = unlimited)</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;ASC IP address or hostname (e.g. '&lt;span style=&quot; font-style:italic;&quot;&gt;calservice' &lt;/span&gt;)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
-             <property name="suffix">
-              <string/>
+             <property name="editable">
+              <bool>true</bool>
              </property>
-             <property name="maximum">
-              <number>99999</number>
+             <property name="maxCount">
+              <number>1024</number>
              </property>
-             <property name="singleStep">
-              <number>100</number>
-             </property>
-             <property name="value">
-              <number>2500</number>
+             <property name="insertPolicy">
+              <enum>QComboBox::NoInsert</enum>
              </property>
             </widget>
            </item>
@@ -98,7 +182,7 @@
          <item>
           <widget class="QPushButton" name="pbConnect">
            <property name="text">
-            <string>Connect</string>
+            <string>&amp;Connect</string>
            </property>
           </widget>
          </item>
@@ -126,14 +210,14 @@
             <bool>false</bool>
            </property>
            <property name="text">
-            <string>Procedure Footswitch</string>
+            <string>&amp;Procedure Footswitch</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QCheckBox" name="cbTesterEnabled">
            <property name="text">
-            <string>Enable FemtecTester</string>
+            <string>Enable Femtec&amp;Tester</string>
            </property>
           </widget>
          </item>
@@ -264,7 +348,7 @@
          </sizepolicy>
         </property>
         <property name="title">
-         <string>Log Filter</string>
+         <string>CAL Log Level</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_3">
          <item>
@@ -337,16 +421,6 @@
            </property>
           </widget>
          </item>
-         <item>
-          <widget class="QCheckBox" name="cbFilterNonCAL">
-           <property name="text">
-            <string>Non CAL</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
         </layout>
        </widget>
       </item>
@@ -400,44 +474,6 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="gbMarker">
-        <property name="title">
-         <string>Highlight Text</string>
-        </property>
-        <layout class="QVBoxLayout" name="verticalLayout">
-         <item>
-          <widget class="QLineEdit" name="leMarker"/>
-         </item>
-         <item>
-          <layout class="QHBoxLayout" name="horizontalLayout">
-           <item>
-            <widget class="QPushButton" name="pbClear">
-             <property name="text">
-              <string>Clear</string>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/icons/icons/trash.png</normaloff>:/icons/icons/trash.png</iconset>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pbAddMarker">
-             <property name="text">
-              <string>Add</string>
-             </property>
-             <property name="icon">
-              <iconset resource="icons.qrc">
-               <normaloff>:/icons/icons/action_add.png</normaloff>:/icons/icons/action_add.png</iconset>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </item>
-        </layout>
-       </widget>
-      </item>
-      <item>
        <spacer name="vsToolBar">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -462,15 +498,18 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1004</width>
+     <width>1167</width>
      <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="actionOpen_Logfile"/>
+    <addaction name="actionOpen_SupportInfo"/>
+    <addaction name="separator"/>
+    <addaction name="actionSettings"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -485,41 +524,33 @@
      <property name="title">
       <string>Arges Firmware</string>
      </property>
-     <addaction name="actionFWStart"/>
-     <addaction name="actionFWStop"/>
-     <addaction name="actionFWRestart"/>
+     <addaction name="actionService_argesfw_start"/>
+     <addaction name="actionService_argesfw_stop"/>
+     <addaction name="actionService_argesfw_restart"/>
      <addaction name="actionFWStatus"/>
     </widget>
     <widget class="QMenu" name="menuCAL">
      <property name="title">
       <string>CAL</string>
      </property>
-     <addaction name="actionCALStart"/>
-     <addaction name="actionCALStop"/>
-     <addaction name="actionCALRestart"/>
-     <addaction name="actionCALStatus"/>
+     <addaction name="actionService_cal_start"/>
+     <addaction name="actionService_cal_stop"/>
+     <addaction name="actionService_cal_restart"/>
+     <addaction name="actionService_cal_status"/>
+     <addaction name="actionService_cal_zap"/>
     </widget>
     <addaction name="menuCAL"/>
     <addaction name="menuArges_Firmware"/>
    </widget>
-   <widget class="QMenu" name="menuFemtec_Tester">
-    <property name="title">
-     <string>Femtec Tester</string>
-    </property>
-    <addaction name="actionFemtecTesterEnabled"/>
-    <addaction name="separator"/>
-    <addaction name="actionFemtecTesterSettings"/>
-   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuServices"/>
-   <addaction name="menuFemtec_Tester"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="sizeGripEnabled">
     <bool>false</bool>
    </property>
   </widget>
-  <action name="actionCALStart">
+  <action name="actionService_cal_start">
    <property name="icon">
     <iconset>
      <normalon>:/icons/icons/service_start.png</normalon>
@@ -532,7 +563,7 @@
     <string>Start CAL</string>
    </property>
   </action>
-  <action name="actionCALStop">
+  <action name="actionService_cal_stop">
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/icons/icons/service_stop.png</normaloff>:/icons/icons/service_stop.png</iconset>
@@ -544,7 +575,7 @@
     <string>Stop CAL</string>
    </property>
   </action>
-  <action name="actionCALRestart">
+  <action name="actionService_cal_restart">
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/icons/icons/service_restart.png</normaloff>:/icons/icons/service_restart.png</iconset>
@@ -556,7 +587,7 @@
     <string>Restart CAL</string>
    </property>
   </action>
-  <action name="actionCALStatus">
+  <action name="actionService_cal_status">
    <property name="text">
     <string>Status</string>
    </property>
@@ -564,7 +595,7 @@
     <string>Query CAL Status</string>
    </property>
   </action>
-  <action name="actionFWStart">
+  <action name="actionService_argesfw_start">
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/icons/icons/service_start.png</normaloff>:/icons/icons/service_start.png</iconset>
@@ -576,7 +607,7 @@
     <string>Start Arges Firmware</string>
    </property>
   </action>
-  <action name="actionFWStop">
+  <action name="actionService_argesfw_stop">
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/icons/icons/service_stop.png</normaloff>:/icons/icons/service_stop.png</iconset>
@@ -588,7 +619,7 @@
     <string>Stop Arges Firmware</string>
    </property>
   </action>
-  <action name="actionFWRestart">
+  <action name="actionService_argesfw_restart">
    <property name="icon">
     <iconset resource="icons.qrc">
      <normaloff>:/icons/icons/service_restart.png</normaloff>:/icons/icons/service_restart.png</iconset>
@@ -602,12 +633,12 @@
   </action>
   <action name="actionOpen_Logfile">
    <property name="text">
-    <string>Open Logfile</string>
+    <string>Open &amp;Logfile</string>
    </property>
   </action>
   <action name="actionQuit">
    <property name="text">
-    <string>Quit</string>
+    <string>&amp;Quit</string>
    </property>
   </action>
   <action name="actionFWStatus">
@@ -632,9 +663,22 @@
     <string>Enabled</string>
    </property>
   </action>
-  <action name="actionFemtecTesterSettings">
+  <action name="actionOpen_SupportInfo">
+   <property name="text">
+    <string>Open &amp;Support Info File</string>
+   </property>
+  </action>
+  <action name="actionSettings">
    <property name="text">
     <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionService_cal_zap">
+   <property name="text">
+    <string>Zap (Kill CAL and clear shm)</string>
+   </property>
+   <property name="toolTip">
+    <string>Kill all running cal instances the hard way and clear shared memory (use with caution!!!)</string>
    </property>
   </action>
  </widget>
@@ -665,7 +709,28 @@
     <slot>setKernelFacilityVisible(bool)</slot>
     <slot>setCalFacilityVisible(bool)</slot>
     <slot>setOtherFacilityVisible(bool)</slot>
+    <slot>setSession(CALSession*)</slot>
    </slots>
+  </customwidget>
+  <customwidget>
+   <class>CALSessionView</class>
+   <extends>QTreeView</extends>
+   <header>calsessionview.h</header>
+   <slots>
+    <signal>currentSessionChanged(CALSession*)</signal>
+   </slots>
+  </customwidget>
+  <customwidget>
+   <class>AnimatedSplitter</class>
+   <extends>QSplitter</extends>
+   <header>animatedsplitter.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SearchWidget</class>
+   <extends>QWidget</extends>
+   <header>searchwidget.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
@@ -673,46 +738,14 @@
  </resources>
  <connections>
   <connection>
-   <sender>leHost</sender>
-   <signal>returnPressed()</signal>
-   <receiver>pbConnect</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>902</x>
-     <y>74</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>902</x>
-     <y>132</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>sbScrollBuffer</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>wvLogView</receiver>
-   <slot>setScrollBufferMaxLength(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>990</x>
-     <y>104</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>803</x>
-     <y>596</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>cbFilterError</sender>
    <signal>toggled(bool)</signal>
    <receiver>wvLogView</receiver>
    <slot>setErrorLevelVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>991</x>
-     <y>365</y>
+     <x>1052</x>
+     <y>347</y>
     </hint>
     <hint type="destinationlabel">
      <x>810</x>
@@ -727,8 +760,8 @@
    <slot>setWarningLevelVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>991</x>
-     <y>380</y>
+     <x>1052</x>
+     <y>372</y>
     </hint>
     <hint type="destinationlabel">
      <x>810</x>
@@ -743,8 +776,8 @@
    <slot>setInfoLevelVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>991</x>
-     <y>425</y>
+     <x>1052</x>
+     <y>397</y>
     </hint>
     <hint type="destinationlabel">
      <x>810</x>
@@ -759,8 +792,8 @@
    <slot>setStateMachineLevelVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>991</x>
-     <y>450</y>
+     <x>1052</x>
+     <y>422</y>
     </hint>
     <hint type="destinationlabel">
      <x>810</x>
@@ -775,8 +808,8 @@
    <slot>setSoapOutLevelVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>991</x>
-     <y>500</y>
+     <x>1052</x>
+     <y>472</y>
     </hint>
     <hint type="destinationlabel">
      <x>810</x>
@@ -791,8 +824,8 @@
    <slot>setSoapInLevelVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>991</x>
-     <y>475</y>
+     <x>1052</x>
+     <y>447</y>
     </hint>
     <hint type="destinationlabel">
      <x>810</x>
@@ -807,28 +840,12 @@
    <slot>setDebugLevelVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>991</x>
-     <y>525</y>
+     <x>1052</x>
+     <y>497</y>
     </hint>
     <hint type="destinationlabel">
      <x>810</x>
      <y>557</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>cbFilterNonCAL</sender>
-   <signal>toggled(bool)</signal>
-   <receiver>wvLogView</receiver>
-   <slot>setNonCalLevelVisible(bool)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>991</x>
-     <y>550</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>810</x>
-     <y>577</y>
     </hint>
    </hints>
   </connection>
@@ -849,38 +866,6 @@
    </hints>
   </connection>
   <connection>
-   <sender>leMarker</sender>
-   <signal>returnPressed()</signal>
-   <receiver>pbAddMarker</receiver>
-   <slot>click()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>991</x>
-     <y>748</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>990</x>
-     <y>778</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pbClear</sender>
-   <signal>clicked()</signal>
-   <receiver>wvLogView</receiver>
-   <slot>clearAllMarkers()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>917</x>
-     <y>778</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>806</x>
-     <y>619</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>wvLogView</sender>
    <signal>statusMessage(QString,int)</signal>
    <receiver>statusBar</receiver>
@@ -892,7 +877,7 @@
     </hint>
     <hint type="destinationlabel">
      <x>630</x>
-     <y>814</y>
+     <y>918</y>
     </hint>
    </hints>
   </connection>
@@ -903,8 +888,8 @@
    <slot>setInscriptFwFacilityVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>991</x>
-     <y>611</y>
+     <x>1052</x>
+     <y>558</y>
     </hint>
     <hint type="destinationlabel">
      <x>413</x>
@@ -919,8 +904,8 @@
    <slot>setCalFacilityVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>991</x>
-     <y>661</y>
+     <x>1052</x>
+     <y>608</y>
     </hint>
     <hint type="destinationlabel">
      <x>413</x>
@@ -935,8 +920,8 @@
    <slot>setKernelFacilityVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>991</x>
-     <y>636</y>
+     <x>1052</x>
+     <y>583</y>
     </hint>
     <hint type="destinationlabel">
      <x>413</x>
@@ -951,8 +936,8 @@
    <slot>setOtherFacilityVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>991</x>
-     <y>686</y>
+     <x>1052</x>
+     <y>633</y>
     </hint>
     <hint type="destinationlabel">
      <x>413</x>
@@ -967,12 +952,12 @@
    <slot>setEnabled(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>871</x>
-     <y>208</y>
+     <x>1052</x>
+     <y>192</y>
     </hint>
     <hint type="destinationlabel">
-     <x>871</x>
-     <y>191</y>
+     <x>1052</x>
+     <y>167</y>
     </hint>
    </hints>
   </connection>
@@ -987,8 +972,8 @@
      <y>-1</y>
     </hint>
     <hint type="destinationlabel">
-     <x>916</x>
-     <y>210</y>
+     <x>1052</x>
+     <y>192</y>
     </hint>
    </hints>
   </connection>
@@ -999,8 +984,8 @@
    <slot>setChecked(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>916</x>
-     <y>210</y>
+     <x>1052</x>
+     <y>192</y>
     </hint>
     <hint type="destinationlabel">
      <x>-1</x>
@@ -1008,5 +993,152 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>tvSessionView</sender>
+   <signal>currentSessionChanged(CALSession*)</signal>
+   <receiver>wvLogView</receiver>
+   <slot>setSession(CALSession*)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>110</x>
+     <y>163</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>126</x>
+     <y>263</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionService_cal_start</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onServiceActionTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>583</x>
+     <y>420</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionService_cal_stop</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onServiceActionTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>583</x>
+     <y>420</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionService_cal_restart</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onServiceActionTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>583</x>
+     <y>420</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionService_cal_zap</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onServiceActionTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>583</x>
+     <y>420</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionService_cal_status</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onServiceActionTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>583</x>
+     <y>420</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionService_argesfw_start</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onServiceActionTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>583</x>
+     <y>420</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionService_argesfw_stop</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onServiceActionTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>583</x>
+     <y>420</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionService_argesfw_restart</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onServiceActionTriggered()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>583</x>
+     <y>420</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>onServiceActionTriggered()</slot>
+ </slots>
 </ui>
