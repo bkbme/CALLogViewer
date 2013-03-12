@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 
 #include <config.h>
+#include <aboutdialog.h>
 #include <searchwidget.h>
 #include <ui_mainwindow.h>
 #include <servicemanager.h>
@@ -38,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	ui->setupUi(this);
 	statusBar()->addPermanentWidget(new CALStatusWidget(m_logParser, this));
+	setWindowTitle(QString("%1 %2.%3%4").arg(APPLICATION_NAME).arg(VERSION_MAJOR).arg(VERSION_MINOR).arg(DEVELOPER_VERSION ? " beta" : ""));
 
 	//setup actions
 	ui->tbCALStart->setDefaultAction(ui->actionService_cal_start);
@@ -303,4 +305,9 @@ void MainWindow::on_actionSettings_triggered()
 	SettingsDialog dialog(this);
 	dialog.addPage(new TesterSettingsPage(m_test));
 	dialog.exec();
+}
+
+void MainWindow::on_action_About_triggered()
+{
+	AboutDialog().exec();
 }

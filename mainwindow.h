@@ -40,6 +40,8 @@ private slots:
 //	void on_actionFemtecTesterEnabled_toggled(bool enabled);
 	void on_actionSettings_triggered();
 
+	void on_action_About_triggered();
+	
 protected:
 	virtual void closeEvent(QCloseEvent *event);
 

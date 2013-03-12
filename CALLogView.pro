@@ -28,8 +28,9 @@ SOURCES += \
 	log/supportinfoopendialog.cpp \
 	misc/settingsdialog.cpp \
 	test/testersettingspage.cpp \
-    misc/searchwidget.cpp \
-    misc/calstatuswidget.cpp
+	misc/searchwidget.cpp \
+	misc/calstatuswidget.cpp \
+	misc/aboutdialog.cpp
 
 HEADERS  += \
 	mainwindow.h \
@@ -47,15 +48,17 @@ HEADERS  += \
 	misc/settingsdialog.h \
 	misc/abstractsettingspage.h \
 	test/testersettingspage.h \
-    misc/searchwidget.h \
-    misc/calstatuswidget.h
+	misc/searchwidget.h \
+	misc/calstatuswidget.h \
+	misc/aboutdialog.h
 
 FORMS += \
 	mainwindow.ui \
 	log/supportinfoopendialog.ui \
 	misc/settingsdialog.ui \
 	test/testersettingspage.ui \
-    misc/searchwidget.ui
+	misc/searchwidget.ui \
+	misc/aboutdialog.ui
 
 RESOURCES += \
 	icons.qrc

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>CALLogViewer</string>
+   <string/>
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QHBoxLayout" name="horizontalLayout_4" stretch="1,0">
@@ -545,8 +545,15 @@
     <addaction name="menuCAL"/>
     <addaction name="menuArges_Firmware"/>
    </widget>
+   <widget class="QMenu" name="menu_Help">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="action_About"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuServices"/>
+   <addaction name="menu_Help"/>
   </widget>
   <widget class="QStatusBar" name="statusBar">
    <property name="sizeGripEnabled">
@@ -702,6 +709,11 @@
    </property>
    <property name="toolTip">
     <string>Kill all running cal instances the hard way and clear shared memory (use with caution!!!)</string>
+   </property>
+  </action>
+  <action name="action_About">
+   <property name="text">
+    <string>&amp;About</string>
    </property>
   </action>
  </widget>
