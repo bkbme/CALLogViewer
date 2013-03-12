@@ -16,7 +16,7 @@ public:
 	explicit CALSessionModel(SysLogParser *parser, QObject *parent = 0);
 	virtual ~CALSessionModel();
 
-	virtual QStringList mimeTypes () const;
+	virtual QStringList mimeTypes() const;
 	virtual Qt::ItemFlags flags(const QModelIndex &index ) const;
 
 	int rowCount(const QModelIndex &parent = QModelIndex()) const ;

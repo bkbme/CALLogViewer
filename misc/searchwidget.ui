@@ -63,6 +63,20 @@
     </widget>
    </item>
    <item>
+    <widget class="QPushButton" name="pbPrevious">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="text">
+      <string>&amp;Previous</string>
+     </property>
+     <property name="icon">
+      <iconset resource="../icons.qrc">
+       <normaloff>:/icons/prev.png</normaloff>:/icons/prev.png</iconset>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QPushButton" name="pbNext">
      <property name="enabled">
       <bool>false</bool>
@@ -70,15 +84,9 @@
      <property name="text">
       <string>&amp;Next</string>
      </property>
-    </widget>
-   </item>
-   <item>
-    <widget class="QPushButton" name="pbPrevious">
-     <property name="enabled">
-      <bool>false</bool>
-     </property>
-     <property name="text">
-      <string>&amp;Previous</string>
+     <property name="icon">
+      <iconset resource="../icons.qrc">
+       <normaloff>:/icons/next.png</normaloff>:/icons/next.png</iconset>
      </property>
     </widget>
    </item>
@@ -91,7 +99,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../icons.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>pbClose</sender>

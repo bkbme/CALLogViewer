@@ -57,7 +57,7 @@
           <bool>true</bool>
          </property>
          <property name="toolTip">
-          <string notr="true"/>
+          <string/>
          </property>
          <property name="statusTip">
           <string/>
@@ -95,6 +95,9 @@
          <property name="expandsOnDoubleClick">
           <bool>false</bool>
          </property>
+         <attribute name="headerMinimumSectionSize">
+          <number>30</number>
+         </attribute>
         </widget>
         <widget class="CALLogView" name="wvLogView">
          <property name="sizePolicy">
@@ -553,8 +556,8 @@
   <action name="actionService_cal_start">
    <property name="icon">
     <iconset>
-     <normalon>:/icons/icons/service_start.png</normalon>
-    </iconset>
+     <normaloff>:/icons/service_start</normaloff>
+     <normalon>:/icons/icons/service_start.png</normalon>:/icons/service_start</iconset>
    </property>
    <property name="text">
     <string>Start</string>
@@ -565,8 +568,8 @@
   </action>
   <action name="actionService_cal_stop">
    <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/service_stop.png</normaloff>:/icons/icons/service_stop.png</iconset>
+    <iconset>
+     <normaloff>:/icons/service_stop</normaloff>:/icons/service_stop</iconset>
    </property>
    <property name="text">
     <string>Stop</string>
@@ -577,8 +580,8 @@
   </action>
   <action name="actionService_cal_restart">
    <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/service_restart.png</normaloff>:/icons/icons/service_restart.png</iconset>
+    <iconset>
+     <normaloff>:/icons/service_restart</normaloff>:/icons/service_restart</iconset>
    </property>
    <property name="text">
     <string>Restart</string>
@@ -588,6 +591,10 @@
    </property>
   </action>
   <action name="actionService_cal_status">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/app_unknown</normaloff>:/icons/app_unknown</iconset>
+   </property>
    <property name="text">
     <string>Status</string>
    </property>
@@ -597,8 +604,8 @@
   </action>
   <action name="actionService_argesfw_start">
    <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/service_start.png</normaloff>:/icons/icons/service_start.png</iconset>
+    <iconset>
+     <normaloff>:/icons/service_start</normaloff>:/icons/service_start</iconset>
    </property>
    <property name="text">
     <string>Start</string>
@@ -609,8 +616,8 @@
   </action>
   <action name="actionService_argesfw_stop">
    <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/service_stop.png</normaloff>:/icons/icons/service_stop.png</iconset>
+    <iconset>
+     <normaloff>:/icons/service_stop</normaloff>:/icons/service_stop</iconset>
    </property>
    <property name="text">
     <string>Stop</string>
@@ -621,8 +628,8 @@
   </action>
   <action name="actionService_argesfw_restart">
    <property name="icon">
-    <iconset resource="icons.qrc">
-     <normaloff>:/icons/icons/service_restart.png</normaloff>:/icons/icons/service_restart.png</iconset>
+    <iconset>
+     <normaloff>:/icons/service_restart</normaloff>:/icons/service_restart</iconset>
    </property>
    <property name="text">
     <string>Restart</string>
@@ -637,11 +644,19 @@
    </property>
   </action>
   <action name="actionQuit">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/quit</normaloff>:/icons/quit</iconset>
+   </property>
    <property name="text">
     <string>&amp;Quit</string>
    </property>
   </action>
   <action name="actionFWStatus">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/app_unknown</normaloff>:/icons/app_unknown</iconset>
+   </property>
    <property name="text">
     <string>Status</string>
    </property>
@@ -669,11 +684,19 @@
    </property>
   </action>
   <action name="actionSettings">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/settings</normaloff>:/icons/settings</iconset>
+   </property>
    <property name="text">
     <string>Settings</string>
    </property>
   </action>
   <action name="actionService_cal_zap">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/icons/service_zap</normaloff>:/icons/service_zap</iconset>
+   </property>
    <property name="text">
     <string>Zap (Kill CAL and clear shm)</string>
    </property>
@@ -733,9 +756,7 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources>
-  <include location="icons.qrc"/>
- </resources>
+ <resources/>
  <connections>
   <connection>
    <sender>cbFilterError</sender>

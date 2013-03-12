@@ -1,12 +1,24 @@
 <RCC>
     <qresource prefix="/icons">
-        <file>icons/service_restart.png</file>
-        <file>icons/service_start.png</file>
-        <file>icons/service_stop.png</file>
-        <file>icons/action_add.png</file>
         <file>icons/status_running.png</file>
         <file>icons/status_stopped.png</file>
         <file>icons/status_unknown.png</file>
-        <file>icons/trash.png</file>
+        <file alias="app_exit.png">icons/Pyconic-Free/PNG/209.png</file>
+        <file alias="app_reset.png">icons/Pyconic-Free/PNG/008.png</file>
+        <file alias="app_halt.png">icons/Pyconic-Free/PNG/248.png</file>
+        <file alias="app_crash.png">icons/Pyconic-Free/PNG/274.png</file>
+        <file alias="app_esd.png">icons/Pyconic-Free/PNG/047.png</file>
+        <file alias="app_error.png">icons/Pyconic-Free/PNG/320.png</file>
+        <file alias="app_fail.png">icons/Pyconic-Free/PNG/364.png</file>
+        <file alias="app_unknown.png">icons/Pyconic-Free/PNG/048.png</file>
+        <file alias="app_running.png">icons/Pyconic-Free/PNG/155.png</file>
+        <file alias="service_start.png">icons/Pyconic-Free/PNG/113.png</file>
+        <file alias="service_stop.png">icons/Pyconic-Free/PNG/116.png</file>
+        <file alias="service_restart.png">icons/Pyconic-Free/PNG/125.png</file>
+        <file alias="service_zap.png">icons/Pyconic-Free/PNG/363.png</file>
+        <file alias="settings.png">icons/Pyconic-Free/PNG/179.png</file>
+        <file alias="quit.png">icons/Pyconic-Free/PNG/017.png</file>
+        <file alias="next.png">icons/Pyconic-Free/PNG/011-2.png</file>
+        <file alias="prev.png">icons/Pyconic-Free/PNG/011-1.png</file>
     </qresource>
 </RCC>

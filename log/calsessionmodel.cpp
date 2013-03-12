@@ -1,7 +1,9 @@
 #include "calsessionmodel.h"
+#include <config.h>
 
 #include <syslogparser.h>
 #include <QFontMetrics>
+#include <QIcon>
 //#include <QDebug>
 
 const int COLUMN_COUNT = 6;
@@ -32,7 +34,7 @@ CALSessionModel::~CALSessionModel()
 	m_sessions.clear();
 }
 
-QStringList CALSessionModel::mimeTypes () const
+QStringList CALSessionModel::mimeTypes() const
 {
 	QStringList supportedTypes;
 	supportedTypes << "text/uri-list";
@@ -56,18 +58,19 @@ int CALSessionModel::columnCount(const QModelIndex & /*parent*/) const
 
 QVariant CALSessionModel::data(const QModelIndex &index, int role) const
 {
-	if (role == Qt::DisplayRole && index.row() < m_sessions.count())
+	if (index.row() < 0 || index.row() >= m_sessions.count())
 	{
-		CALSession *session = m_sessions.at(index.row());
-		if (!session)
-		{
-			return QVariant();
-		}
+		return QVariant();
+	}
 
+	CALSession *session = m_sessions.at(index.row());
+
+	if (role == Qt::DisplayRole)
+	{
 		const uint duration = session->durationSecs();
 		switch (index.column())
 		{
-			case 0: return session->exitCode();
+			//case 0: return session->exitCode() >= 0 ? QString("(%1)").arg(session->exitCode()) : QVariant();
 			case 1: return session->start().toString("yyyy-MM-dd HH:mm:ss");
 			case 2: return session->end().toString("yyyy-MM-dd HH:mm:ss");
 			case 3: return (duration ? QString("%2min %3sec").arg(static_cast<int>(duration / 60), 3).arg(duration % 60, 2) : QVariant());
@@ -77,6 +80,44 @@ QVariant CALSessionModel::data(const QModelIndex &index, int role) const
 				return QVariant();
 		}
 	}
+
+	if (role == Qt::DecorationRole && index.column() == 0)
+	{
+		switch (session->exitCode())
+		{
+			case CAL::APP_EXITCODE_NORMAL: return QIcon(":/icons/app_exit.png");
+			case CAL::APP_EXITCODE_RESET: return QIcon(":/icons/app_reset.png");
+			case CAL::APP_EXITCODE_MACHINEHALT: return QIcon(":/icons/app_halt.png");
+			case CAL::APP_EXITCODE_EMERGENCY: return QIcon(":/icons/app_esd.png");
+			case CAL::APP_EXITCODE_INTERNALERROR: return QIcon(":/icons/app_error.png");
+			case CAL::APP_EXITCODE_DAEMONFAIL: return QIcon(":/icons/app_fail.png");
+			case CAL::APP_EXITCODE_CRASHED: return QIcon(":/icons/app_crash.png");
+			default: return QIcon((m_continuous && index.row() == rowCount() - 1) ? ":/icons/app_running.png" : ":/icons/app_unknown.png");
+		}
+	}
+
+	if (role == Qt::ToolTipRole)
+	{
+		switch (index.column())
+		{
+			case 0:
+				switch (session->exitCode())
+				{
+					case CAL::APP_EXITCODE_NORMAL: return QString("0 - CAL application shutdown (e.g. via init script)");
+					case CAL::APP_EXITCODE_RESET: return QString("0 - CAL restarted due to GUI disconnect");
+					case CAL::APP_EXITCODE_MACHINEHALT: return QString("0 - CAL application shutdown and system power off");
+					case CAL::APP_EXITCODE_EMERGENCY: return QString("0 - CAL restarted due to an emergency shutdown");
+					case CAL::APP_EXITCODE_INTERNALERROR: return QString("0 - CAL was terminated due to an internal application error");
+					case CAL::APP_EXITCODE_DAEMONFAIL: return QString("0 - CAL failed to fork into background (daemon)");
+					case CAL::APP_EXITCODE_CRASHED: return QString("0 - CAL crashed or was killed");
+					default: QString((m_continuous && index.row() == rowCount() - 1) ? "still runnning..." : "unknown");
+				}
+
+			case 5: return QString(session->esdErrorCode() > 0 ? session->esdErrorStr() : "");
+			default: return QVariant();
+		}
+	}
+
 	return QVariant();
 }
 
@@ -84,15 +125,30 @@ QVariant CALSessionModel::headerData(int section, Qt::Orientation orientation, i
 {
 	if (orientation == Qt::Horizontal && role == Qt::DisplayRole)
 	{
-		switch (section)
+		switch (role)
 		{
-			case 0: return QString("ExitCode");
-			case 1: return QString("Start");
-			case 2: return QString("End");
-			case 3: return QString("Duration");
-			case 4: return QString("ESD");
-			case 5: return QString("Error");
-			default: return QVariant();
+			case Qt::DisplayRole:
+				switch (section)
+				{
+					case 0: return QString("Exit");
+					case 1: return QString("Start");
+					case 2: return QString("End");
+					case 3: return QString("Duration");
+					case 4: return QString("ESD");
+					case 5: return QString("Error");
+					default: return QVariant();
+				}
+			case Qt::ToolTipRole:
+				switch (section)
+				{
+					case 0: return QString("CAL exit code");
+					case 1: return QString("Timestamp CAL was started");
+					case 2: return QString("Timestamp CAL was stopped");
+					case 3: return QString("Duration CAL was running");
+					case 4: return QString("Emergency shutdown error code (if any)");
+					case 5: return QString("Emergency shutdown error message");
+					default: return QVariant();
+				}
 		}
 	}
 
