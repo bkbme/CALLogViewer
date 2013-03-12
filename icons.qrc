@@ -20,5 +20,6 @@
         <file alias="quit.png">icons/Pyconic-Free/PNG/017.png</file>
         <file alias="next.png">icons/Pyconic-Free/PNG/011-2.png</file>
         <file alias="prev.png">icons/Pyconic-Free/PNG/011-1.png</file>
+        <file alias="test.png">icons/femtec_tester.png</file>
     </qresource>
 </RCC>

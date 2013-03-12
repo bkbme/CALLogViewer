@@ -30,7 +30,7 @@ TesterSettingsPage::~TesterSettingsPage()
 
 QIcon TesterSettingsPage::icon() const
 {
-	return QIcon(); /// @todo: create icon
+	return QIcon(":/icons/test.png");
 }
 
 void TesterSettingsPage::loadSettings()
