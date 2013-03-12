@@ -51,6 +51,13 @@ void SupportInfoOpenDialog::loadSyslogFileList(const QString& supportInfoFileNam
 {
 	if (!QFile::exists(supportInfoFileName))
 	{
+		qDebug() << "Can not open support info file: " << supportInfoFileName << " (file doesn't exist)";
+		return;
+	}
+
+	if (!SysLogParser::canHandleTarArchive())
+	{
+		qDebug() << "Extracting zipped tar archives is not supported on this system";
 		return;
 	}
 
@@ -60,13 +67,14 @@ void SupportInfoOpenDialog::loadSyslogFileList(const QString& supportInfoFileNam
 	connect(tar, SIGNAL(finished(int)), this, SLOT(onFileListFinished()));
 
 #ifdef Q_WS_WIN
-	args << "-tv"
+	args << "-tv";
 
 	QStringList gzip_args;
-	gzip_args << "-dc" << filename;
+	gzip_args << "-dc" << supportInfoFileName;
 	QProcess *gzip = new QProcess(tar);
 	gzip->setStandardOutputProcess(tar); // tar.exe doesn't support on-the-fly gzip extraction :(
-	gzip->start(GZIP_EXEC, gzip_args);
+	gzip->start(QCoreApplication::applicationDirPath() + QDir::separator() + GZIP_EXEC, gzip_args);
+	//qDebug() << "starting " << QCoreApplication::applicationDirPath() + QDir::separator() + GZIP_EXEC << gzip_args.join(" ");
 #else
 	args << "--wildcards" << "-tzvf" << supportInfoFileName;
 #endif
@@ -78,7 +86,12 @@ void SupportInfoOpenDialog::loadSyslogFileList(const QString& supportInfoFileNam
 		model->setRowCount(0);
 	}
 
+#ifdef Q_WS_WIN
+	tar->start(QCoreApplication::applicationDirPath() + QDir::separator() + TAR_EXEC, args);
+	//qDebug() << "starting " << QCoreApplication::applicationDirPath() + QDir::separator() + TAR_EXEC << args.join(" ");
+#else
 	tar->start(TAR_EXEC, args);
+#endif
 }
 
 void SupportInfoOpenDialog::on_pbBrowse_clicked()

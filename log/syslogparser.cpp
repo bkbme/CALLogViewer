@@ -14,12 +14,8 @@
 SysLogParser::SysLogParser(QNetworkAccessManager *netMgr, QObject *parent) :
 	QObject(parent),
 	m_net(netMgr),
-    m_log(0)
+	m_log(0)
 {
-#ifdef Q_WS_WIN
-        TAR_EXEC = QCoreApplication::applicationDirPath() + QDir::separator() + TAR_EXEC;
-        GZIP_EXEC = QCoreApplication::applicationDirPath() + QDir::separator() + GZIP_EXEC;
-#endif
 }
 
 void SysLogParser::openLog(const QUrl &url)
@@ -53,15 +49,20 @@ void SysLogParser::openLog(const QString &filename)
 		// extract and parse 'var/log/messages' from support info archive
 		if (!canHandleTarArchive())
 		{
+#ifdef Q_WS_WIN
+			qDebug() << "Failed to extract support info archive: '" << QCoreApplication::applicationDirPath() << QDir::separator() << TAR_EXEC << "'' doesn't exist";
+			if (!QFile::exists(QCoreApplication::applicationDirPath() + QDir::separator() + TAR_EXEC))
+#else
 			qDebug() << "Failed to extract support info archive: '" << TAR_EXEC << "'' doesn't exist";
 			if (!QFile::exists(TAR_EXEC))
+#endif
 			{
 				statusMessage(QString("Failed to extract support info archive: %1 doesn't exist!").arg(TAR_EXEC), 0);
 			}
 #ifdef Q_WS_WIN
-			if (!QFile::exists(GZIP_EXEC))
+			if (!QFile::exists(QCoreApplication::applicationDirPath() + QDir::separator() + GZIP_EXEC))
 			{
-				statusMessage(QString("Failed to extract support info archive: %1 doesn't exist!").arg(GZIP_EXEC), 0);
+				statusMessage(QString("Failed to extract support info archive: %1 doesn't exist!").arg(QCoreApplication::applicationDirPath() + QDir::separator() + GZIP_EXEC), 0);
 			}
 #endif
 			return;
@@ -79,13 +80,16 @@ void SysLogParser::openLog(const QString &filename)
 		gzip_args << "-dc" << filename;
 		QProcess *gzip = new QProcess(tar);
 		gzip->setStandardOutputProcess(tar); // tar.exe doesn't support on-the-fly gzip extraction :(
-		gzip->start(GZIP_EXEC, gzip_args);
+		gzip->start(QCoreApplication::applicationDirPath() + QDir::separator() + GZIP_EXEC, gzip_args);
 #else
 		args << "Oxf" << filename;
 #endif
 		args << "var/log/messages";
-
+#ifdef Q_WS_WIN
+		tar->start(QCoreApplication::applicationDirPath() + QDir::separator() +  TAR_EXEC, args);
+#else
 		tar->start(TAR_EXEC, args);
+#endif
 		m_log = tar;
 		emit logOpened(false);
 		return;
@@ -147,14 +151,18 @@ void SysLogParser::loadNextLog()
 	gzip_args << "-dc" << m_supportInfoFile;
 	QProcess *gzip = new QProcess(tar);
 	gzip->setStandardOutputProcess(tar); // tar.exe doesn't support on-the-fly gzip extraction :(
-	gzip->start(GZIP_EXEC, gzip_args);
+	gzip->start(QCoreApplication::applicationDirPath() + QDir::separator() + GZIP_EXEC, gzip_args);
 #else
 	args << "Oxf" << m_supportInfoFile;
 #endif
 	args << m_filesToLoadList.takeLast().trimmed();
 
 	m_log = tar;
+#ifdef Q_WS_WIN
+	tar->start(QCoreApplication::applicationDirPath() + QDir::separator() + TAR_EXEC, args);
+#else
 	tar->start(TAR_EXEC, args);
+#endif
 	qDebug() << "process started:" << TAR_EXEC << "args: " << args.join(" ");
 	return;
 }
@@ -361,7 +369,8 @@ bool SysLogParser::isLogContinuous() const
 bool SysLogParser::canHandleTarArchive()
 {
 #ifdef Q_WS_WIN
-	return (QFile::exists(TAR_EXEC) && QFile::exists(GZIP_EXEC));
+	return (QFile::exists(QCoreApplication::applicationDirPath() + QDir::separator() + TAR_EXEC) &&
+			QFile::exists(QCoreApplication::applicationDirPath() + QDir::separator() + GZIP_EXEC));
 #else
 	return QFile::exists(TAR_EXEC);
 #endif
