@@ -104,13 +104,13 @@ QVariant CALSessionModel::data(const QModelIndex &index, int role) const
 				switch (session->exitCode())
 				{
 					case CAL::APP_EXITCODE_NORMAL: return QString("0 - CAL application shutdown (e.g. via init script)");
-					case CAL::APP_EXITCODE_RESET: return QString("0 - CAL restarted due to GUI disconnect");
-					case CAL::APP_EXITCODE_MACHINEHALT: return QString("0 - CAL application shutdown and system power off");
-					case CAL::APP_EXITCODE_EMERGENCY: return QString("0 - CAL restarted due to an emergency shutdown");
-					case CAL::APP_EXITCODE_INTERNALERROR: return QString("0 - CAL was terminated due to an internal application error");
-					case CAL::APP_EXITCODE_DAEMONFAIL: return QString("0 - CAL failed to fork into background (daemon)");
-					case CAL::APP_EXITCODE_CRASHED: return QString("0 - CAL crashed or was killed");
-					default: QString((m_continuous && index.row() == rowCount() - 1) ? "still runnning..." : "unknown");
+					case CAL::APP_EXITCODE_RESET: return QString("1 - CAL restarted due to GUI disconnect");
+					case CAL::APP_EXITCODE_MACHINEHALT: return QString("2 - CAL application shutdown and system power off");
+					case CAL::APP_EXITCODE_EMERGENCY: return QString("3 - CAL restarted due to an emergency shutdown");
+					case CAL::APP_EXITCODE_INTERNALERROR: return QString("4 - CAL was terminated due to an internal application error");
+					case CAL::APP_EXITCODE_DAEMONFAIL: return QString("5 - CAL failed to fork into background (daemon)");
+					case CAL::APP_EXITCODE_CRASHED: return QString("6 - CAL crashed or was killed");
+					default: return QString((m_continuous && index.row() == rowCount() - 1) ? "still runnning..." : "unknown");
 				}
 
 			case 5: return QString(session->esdErrorCode() > 0 ? session->esdErrorStr() : "");
