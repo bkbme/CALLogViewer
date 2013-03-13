@@ -25,6 +25,7 @@ void SettingsDialog::addPage(AbstractSettingsPage *page)
 
 	ui->lwContent->addItem(item);
 	ui->swPages->addWidget(page); // takes ownership
+	page->loadSettings();
 }
 
 void SettingsDialog::changePage(QListWidgetItem *current, QListWidgetItem *previous)
