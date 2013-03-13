@@ -10,6 +10,7 @@
 #include <calsessionmodel.h>
 #include <calstatuswidget.h>
 #include <settingsdialog.h>
+#include <logsettingspage.h>
 #include <testersettingspage.h>
 #include <supportinfoopendialog.h>
 
@@ -20,6 +21,7 @@
 #include <QLineEdit>
 #include <QApplication>
 #include <QStringListModel>
+#include <QMetaObject>
 
 const int MAX_HISTORY_ASC = 10;
 
@@ -83,15 +85,19 @@ MainWindow::MainWindow(QWidget *parent) :
 
 	loadSettings();
 
-	if(QApplication::arguments().size() > 1) {
-		const QString filename = QApplication::arguments().at(1);
-		if (filename.endsWith(".tar.gz"))
-		{
-			onSupportInfoDropped(filename);
-		} else
-		{
-			m_logParser->openLog(filename);
-		}
+	if(QApplication::arguments().size() > 1) // load support-info/log file on startup if given as an argument on cmd-line...
+	{
+		const QString path = QApplication::arguments().at(1);
+		bool isSupportInfo = path.endsWith(".tar.gz");
+		QMetaObject::invokeMethod((isSupportInfo ? static_cast<QObject*>(this) : static_cast<QObject*>(m_logParser)),
+								  (isSupportInfo ? "onSupportInfoDropped" : "openLog"),
+								  Qt::QueuedConnection, Q_ARG(QUrl, QUrl(path)));
+		return;
+	}
+
+	if (QSettings().value("ASC/autoConnect", false).toBool())
+	{
+		QMetaObject::invokeMethod(this, "on_pbConnect_clicked", Qt::QueuedConnection);
 	}
 }
 
@@ -151,13 +157,12 @@ void MainWindow::on_pbConnect_clicked()
 		}
 
 		QUrl url(QString("http://%1:81/syslog.sh").arg(host));
-		//QUrl url(QString("http://%1:81/syslog.sh").arg(ui->cbHost->currentText()));
-		//int maxHistoryLength = ui->sbScrollBuffer->value();
-		//if (maxHistoryLength > 0)
-		//{
-		//	url.addQueryItem("maxLength", QString::number(maxHistoryLength));
-		//}
-		url.addQueryItem("maxLength", QString::number(20000)); // todo: add to settings dialog
+		int maxHistoryLength = QSettings().value("ASC/maxHistory", 10000).toInt();
+		if (maxHistoryLength > 0)
+		{
+			url.addQueryItem("maxLength", QString::number(maxHistoryLength));
+		}
+		//url.addQueryItem("maxLength", QString::number(20000)); // todo: add to settings dialog
 
 		m_logParser->openLog(QUrl(url));
 		setWindowTitle(QString("%1 - %2").arg(APPLICATION_NAME, url.host()));
@@ -304,6 +309,7 @@ void MainWindow::closeEvent(QCloseEvent * /*event*/)
 void MainWindow::on_actionSettings_triggered()
 {
 	SettingsDialog dialog(this);
+	dialog.addPage(new LogSettingsPage(this));
 	dialog.addPage(new TesterSettingsPage(m_test));
 	dialog.exec();
 }

@@ -110,7 +110,7 @@ QVariant CALSessionModel::data(const QModelIndex &index, int role) const
 					case CAL::APP_EXITCODE_INTERNALERROR: return QString("4 - CAL was terminated due to an internal application error");
 					case CAL::APP_EXITCODE_DAEMONFAIL: return QString("5 - CAL failed to fork into background (daemon)");
 					case CAL::APP_EXITCODE_CRASHED: return QString("6 - CAL crashed or was killed");
-					default: return QString((m_continuous && index.row() == rowCount() - 1) ? "still runnning..." : "unknown");
+					default: return QString((m_continuous && index.row() == rowCount() - 1) ? "still running..." : "unknown");
 				}
 
 			case 5: return QString(session->esdErrorCode() > 0 ? session->esdErrorStr() : "");

@@ -30,7 +30,8 @@ SOURCES += \
 	test/testersettingspage.cpp \
 	misc/searchwidget.cpp \
 	misc/calstatuswidget.cpp \
-	misc/aboutdialog.cpp
+	misc/aboutdialog.cpp \
+	log/logsettingspage.cpp
 
 HEADERS  += \
 	mainwindow.h \
@@ -50,7 +51,8 @@ HEADERS  += \
 	test/testersettingspage.h \
 	misc/searchwidget.h \
 	misc/calstatuswidget.h \
-	misc/aboutdialog.h
+	misc/aboutdialog.h \
+	log/logsettingspage.h
 
 FORMS += \
 	mainwindow.ui \
@@ -58,7 +60,8 @@ FORMS += \
 	misc/settingsdialog.ui \
 	test/testersettingspage.ui \
 	misc/searchwidget.ui \
-	misc/aboutdialog.ui
+	misc/aboutdialog.ui \
+	log/logsettingspage.ui
 
 RESOURCES += \
 	icons.qrc

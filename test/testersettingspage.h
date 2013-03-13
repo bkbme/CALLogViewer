@@ -22,10 +22,6 @@ public:
 	void loadSettings();
 	void saveSettings();
 
-signals:
-	
-public slots:
-
 private:
 	Ui::TesterSettingsPage *ui;
 	FemtecTester *m_tester;
