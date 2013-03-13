@@ -11,7 +11,7 @@ AboutDialog::AboutDialog(QWidget *parent) :
 							.arg(APPLICATION_NAME)
 							.arg(VERSION_MAJOR)
 							.arg(VERSION_MINOR)
-							.arg(DEVELOPER_VERSION ? "beta" : "")
+							.arg(DEVELOPER_BUILD ? "beta" : "")
 							.arg(qVersion()));
 }
 

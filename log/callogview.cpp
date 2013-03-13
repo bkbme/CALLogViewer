@@ -1,3 +1,4 @@
+#include "config.h"
 #include "callogview.h"
 #include <calsessionmodel.h>
 
@@ -61,7 +62,11 @@ CALLogView::CALLogView(QWidget *parent) :
 	m_logFacilityVisibility(),
 	m_search(new SearchData())
 {
-	settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true); // enable web-inspector
+	if (DEVELOPER_BUILD)
+	{
+		settings()->setAttribute(QWebSettings::DeveloperExtrasEnabled, true); // enable web-inspector in development builds
+	}
+
 	QMetaObject::invokeMethod(this, "init", Qt::QueuedConnection);
 	setAcceptDrops(true);
 }

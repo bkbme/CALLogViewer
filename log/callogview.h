@@ -8,7 +8,6 @@
 
 #include <QTextStream>
 #include <QWebView>
-#include <QPointer>
 #include <QQueue>
 #include <QPair>
 #include <QMap>
