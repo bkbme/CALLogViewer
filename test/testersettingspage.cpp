@@ -19,8 +19,6 @@ TesterSettingsPage::TesterSettingsPage(FemtecTester *tester, QWidget *parent) :
 			ui->cbComPort->setCurrentIndex(ui->cbComPort->count() - 1);
 		}
 	}
-
-	setWindowTitle("Tester Settings");
 }
 
 TesterSettingsPage::~TesterSettingsPage()

@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Tester Settings</string>
+   <string>Tester</string>
   </property>
   <property name="styleSheet">
    <string notr="true"/>

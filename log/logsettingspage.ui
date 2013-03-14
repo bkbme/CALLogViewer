@@ -11,13 +11,13 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>General Settings</string>
+   <string>Log</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QGroupBox" name="gbLogSettings">
      <property name="title">
-      <string>General Settings</string>
+      <string>Log Settings</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
