@@ -9,7 +9,9 @@ namespace Ui {
 	class MainWindow;
 }
 
-class FemtecTester;
+//class FemtecTester;
+class ProcedureFootswitch;
+class FemtoTester;
 class LogAnalyzer;
 class SysLogParser;
 class ServiceManager;
@@ -53,8 +55,9 @@ private:
 	Ui::MainWindow *ui;
 	SysLogParser *m_logParser;
 	ServiceManager *m_serviceMgr;
-	FemtecTester *m_test;
-	int m_splitterHandle;
+//	FemtecTester *m_test;
+	FemtoTester *m_test;
+	ProcedureFootswitch *m_fs;
 	QStringListModel *m_ascHistoryModel;
 };
 

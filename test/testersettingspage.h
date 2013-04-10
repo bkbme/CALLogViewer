@@ -3,7 +3,9 @@
 
 #include <abstractsettingspage.h>
 
-class FemtecTester;
+//class FemtecTester;
+class FemtoTester;
+class ProcedureFootswitch;
 
 namespace Ui {
 	class TesterSettingsPage;
@@ -14,7 +16,8 @@ class TesterSettingsPage : public AbstractSettingsPage
 	Q_OBJECT
 
 public:
-	explicit TesterSettingsPage(FemtecTester *tester, QWidget *parent = 0);
+	//explicit TesterSettingsPage(FemtecTester *tester, QWidget *parent = 0);
+	explicit TesterSettingsPage(FemtoTester *tester, ProcedureFootswitch *fs, QWidget *parent = 0);
 	~TesterSettingsPage();
 
 	QIcon icon() const;
@@ -24,7 +27,8 @@ public:
 
 private:
 	Ui::TesterSettingsPage *ui;
-	FemtecTester *m_tester;
+	FemtoTester *m_tester;
+	ProcedureFootswitch *m_fs;
 };
 
 #endif // TESTERSETTINGSPAGE_H

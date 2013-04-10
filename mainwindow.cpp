@@ -6,7 +6,9 @@
 #include <ui_mainwindow.h>
 #include <servicemanager.h>
 #include <syslogparser.h>
-#include <femtectester.h>
+//#include <femtectester.h>
+#include <femtotester.h>
+#include <procedurefootswitch.h>
 #include <calsessionmodel.h>
 #include <calstatuswidget.h>
 #include <settingsdialog.h>
@@ -30,14 +32,14 @@ MainWindow::MainWindow(QWidget *parent) :
 	ui(new Ui::MainWindow),
 	m_logParser(0),
 	m_serviceMgr(0),
-	m_test(0),
-	m_splitterHandle(0),
+	m_test(new FemtoTester(this)),
+	m_fs(0),
 	m_ascHistoryModel(new QStringListModel(this))
 {
 	QNetworkAccessManager *netMgr = new QNetworkAccessManager(this);
 	m_logParser = new SysLogParser(netMgr, this);
 	m_serviceMgr = new ServiceManager(netMgr, this);
-	m_test = new FemtecTester(m_logParser, this);
+	m_fs = new ProcedureFootswitch(m_logParser, m_test, this);
 
 	ui->setupUi(this);
 	statusBar()->addPermanentWidget(new CALStatusWidget(m_logParser, this));
@@ -65,15 +67,15 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->tvSessionView, SIGNAL(supportInfoDropped(QUrl)), this, SLOT(onSupportInfoDropped(QUrl)));
 	connect(ui->cbHost->lineEdit(), SIGNAL(returnPressed()), ui->pbConnect, SIGNAL(clicked()));
 
-	connect(ui->pbProcedureFS, SIGNAL(pressed()), m_test, SLOT(pressProcedureFootswitch()));
-	connect(ui->pbProcedureFS, SIGNAL(released()), m_test, SLOT(releaseProcedureFootswitch()));
+	connect(ui->pbProcedureFS, SIGNAL(pressed()), m_fs, SLOT(pressProcedureFootswitch()));
+	connect(ui->pbProcedureFS, SIGNAL(released()), m_fs, SLOT(releaseProcedureFootswitch()));
 	connect(ui->actionFemtecTesterEnabled, SIGNAL(toggled(bool)), m_test, SLOT(setEnabled(bool)));
 
 	connect(ui->wSearch, SIGNAL(newSearch(QString,Qt::CaseSensitivity)), ui->wvLogView, SLOT(search(QString,Qt::CaseSensitivity)));
 	connect(ui->wSearch, SIGNAL(continueSearch(SearchDirection)), ui->wvLogView, SLOT(continueSearch(SearchDirection)));
 	connect(ui->wSearch, SIGNAL(closed()), ui->wvLogView, SLOT(clearSearch()));
 
-	connect(m_test, SIGNAL(enabledStateChanged(bool)), ui->actionFemtecTesterEnabled, SLOT(setChecked(bool)));
+	connect(m_test, SIGNAL(connectedStateChanged(bool)), ui->actionFemtecTesterEnabled, SLOT(setChecked(bool)));
 	connect(m_test, SIGNAL(statusMessage(QString,int)), statusBar(), SLOT(showMessage(QString, int)));
 /// @todo fix logging from Tester
 //	connect(m_test, SIGNAL(logMessage(LogMessage)), ui->wvLogView, SLOT(newLogMessage(LogMessage)));
@@ -310,7 +312,8 @@ void MainWindow::on_actionSettings_triggered()
 {
 	SettingsDialog dialog(this);
 	dialog.addPage(new LogSettingsPage(this));
-	dialog.addPage(new TesterSettingsPage(m_test));
+	//dialog.addPage(new TesterSettingsPage(m_test));
+	dialog.addPage(new TesterSettingsPage(m_test, m_fs));
 	dialog.exec();
 }
 

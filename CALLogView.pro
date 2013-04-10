@@ -31,7 +31,16 @@ SOURCES += \
 	misc/searchwidget.cpp \
 	misc/calstatuswidget.cpp \
 	misc/aboutdialog.cpp \
-	log/logsettingspage.cpp
+	log/logsettingspage.cpp \
+    test/femtotester.cpp \
+    test/procedurefootswitch.cpp \
+    test/abstractmessage.cpp \
+    test/ackmessage.cpp \
+    test/errormessage.cpp \
+    test/initmessage.cpp \
+    test/versionmessage.cpp \
+    test/footswitchmessage.cpp \
+    test/messageparser.cpp
 
 HEADERS  += \
 	mainwindow.h \
@@ -52,7 +61,16 @@ HEADERS  += \
 	misc/searchwidget.h \
 	misc/calstatuswidget.h \
 	misc/aboutdialog.h \
-	log/logsettingspage.h
+	log/logsettingspage.h \
+    test/femtotester.h \
+    test/procedurefootswitch.h \
+    test/abstractmessage.h \
+    test/ackmessage.h \
+    test/errormessage.h \
+    test/initmessage.h \
+    test/versionmessage.h \
+    test/footswitchmessage.h \
+    test/messageparser.h
 
 FORMS += \
 	mainwindow.ui \

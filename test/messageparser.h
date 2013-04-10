@@ -1,0 +1,34 @@
+#ifndef MESSAGEPARSER_H
+#define MESSAGEPARSER_H
+
+#include <abstractmessage.h>
+
+class QByteArray;
+
+class MessageParser
+{
+public:
+	enum MessageIdentifier
+	{
+		IdAckMessage = 0x01,
+		IdErrorMessage = 0x02,
+		IdInitMessage = 0x03,
+		IdVersionMessage = 0x04,
+		IdFootSwitchMessage = 0x05,
+		IdInterlockOpenMessage = 0x06,
+		IdResetInterlockMessage = 0x07,
+		IdDockingLimitMessage = 0x08,
+		IdDockingForceMessage = 0x09,
+		IdSetServoMessage = 0x0A,
+		IdInvalidIdentifier = 0x0B // must remain at end for parsing!!!
+	};
+			
+	explicit MessageParser(QByteArray *readBuffer);
+
+	AbstractMessage* nextMessage();
+
+private:
+	QByteArray *m_buffer;
+};
+
+#endif // MESSAGEPARSER_H
