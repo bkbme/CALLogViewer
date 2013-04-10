@@ -120,7 +120,6 @@ void FemtoTester::setEnabled(bool enabled)
 		qDebug() << "FemtoTester: serial port opened: " << m_serialPort->portName();
 		emit statusMessage(QString("establishing connection with FemtoTester on serial port: %1").arg(m_serialPort->portName()));
 		sendMessage(new InitMessage(++m_seqCount));
-		emit connectedStateChanged(true);
 		m_sendTimer->start(SEND_TIMER_INTERVAL);
 		return;
 	}
