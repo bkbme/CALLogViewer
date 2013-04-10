@@ -240,6 +240,10 @@ qint64 QextSerialPortPrivate::writeData_sys(const char *data, qint64 maxSize)
             // writing asynchronously...not an error
             QWriteLocker writelocker(bytesToWriteLock);
             pendingWrites.append(newOverlapWrite);
+
+			// Bug: write() is supposed to return the number of bytes written, instead it returned 0 (indicating an error) all the time
+			// Of course as this is an ongoing async operation we can't tell at this moment how many bytes will get written successfully
+			bytesWritten = maxSize;
         }
         else {
             QESP_WARNING()<<"QextSerialPort write error:"<<GetLastError();
