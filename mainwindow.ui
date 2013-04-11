@@ -193,9 +193,9 @@
        </widget>
       </item>
       <item>
-       <widget class="QGroupBox" name="gbFemtecTester">
+       <widget class="QGroupBox" name="gbFemtoTester">
         <property name="title">
-         <string>FemtecTester</string>
+         <string>FemtoTester</string>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_6">
          <item>
@@ -220,7 +220,7 @@
          <item>
           <widget class="QCheckBox" name="cbTesterEnabled">
            <property name="text">
-            <string>Enable Femtec&amp;Tester</string>
+            <string>Enable Femto&amp;Tester</string>
            </property>
           </widget>
          </item>
