@@ -32,15 +32,16 @@ SOURCES += \
 	misc/calstatuswidget.cpp \
 	misc/aboutdialog.cpp \
 	log/logsettingspage.cpp \
-    test/femtotester.cpp \
-    test/procedurefootswitch.cpp \
-    test/abstractmessage.cpp \
-    test/ackmessage.cpp \
-    test/errormessage.cpp \
-    test/initmessage.cpp \
-    test/versionmessage.cpp \
-    test/footswitchmessage.cpp \
-    test/messageparser.cpp
+	test/femtotester.cpp \
+	test/procedurefootswitch.cpp \
+	test/abstractmessage.cpp \
+	test/ackmessage.cpp \
+	test/errormessage.cpp \
+	test/initmessage.cpp \
+	test/versionmessage.cpp \
+	test/footswitchmessage.cpp \
+	test/messageparser.cpp \
+	test/testerstatuswidget.cpp
 
 HEADERS  += \
 	mainwindow.h \
@@ -62,15 +63,16 @@ HEADERS  += \
 	misc/calstatuswidget.h \
 	misc/aboutdialog.h \
 	log/logsettingspage.h \
-    test/femtotester.h \
-    test/procedurefootswitch.h \
-    test/abstractmessage.h \
-    test/ackmessage.h \
-    test/errormessage.h \
-    test/initmessage.h \
-    test/versionmessage.h \
-    test/footswitchmessage.h \
-    test/messageparser.h
+	test/femtotester.h \
+	test/procedurefootswitch.h \
+	test/abstractmessage.h \
+	test/ackmessage.h \
+	test/errormessage.h \
+	test/initmessage.h \
+	test/versionmessage.h \
+	test/footswitchmessage.h \
+	test/messageparser.h \
+	test/testerstatuswidget.h
 
 FORMS += \
 	mainwindow.ui \

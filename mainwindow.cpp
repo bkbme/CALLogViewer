@@ -15,6 +15,7 @@
 #include <logsettingspage.h>
 #include <testersettingspage.h>
 #include <supportinfoopendialog.h>
+#include <testerstatuswidget.h>
 
 #include <QNetworkAccessManager>
 #include <QFileDialog>
@@ -42,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_fs = new ProcedureFootswitch(m_logParser, m_test, this);
 
 	ui->setupUi(this);
+	statusBar()->addPermanentWidget(m_test->statusWidget());
 	statusBar()->addPermanentWidget(new CALStatusWidget(m_logParser, this));
 	setWindowTitle(QString("%1 %2.%3%4").arg(APPLICATION_NAME).arg(VERSION_MAJOR).arg(VERSION_MINOR).arg(DEVELOPER_BUILD ? " beta" : ""));
 	ui->actionOpen_SupportInfo->setEnabled(SysLogParser::canHandleTarArchive());
