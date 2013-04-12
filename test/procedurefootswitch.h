@@ -58,6 +58,7 @@ public slots:
 
 	void loadSettings();
 	void saveSettings();
+	void reset();
 
 private slots:
 	void timerElapsed();

@@ -37,13 +37,28 @@ ProcedureFootswitch::ProcedureFootswitch(SysLogParser *parser, FemtoTester *test
 	connect(m_logParser, SIGNAL(treatmentAborted()), this, SLOT(releaseProcedureFootswitch()));
 	connect(m_logParser, SIGNAL(calStopped(int)), this, SLOT(releaseProcedureFootswitch()));
 	connect(m_logParser, SIGNAL(executingTreatment()), this, SLOT(pauseTreatment()));
-	// power check
 	connect(m_logParser, SIGNAL(powerCheckStarted()), this, SLOT(pressProcedureFootswitch()));
 	//connect(m_logParser, SIGNAL(procShutterOpened()), this, SLOT(onProcShutterOpen()));
+	connect(m_tester, SIGNAL(connectedStateChanged(bool)), this, SLOT(reset()));
+}
+
+void ProcedureFootswitch::reset()
+{
+	m_pauseTimer->stop();
+	m_statusMessageTimer->stop();
+
+	m_currentProcedureFSState = FSPedalUp;
+	m_targetProcedureFSState = FSPedalUp;
+	m_pauseState = NoPause;
 }
 
 void ProcedureFootswitch::pressProcedureFootswitch()
 {
+	if (!m_tester || !m_tester->connected())
+	{
+		return;
+	}
+
 	m_targetProcedureFSState = FSPedalDown;
 
 	if (m_currentProcedureFSState == FSPedalUp)
@@ -55,6 +70,11 @@ void ProcedureFootswitch::pressProcedureFootswitch()
 
 void ProcedureFootswitch::pressProcedureFootswitchDelayed()
 {
+	if (!m_tester || !m_tester->connected())
+	{
+		return;
+	}
+
 	m_targetProcedureFSState = FSPedalDown;
 
 	if (m_currentProcedureFSState == FSPedalUp) // if Intermediate, fs is pressed immediately
@@ -68,6 +88,11 @@ void ProcedureFootswitch::pressProcedureFootswitchDelayed()
 
 void ProcedureFootswitch::releaseProcedureFootswitch()
 {
+	if (!m_tester || !m_tester->connected())
+	{
+		return;
+	}
+
 	m_pauseState = NoPause;
 	m_targetProcedureFSState = FSPedalUp;
 
@@ -80,7 +105,7 @@ void ProcedureFootswitch::releaseProcedureFootswitch()
 
 void ProcedureFootswitch::setFSState(FootswitchState state)
 {
-	if (m_currentProcedureFSState == state || !m_tester)
+	if (m_currentProcedureFSState == state || !m_tester || !m_tester->connected())
 	{
 		return;
 	}
@@ -91,24 +116,24 @@ void ProcedureFootswitch::setFSState(FootswitchState state)
 			m_tester->setFootswitchState(FSPedalUp);
 			//qDebug() << "footswitch released";
 			emit logMessage(LogMessage(LogMessage::Info, LogMessage::Other, QDateTime::currentDateTimeUtc(), "CALLogView", "footswitch released"));
-			emit statusMessage("footswitch released");
+			//emit statusMessage("footswitch released");
 			break;
 		case FSPedalDown:
 			m_tester->setFootswitchState(FSPedalDown);
 			//qDebug() << "footswitch pressed";
 			emit logMessage(LogMessage(LogMessage::Info, LogMessage::Other, QDateTime::currentDateTimeUtc(), "CALLogView", "footswitch pressed"));
-			emit statusMessage("footswitch pressed");
+			//emit statusMessage("footswitch pressed");
 			break;
 		case FSIntermediate:
 			m_statusMessageTimer->stop();
 			m_tester->setFootswitchState(FSIntermediate);
 			//qDebug() << "footswitch in state 'Intermediate'";
 			emit logMessage(LogMessage(LogMessage::Info, LogMessage::Other, QDateTime::currentDateTimeUtc(), "CALLogView", "footswitch intermediate"));
-			emit statusMessage("footswitch in state 'Intermediate'");
+			//emit statusMessage("footswitch in state 'Intermediate'");
 			break;
 		default:
 			//qDebug() << "footswitch in (invalid) state: " << state;
-			emit statusMessage(QString("footswitch in (invalid) state: %1").arg(state));
+			//emit statusMessage(QString("footswitch in (invalid) state: %1").arg(state));
 			break;
 	}
 
@@ -118,6 +143,11 @@ void ProcedureFootswitch::setFSState(FootswitchState state)
 
 void ProcedureFootswitch::pauseTreatment()
 {
+	if (!m_tester || !m_tester->connected())
+	{
+		return;
+	}
+
 	if (m_fakeTrmPause && m_targetProcedureFSState == FSPedalDown && m_pauseState == NoPause)
 	{
 		int pauseDelay = randomTimerInterval(m_pauseDelay);
@@ -131,6 +161,11 @@ void ProcedureFootswitch::pauseTreatment()
 
 void ProcedureFootswitch::timerElapsed()
 {
+	if (!m_tester || !m_tester->connected())
+	{
+		return;
+	}
+
 	switch (m_currentProcedureFSState)
 	{
 		case FSIntermediate:
@@ -149,6 +184,11 @@ void ProcedureFootswitch::timerElapsed()
 
 void ProcedureFootswitch::pauseTimerElapsed()
 {
+	if (!m_tester || !m_tester->connected())
+	{
+		return;
+	}
+
 	int interval;
 	m_pauseTimer->stop();
 
@@ -232,6 +272,11 @@ void ProcedureFootswitch::showCountdown(const QString& msgFormat, int length, in
 
 void ProcedureFootswitch::updateStatusMessage()
 {
+	if (!m_tester || !m_tester->connected())
+	{
+		return;
+	}
+
 	if ((m_statusMessageCountdown -= m_statusMessageTimer->interval()) < 0)
 	{
 		m_statusMessageTimer->stop();
@@ -243,6 +288,11 @@ void ProcedureFootswitch::updateStatusMessage()
 
 void ProcedureFootswitch::onProcShutterOpen()
 {
+	if (!m_tester || !m_tester->connected())
+	{
+		return;
+	}
+	
 	int timeout = randomTimerInterval(TimingLimits(2.5, 4));
 	showCountdown("aborting powercheck in %1 seconds...", timeout, 100);
 	emit logMessage(LogMessage(LogMessage::Info, LogMessage::Other, QDateTime::currentDateTimeUtc(), "CALLogView", QString("aborting PwrCheck in %1 msec...").arg(timeout)));

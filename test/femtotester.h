@@ -24,6 +24,7 @@ public:
 
 	QString port() const;
 	TesterStatusWidget *statusWidget();
+	bool connected() const { return m_testerConnected; }
 
 public slots:
 	void setFootswitchState(ProcedureFootswitch::FootswitchState state);
