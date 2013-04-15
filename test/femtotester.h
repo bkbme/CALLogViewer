@@ -13,6 +13,7 @@ class AbstractMessage;
 class AckMessage;
 class ErrorMessage;
 class VersionMessage;
+class DockingForceMessage;
 class QTimer;
 
 class FemtoTester : public QObject
@@ -39,6 +40,7 @@ protected:
 	void handleAck(AckMessage *msg);
 	void handleError(ErrorMessage *msg);
 	void handleVersion(VersionMessage *msg);
+	void handleDockingForce(DockingForceMessage* msg);
 	void onSendMessageSuccess(AbstractMessage *msg);
 
 signals:

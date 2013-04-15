@@ -41,7 +41,8 @@ SOURCES += \
 	test/versionmessage.cpp \
 	test/footswitchmessage.cpp \
 	test/messageparser.cpp \
-	test/testerstatuswidget.cpp
+	test/testerstatuswidget.cpp \
+    test/dockingforcemessage.cpp
 
 HEADERS  += \
 	mainwindow.h \
@@ -72,7 +73,8 @@ HEADERS  += \
 	test/versionmessage.h \
 	test/footswitchmessage.h \
 	test/messageparser.h \
-	test/testerstatuswidget.h
+	test/testerstatuswidget.h \
+    test/dockingforcemessage.h
 
 FORMS += \
 	mainwindow.ui \

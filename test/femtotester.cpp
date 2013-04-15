@@ -6,6 +6,7 @@
 #include <ackmessage.h>
 #include <versionmessage.h>
 #include <footswitchmessage.h>
+#include <dockingforcemessage.h>
 #include <testerstatuswidget.h>
 #include <config.h>
 
@@ -244,6 +245,9 @@ void FemtoTester::readMessages()
 			case MessageParser::IdVersionMessage:
 				handleVersion(dynamic_cast<VersionMessage*>(msg));
 				break;
+			case MessageParser::IdDockingForceMessage:
+				handleDockingForce(dynamic_cast<DockingForceMessage*>(msg));
+				break;
 			default:
 				qDebug() << "FemtoTester: received unknown message (identifier: " << msg->identifier() << ")";
 		}
@@ -334,6 +338,20 @@ void FemtoTester::handleVersion(VersionMessage *msg)
 	emit statusMessage(QString("FemtoTester found, but FirmwareVersion '%1' is not supported (expected: '%2xx')").arg(msg->version(), FEMTO_TEST_VERSION));
 	qDebug() << QString("FemtoTester found, but FirmwareVersion '%1' is not supported (expected: '%2xx')").arg(msg->version(), FEMTO_TEST_VERSION);
 	sendMessage(new ErrorMessage(++m_seqCount, ErrorMessage::ErrorVersion));
+}
+
+void FemtoTester::handleDockingForce(DockingForceMessage* msg)
+{
+	if (!msg || !msg->isValid())
+	{
+		qDebug() << "FemtoTester: invalid DockingForceMessage passed to handleDockingForce()";
+		sendMessage(new ErrorMessage(++m_seqCount, ErrorMessage::ErrorParser));
+		return;
+	}
+
+	/// @todo implement signal for dms/ref voltage
+
+	qDebug() << "FemtoTester: Docking force: vDMS=" << msg->voltageDMS() << "vREF=" << msg->voltageRef();
 }
 
 void FemtoTester::timeout()
