@@ -9,11 +9,11 @@ AckMessage::AckMessage(quint8 seq, quint8 seqAck) :
 }
 
 AckMessage::AckMessage(const QByteArray &rawData) :
-	AbstractMessage(rawData.size() == 5 ? rawData.at(2) : 0)
+	AbstractMessage(rawData.size() == 5 ? static_cast<quint8>(rawData.at(2)) : 0)
 {
 	if (rawData.size() == 5)
 	{
-		if (rawData.at(0) == identifier())
+		if (static_cast<quint8>(rawData.at(0)) == identifier())
 		{
 			m_data.append(rawData.at(3));
 		}

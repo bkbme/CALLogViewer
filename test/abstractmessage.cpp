@@ -25,7 +25,7 @@ quint8 AbstractMessage::checksum() const
 
 	for (int i = 0; i < m_data.size(); ++i)
 	{
-		sum += m_data.at(i);
+		sum += static_cast<quint8>(m_data.at(i));
 	}
 
 	return (0xFF - sum);
