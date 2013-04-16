@@ -283,7 +283,7 @@ void ProcedureFootswitch::updateStatusMessage()
 		return;
 	}
 
-	emit statusMessage(m_statusMessageFormat.arg(static_cast<double>(m_statusMessageCountdown) / 1000));
+	emit statusMessage(m_statusMessageFormat.arg(static_cast<double>(m_statusMessageCountdown) / 1000), 1000);
 }
 
 void ProcedureFootswitch::onProcShutterOpen()
