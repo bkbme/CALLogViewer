@@ -29,6 +29,8 @@ public:
 
 public slots:
 	void setFootswitchState(ProcedureFootswitch::FootswitchState state);
+	void setLowerDockingLimit(uint lowerLimit, uint upperLimit);
+	void setServo(int value);
 	void setPort(const QString &portName);
 	void setEnabled(bool enabled);
 

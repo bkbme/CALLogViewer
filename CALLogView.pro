@@ -42,7 +42,9 @@ SOURCES += \
 	test/footswitchmessage.cpp \
 	test/messageparser.cpp \
 	test/testerstatuswidget.cpp \
-    test/dockingforcemessage.cpp
+	test/dockingforcemessage.cpp \
+	test/servoctrlmessage.cpp \
+	test/dockinglimitmessage.cpp
 
 HEADERS  += \
 	mainwindow.h \
@@ -74,7 +76,9 @@ HEADERS  += \
 	test/footswitchmessage.h \
 	test/messageparser.h \
 	test/testerstatuswidget.h \
-    test/dockingforcemessage.h
+	test/dockingforcemessage.h \
+	test/servoctrlmessage.h \
+	test/dockinglimitmessage.h
 
 FORMS += \
 	mainwindow.ui \

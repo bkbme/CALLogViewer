@@ -5,7 +5,9 @@
 #include <initmessage.h>
 #include <ackmessage.h>
 #include <versionmessage.h>
+#include <servoctrlmessage.h>
 #include <footswitchmessage.h>
+#include <dockinglimitmessage.h>
 #include <dockingforcemessage.h>
 #include <testerstatuswidget.h>
 #include <config.h>
@@ -79,6 +81,24 @@ void FemtoTester::setFootswitchState(ProcedureFootswitch::FootswitchState state)
 	{
 		qDebug() << "FemtoTester: setFootswitchState(" << state << ")";
 		sendMessage(new FootswitchMessage(++m_seqCount, state));
+	}
+}
+
+void FemtoTester::setLowerDockingLimit(uint lowerLimit, uint upperLimit)
+{
+	if (m_testerConnected)
+	{
+		qDebug() << "FemtoTester: setDockingLimit(" << lowerLimit << ", " << upperLimit << ")";
+		sendMessage(new DockingLimitMessage(++m_seqCount, lowerLimit, upperLimit));
+	}
+}
+
+void FemtoTester::setServo(int value)
+{
+	if (m_testerConnected)
+	{
+		qDebug() << "FemtoTester: setServo(" << value << ")";
+		sendMessage(new ServoCtrlMessage(++m_seqCount, value));
 	}
 }
 

@@ -16,10 +16,10 @@ public:
 		IdVersionMessage = 0x04,
 		IdFootSwitchMessage = 0x05,
 		IdInterlockOpenMessage = 0x06,
-		IdResetInterlockMessage = 0x07,
+		IdInterlockResetMessage = 0x07,
 		IdDockingLimitMessage = 0x08,
 		IdDockingForceMessage = 0x09,
-		IdSetServoMessage = 0x0A,
+		IdServoCtrlMessage = 0x0A,
 		IdInvalidIdentifier = 0x0B // must remain at end for parsing!!!
 	};
 			
