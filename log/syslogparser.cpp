@@ -343,6 +343,11 @@ void SysLogParser::analyzeMessage(const LogMessage &msg)
 				emit powerCheckStarted();
 				return;
 			}
+			if (msg.message().contains("PowerCheckDone"))
+			{
+				emit powerCheckStopped();
+				return;
+			}
 			break;
 		case LogMessage::Error:
 			if (msg.message().contains("(ERR_"))

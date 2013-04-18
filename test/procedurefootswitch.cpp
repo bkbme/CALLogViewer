@@ -38,6 +38,7 @@ ProcedureFootswitch::ProcedureFootswitch(SysLogParser *parser, FemtoTester *test
 	connect(m_logParser, SIGNAL(calStopped(int)), this, SLOT(releaseProcedureFootswitch()));
 	connect(m_logParser, SIGNAL(executingTreatment()), this, SLOT(pauseTreatment()));
 	connect(m_logParser, SIGNAL(powerCheckStarted()), this, SLOT(pressProcedureFootswitch()));
+	connect(m_logParser, SIGNAL(powerCheckStopped()), this, SLOT(releaseProcedureFootswitch()));
 	//connect(m_logParser, SIGNAL(procShutterOpened()), this, SLOT(onProcShutterOpen()));
 	connect(m_tester, SIGNAL(connectedStateChanged(bool)), this, SLOT(reset()));
 }

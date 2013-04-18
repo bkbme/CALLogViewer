@@ -35,6 +35,7 @@ signals:
 	void treatmentAborted();
 	void executingTreatment();
 	void powerCheckStarted();
+	void powerCheckStopped();
 //	void procShutterOpened();
 	void emergencyShutdown(int code, const QString &msg);
 
