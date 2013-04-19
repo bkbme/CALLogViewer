@@ -13,6 +13,7 @@
 #include <calstatuswidget.h>
 #include <settingsdialog.h>
 #include <logsettingspage.h>
+#include <docksettingspage.h>
 #include <testersettingspage.h>
 #include <supportinfoopendialog.h>
 #include <testerstatuswidget.h>
@@ -317,6 +318,7 @@ void MainWindow::on_actionSettings_triggered()
 	dialog.addPage(new LogSettingsPage(this));
 	//dialog.addPage(new TesterSettingsPage(m_test));
 	dialog.addPage(new TesterSettingsPage(m_test, m_fs));
+	dialog.addPage(new DockSettingsPage(m_test));
 	dialog.exec();
 }
 

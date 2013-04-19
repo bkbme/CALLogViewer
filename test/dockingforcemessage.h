@@ -12,8 +12,8 @@ public:
 	quint8 identifier() const { return 0x09; }
 	bool isValid() const;
 
-	quint16 voltageDMS() const;
-	quint16 voltageRef() const;
+	quint16 dms() const;
+	quint16 ref() const;
 };
 
 #endif // DOCKINGFORCEMESSAGE_H

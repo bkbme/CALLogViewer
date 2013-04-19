@@ -1,15 +1,16 @@
 #include "servoctrlmessage.h"
 
-const quint8 SERVO_POS_MIN = 60;
-const quint8 SERVO_POS_MAX = 140;
+const quint8 SERVO_POS_MIN = 40;
+const quint8 SERVO_POS_MAX = 200;
+const quint8 SERVO_POS_STOP = 116;
 
 ServoCtrlMessage::ServoCtrlMessage(quint8 seq, int position) :
 	AbstractMessage(seq)
 {
-	int pos = position + 127;
+	quint8 pos = ~(static_cast<quint8>(position + static_cast<quint8>(~SERVO_POS_STOP)));
 	if (pos >= SERVO_POS_MIN && pos <= SERVO_POS_MAX)
 	{
-		m_data.append(static_cast<quint8>(pos));
+		m_data.append(pos);
 	}
 }
 
@@ -26,5 +27,5 @@ bool ServoCtrlMessage::isValid() const
 
 int ServoCtrlMessage::position() const
 {
-	return (isValid() ? static_cast<quint8>(m_data.at(1)) - 127 : 0);
+	return (~(static_cast<quint8>(isValid() ? m_data.at(1) : SERVO_POS_STOP)) - static_cast<quint8>(~SERVO_POS_STOP));
 }

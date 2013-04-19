@@ -44,7 +44,8 @@ SOURCES += \
 	test/testerstatuswidget.cpp \
 	test/dockingforcemessage.cpp \
 	test/servoctrlmessage.cpp \
-	test/dockinglimitmessage.cpp
+	test/dockinglimitmessage.cpp \
+	test/docksettingspage.cpp
 
 HEADERS  += \
 	mainwindow.h \
@@ -78,7 +79,8 @@ HEADERS  += \
 	test/testerstatuswidget.h \
 	test/dockingforcemessage.h \
 	test/servoctrlmessage.h \
-	test/dockinglimitmessage.h
+	test/dockinglimitmessage.h \
+	test/docksettingspage.h
 
 FORMS += \
 	mainwindow.ui \
@@ -87,7 +89,8 @@ FORMS += \
 	test/testersettingspage.ui \
 	misc/searchwidget.ui \
 	misc/aboutdialog.ui \
-	log/logsettingspage.ui
+	log/logsettingspage.ui \
+	test/docksettingspage.ui
 
 RESOURCES += \
 	icons.qrc

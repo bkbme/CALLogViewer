@@ -84,7 +84,7 @@ void FemtoTester::setFootswitchState(ProcedureFootswitch::FootswitchState state)
 	}
 }
 
-void FemtoTester::setLowerDockingLimit(uint lowerLimit, uint upperLimit)
+void FemtoTester::setDockingLimit(uint lowerLimit, uint upperLimit)
 {
 	if (m_testerConnected)
 	{
@@ -369,9 +369,9 @@ void FemtoTester::handleDockingForce(DockingForceMessage* msg)
 		return;
 	}
 
-	/// @todo implement signal for dms/ref voltage
+	emit dockingForceChanged(msg->dms(), msg->ref());
 
-	qDebug() << "FemtoTester: Docking force: vDMS=" << msg->voltageDMS() << "vREF=" << msg->voltageRef();
+	qDebug() << "FemtoTester: Docking force: vDMS=" << msg->dms() << "vREF=" << msg->ref();
 }
 
 void FemtoTester::timeout()

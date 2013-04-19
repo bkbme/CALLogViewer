@@ -29,7 +29,7 @@ public:
 
 public slots:
 	void setFootswitchState(ProcedureFootswitch::FootswitchState state);
-	void setLowerDockingLimit(uint lowerLimit, uint upperLimit);
+	void setDockingLimit(uint lowerLimit, uint upperLimit);
 	void setServo(int value);
 	void setPort(const QString &portName);
 	void setEnabled(bool enabled);
@@ -49,6 +49,7 @@ signals:
 	void connectedStateChanged(bool connected);
 	void statusMessage(const QString &msg, int timeout = 0);
 	void footswitchState(ProcedureFootswitch::FootswitchState state);
+	void dockingForceChanged(quint16 dms, quint16 ref);
 
 private slots:
 	void timeout();

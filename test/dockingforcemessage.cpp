@@ -28,7 +28,7 @@ bool DockingForceMessage::isValid() const
 	return (m_data.size() == 4);
 }
 
-quint16 DockingForceMessage::voltageDMS() const
+quint16 DockingForceMessage::dms() const
 {
 	if (isValid())
 	{
@@ -38,7 +38,7 @@ quint16 DockingForceMessage::voltageDMS() const
 	return 0;
 }
 
-quint16 DockingForceMessage::voltageRef() const
+quint16 DockingForceMessage::ref() const
 {
 	if (isValid())
 	{
