@@ -22,6 +22,11 @@ public:
 
 	QIcon icon() const;
 
+	void accept();
+	void reject();
+	void apply();
+	void reset();
+
 	void loadSettings();
 	void saveSettings();
 

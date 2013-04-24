@@ -282,14 +282,31 @@ void SysLogParser::analyzeMessage(const LogMessage &msg)
 {
 	switch (msg.level())
 	{
-/*		case LogMessage::Debug:
-			if (msg.message().startsWith("Ignoring procedure shutter intermediate state: opening"))
+		case LogMessage::Debug:
+//			if (msg.message().startsWith("Ignoring procedure shutter intermediate state: opening"))
+//			{
+//				emit procShutterOpened();
+//				return;
+//			}
+			if (msg.message().startsWith("ASCACCESS: Entered virtual void CASCAccessLayer::SetDockingMode(DOCKING_MODE)"))
 			{
-				emit procShutterOpened();
-				return;
+				if (msg.message().contains("'Soft Docking'"))
+				{
+					emit dockingModeSelected(AutoDock::SoftDocking);
+					return;
+				}
+				if (msg.message().contains("'Regular Docking'"))
+				{
+					emit dockingModeSelected(AutoDock::RegularDocking);
+					return;
+				}
+			}
+			if (msg.message().startsWith("ASCACCESS: Entered virtual void CASCAccessLayer::SetVacuumSuctionRing(bool)(Off)"))
+			{
+				emit suctionRingVacuumDisabled();
 			}
 			break;
-*/		case LogMessage::Info:
+		case LogMessage::Info:
 			if(msg.message().startsWith("Starting new CAL..."))
 			{
 				emit calStarted();

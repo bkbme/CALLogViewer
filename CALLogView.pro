@@ -45,7 +45,8 @@ SOURCES += \
 	test/dockingforcemessage.cpp \
 	test/servoctrlmessage.cpp \
 	test/dockinglimitmessage.cpp \
-	test/docksettingspage.cpp
+	test/docksettingspage.cpp \
+	test/autodock.cpp
 
 HEADERS  += \
 	mainwindow.h \
@@ -80,7 +81,8 @@ HEADERS  += \
 	test/dockingforcemessage.h \
 	test/servoctrlmessage.h \
 	test/dockinglimitmessage.h \
-	test/docksettingspage.h
+	test/docksettingspage.h \
+	test/autodock.h
 
 FORMS += \
 	mainwindow.ui \

@@ -8,6 +8,7 @@ LogSettingsPage::LogSettingsPage(QWidget *parent) :
 	ui(new Ui::LogSettingsPage)
 {
 	ui->setupUi(this);
+	loadSettings();
 }
 
 LogSettingsPage::~LogSettingsPage()
@@ -18,6 +19,27 @@ LogSettingsPage::~LogSettingsPage()
 QIcon LogSettingsPage::icon() const
 {
 	return QIcon(":/icons/logviewer.png");
+}
+
+void LogSettingsPage::accept()
+{
+	saveSettings();
+}
+
+void LogSettingsPage::reject()
+{
+	// nothing to do here
+}
+
+void LogSettingsPage::apply()
+{
+	saveSettings();
+}
+
+void LogSettingsPage::reset()
+{
+	ui->cbAutoConnect->setChecked(false);
+	ui->sbASCHistoryLength->setValue(10000);
 }
 
 void LogSettingsPage::loadSettings()

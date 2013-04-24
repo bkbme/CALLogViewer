@@ -9,7 +9,7 @@ namespace Ui {
 	class MainWindow;
 }
 
-//class FemtecTester;
+class AutoDock;
 class ProcedureFootswitch;
 class FemtoTester;
 class LogAnalyzer;
@@ -39,7 +39,6 @@ private slots:
 	void on_actionOpen_SupportInfo_triggered();
 	void onSupportInfoDropped(const QUrl& url);
 	void onServiceActionTriggered();
-//	void on_actionFemtecTesterEnabled_toggled(bool enabled);
 	void on_actionSettings_triggered();
 
 	void on_action_About_triggered();
@@ -55,8 +54,8 @@ private:
 	Ui::MainWindow *ui;
 	SysLogParser *m_logParser;
 	ServiceManager *m_serviceMgr;
-//	FemtecTester *m_test;
 	FemtoTester *m_test;
+	AutoDock *m_dock;
 	ProcedureFootswitch *m_fs;
 	QStringListModel *m_ascHistoryModel;
 };

@@ -2,6 +2,7 @@
 #define SYSLOGLOADER_H
 
 #include <logmessage.h>
+#include <autodock.h>
 #include <QObject>
 #include <QString>
 #include <QUrl>
@@ -37,6 +38,8 @@ signals:
 	void powerCheckStarted();
 	void powerCheckStopped();
 //	void procShutterOpened();
+	void suctionRingVacuumDisabled();
+	void dockingModeSelected(AutoDock::DockingMode mode);
 	void emergencyShutdown(int code, const QString &msg);
 
 public slots:

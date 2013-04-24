@@ -13,322 +13,372 @@
   <property name="windowTitle">
    <string>Dock</string>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="QGroupBox" name="gbDockSettings">
+    <widget class="QGroupBox" name="groupBox">
      <property name="title">
-      <string>Dock Settings</string>
+      <string>Docking Limits</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <layout class="QHBoxLayout" name="horizontalLayout_6">
       <item>
-       <layout class="QVBoxLayout" name="verticalLayout">
-        <item>
-         <widget class="QLabel" name="lServoDesc">
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="3" column="1">
+         <widget class="QPushButton" name="pbGrabRegular">
           <property name="text">
-           <string>Servo Test</string>
+           <string>Grab Regular</string>
           </property>
          </widget>
         </item>
-        <item>
-         <widget class="QSlider" name="vsServo">
-          <property name="minimum">
-           <number>-50</number>
+        <item row="1" column="0">
+         <widget class="QLabel" name="lLowerDockingLimit">
+          <property name="text">
+           <string>Lower Docking Limit</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QSpinBox" name="sbUpperRegular">
+          <property name="maximum">
+           <number>900</number>
+          </property>
+          <property name="value">
+           <number>700</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="2">
+         <widget class="QSpinBox" name="sbLowerSoft">
+          <property name="maximum">
+           <number>900</number>
+          </property>
+          <property name="value">
+           <number>150</number>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="lUpperDockingLimit">
+          <property name="text">
+           <string>Upper Docking Limit</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="lRegularDocking">
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Regular Docking</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2">
+         <widget class="QPushButton" name="pbGrabSoft">
+          <property name="text">
+           <string>Grab Soft</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QLabel" name="lSoftDocking">
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Soft Docking</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QSpinBox" name="sbUpperSoft">
+          <property name="maximum">
+           <number>900</number>
+          </property>
+          <property name="value">
+           <number>300</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSpinBox" name="sbLowerRegular">
+          <property name="maximum">
+           <number>900</number>
+          </property>
+          <property name="value">
+           <number>600</number>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="3">
+         <widget class="QPushButton" name="pbTare">
+          <property name="text">
+           <string>Tare</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../icons.qrc">
+            <normaloff>:/icons/dock_tare.png</normaloff>:/icons/dock_tare.png</iconset>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QLabel" name="lZeroDocking">
+          <property name="font">
+           <font>
+            <weight>50</weight>
+            <bold>false</bold>
+           </font>
+          </property>
+          <property name="text">
+           <string>Undocked</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QSpinBox" name="sbLowerZero">
+          <property name="enabled">
+           <bool>false</bool>
           </property>
           <property name="maximum">
-           <number>50</number>
+           <number>100</number>
           </property>
           <property name="value">
            <number>0</number>
           </property>
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="invertedAppearance">
-           <bool>false</bool>
-          </property>
-          <property name="invertedControls">
-           <bool>false</bool>
-          </property>
-          <property name="tickPosition">
-           <enum>QSlider::TicksBelow</enum>
-          </property>
          </widget>
         </item>
-        <item>
-         <widget class="QSpinBox" name="spinBox_3">
-          <property name="minimum">
-           <number>-50</number>
+        <item row="2" column="3">
+         <widget class="QSpinBox" name="sbUpperZero">
+          <property name="enabled">
+           <bool>true</bool>
           </property>
           <property name="maximum">
-           <number>50</number>
+           <number>400</number>
+          </property>
+          <property name="value">
+           <number>100</number>
           </property>
          </widget>
         </item>
        </layout>
-      </item>
-      <item>
-       <layout class="QVBoxLayout" name="verticalLayout_4">
-        <item>
-         <widget class="QGroupBox" name="groupBox">
-          <property name="title">
-           <string>Docking Limits</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <item>
-            <layout class="QGridLayout" name="gridLayout">
-             <item row="1" column="1">
-              <widget class="QSpinBox" name="sbLowerRegular">
-               <property name="maximum">
-                <number>1023</number>
-               </property>
-               <property name="value">
-                <number>100</number>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="lRegularDocking">
-               <property name="text">
-                <string>Regular Docking</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="lLowerDockingLimit">
-               <property name="text">
-                <string>Lower Docking Limit</string>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="1">
-              <widget class="QSpinBox" name="sbUpperRegular">
-               <property name="maximum">
-                <number>1023</number>
-               </property>
-               <property name="value">
-                <number>600</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="0">
-              <widget class="QLabel" name="lUpperDockingLimit">
-               <property name="text">
-                <string>Upper Docking Limit</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="2">
-              <widget class="QLabel" name="lSoftDocking">
-               <property name="text">
-                <string>Soft Docking</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="2">
-              <widget class="QSpinBox" name="sbLowerSoft">
-               <property name="maximum">
-                <number>1023</number>
-               </property>
-               <property name="value">
-                <number>100</number>
-               </property>
-              </widget>
-             </item>
-             <item row="2" column="2">
-              <widget class="QSpinBox" name="sbUpperSoft">
-               <property name="maximum">
-                <number>1023</number>
-               </property>
-               <property name="value">
-                <number>300</number>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QFormLayout" name="formLayout">
-             <item row="0" column="0">
-              <widget class="QLabel" name="lRefDesc">
-               <property name="text">
-                <string>Reference Voltage:</string>
-               </property>
-              </widget>
-             </item>
-             <item row="0" column="1">
-              <widget class="QLabel" name="lRef">
-               <property name="text">
-                <string>0V</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="0">
-              <widget class="QLabel" name="lDMSDesc">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>DMS (raw value):</string>
-               </property>
-              </widget>
-             </item>
-             <item row="1" column="1">
-              <widget class="QLabel" name="lDMS">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="text">
-                <string>0</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="gbDockTest">
-          <property name="title">
-           <string>Dock Test</string>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_2">
-             <item>
-              <widget class="QLabel" name="lDockingMode">
-               <property name="text">
-                <string>Docking Mode</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="rbRegularDocking">
-               <property name="text">
-                <string>Regular</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">bgDockingMode</string>
-               </attribute>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="rbSoftDocking">
-               <property name="text">
-                <string>Soft</string>
-               </property>
-               <attribute name="buttonGroup">
-                <string notr="true">bgDockingMode</string>
-               </attribute>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
-             <item>
-              <widget class="QPushButton" name="pbUndock">
-               <property name="text">
-                <string>Undock</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pbBottom">
-               <property name="text">
-                <string>Bottom</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="pbDock">
-               <property name="text">
-                <string>Dock</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <spacer name="verticalSpacer">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>20</width>
-            <height>40</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
-      </item>
-      <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>252</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
       </item>
      </layout>
     </widget>
    </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <item>
+      <widget class="QGroupBox" name="gbAutoDock">
+       <property name="title">
+        <string>Auto Docking</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_3">
+        <item>
+         <widget class="QCheckBox" name="cbAutoDock">
+          <property name="text">
+           <string>AutoDock when treatment is selected in GUI</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QCheckBox" name="cbAutoUndock">
+          <property name="text">
+           <string>AutoUndock when treatment is finished/aborted</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_2">
+          <item>
+           <widget class="QLabel" name="lDockingMode">
+            <property name="text">
+             <string>Docking Mode</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="rbRegularDocking">
+            <property name="text">
+             <string>Regular</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">bgDockingMode</string>
+            </attribute>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="rbSoftDocking">
+            <property name="text">
+             <string>Soft</string>
+            </property>
+            <attribute name="buttonGroup">
+             <string notr="true">bgDockingMode</string>
+            </attribute>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QPushButton" name="pbBottom">
+            <property name="text">
+             <string>Bottom</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/dock_bottom.png</normaloff>:/icons/dock_bottom.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbUndock">
+            <property name="text">
+             <string>Undock</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/dock_undock.png</normaloff>:/icons/dock_undock.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbDock">
+            <property name="text">
+             <string>Dock</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/dock_dock.png</normaloff>:/icons/dock_dock.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <widget class="QGroupBox" name="gbDockInfo">
+       <property name="title">
+        <string>Manual Docking</string>
+       </property>
+       <layout class="QVBoxLayout" name="verticalLayout_2">
+        <item>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="lRefDesc">
+            <property name="text">
+             <string>Reference Voltage:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="lRef">
+            <property name="text">
+             <string>0V</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="lDMSDesc">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>DMS (raw value):</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="lDMS">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>0</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+        <item>
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QPushButton" name="pbUp">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Up</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/dock_up.png</normaloff>:/icons/dock_up.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="pbDown">
+            <property name="minimumSize">
+             <size>
+              <width>70</width>
+              <height>0</height>
+             </size>
+            </property>
+            <property name="text">
+             <string>Down</string>
+            </property>
+            <property name="icon">
+             <iconset resource="../icons.qrc">
+              <normaloff>:/icons/dock_down.png</normaloff>:/icons/dock_down.png</iconset>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </item>
+       </layout>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>168</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
   </layout>
  </widget>
- <resources/>
- <connections>
-  <connection>
-   <sender>vsServo</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>spinBox_3</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>39</x>
-     <y>229</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>61</x>
-     <y>410</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>spinBox_3</sender>
-   <signal>valueChanged(int)</signal>
-   <receiver>vsServo</receiver>
-   <slot>setValue(int)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>61</x>
-     <y>410</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>39</x>
-     <y>208</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <resources>
+  <include location="../icons.qrc"/>
+ </resources>
+ <connections/>
  <buttongroups>
   <buttongroup name="bgDockingMode"/>
  </buttongroups>

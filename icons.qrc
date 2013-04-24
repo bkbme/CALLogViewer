@@ -22,5 +22,12 @@
         <file alias="prev.png">icons/Pyconic-Free/PNG/011-1.png</file>
         <file alias="test.png">icons/femtec_tester.png</file>
         <file alias="logviewer.png">icons/logviewer-64.png</file>
+        <file alias="dock_down.png">icons/Pyconic-Free/PNG/013.png</file>
+        <file alias="dock_up.png">icons/Pyconic-Free/PNG/014.png</file>
+        <file alias="dock_bottom.png">icons/Pyconic-Free/PNG/070.png</file>
+        <file alias="dock_tare.png">icons/Pyconic-Free/PNG/162.png</file>
+        <file alias="dock_dock.png">icons/Pyconic-Free/PNG/193.png</file>
+        <file alias="dock_undock.png">icons/Pyconic-Free/PNG/355.png</file>
+        <file alias="dock.png">icons/Pyconic-Free/PNG/192.png</file>
     </qresource>
 </RCC>

@@ -16,6 +16,7 @@ TesterSettingsPage::TesterSettingsPage(FemtoTester *tester, ProcedureFootswitch 
 	Q_ASSERT(fs);
 
 	ui->setupUi(this);
+	loadSettings();
 }
 
 TesterSettingsPage::~TesterSettingsPage()
@@ -26,6 +27,34 @@ TesterSettingsPage::~TesterSettingsPage()
 QIcon TesterSettingsPage::icon() const
 {
 	return QIcon(":/icons/test.png");
+}
+
+void TesterSettingsPage::accept()
+{
+	saveSettings();
+}
+
+void TesterSettingsPage::reject()
+{
+	// nothing to do here
+}
+
+void TesterSettingsPage::apply()
+{
+	saveSettings();
+}
+
+void TesterSettingsPage::reset()
+{
+	ui->dsIntermediateMin->setValue(0.1);
+	ui->dsIntermediateMax->setValue(0.5);
+	ui->dsPauseDelayMin->setValue(0);
+	ui->dsPauseDelayMax->setValue(5);
+	ui->dsPauseLengthMin->setValue(1);
+	ui->dsPauseLengthMax->setValue(30);
+	ui->dsTrmDelayMin->setValue(0);
+	ui->dsTrmDelayMax->setValue(30);
+	ui->cbFakeTrmPause->setChecked(false);
 }
 
 void TesterSettingsPage::loadSettings()

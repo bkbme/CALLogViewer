@@ -2,7 +2,9 @@
 #include "ui_settingsdialog.h"
 
 #include <abstractsettingspage.h>
+#include <QDialogButtonBox>
 #include <QListWidgetItem>
+#include <QAbstractButton>
 #include <QDebug>
 
 SettingsDialog::SettingsDialog(QWidget *parent) :
@@ -25,7 +27,6 @@ void SettingsDialog::addPage(AbstractSettingsPage *page)
 
 	ui->lwContent->addItem(item);
 	ui->swPages->addWidget(page); // takes ownership
-	page->loadSettings();
 }
 
 void SettingsDialog::changePage(QListWidgetItem *current, QListWidgetItem *previous)
@@ -45,9 +46,62 @@ void SettingsDialog::accept()
 		AbstractSettingsPage *page = qobject_cast<AbstractSettingsPage*>(ui->swPages->widget(i));
 		if (page)
 		{
-			page->saveSettings();
+			page->accept();
 		}
 	}
 
 	QDialog::accept();
 }
+
+void SettingsDialog::reject()
+{
+	for (int i = 0; i < ui->swPages->count(); ++i)
+	{
+		AbstractSettingsPage *page = qobject_cast<AbstractSettingsPage*>(ui->swPages->widget(i));
+		if (page)
+		{
+			page->reject();
+		}
+	}
+	QDialog::reject();
+}
+
+void SettingsDialog::apply()
+{
+	for (int i = 0; i < ui->swPages->count(); ++i)
+	{
+		AbstractSettingsPage *page = qobject_cast<AbstractSettingsPage*>(ui->swPages->widget(i));
+		if (page)
+		{
+			page->apply();
+		}
+	}
+}
+
+void SettingsDialog::reset()
+{
+	for (int i = 0; i < ui->swPages->count(); ++i)
+	{
+		AbstractSettingsPage *page = qobject_cast<AbstractSettingsPage*>(ui->swPages->widget(i));
+		if (page)
+		{
+			page->reset();
+		}
+	}
+}
+
+void SettingsDialog::buttonClicked(QAbstractButton *button)
+{
+	switch (ui->buttonBox->buttonRole(button))
+	{
+		case QDialogButtonBox::ResetRole:
+			reset();
+			break;
+		case QDialogButtonBox::ApplyRole:
+			apply();
+			break;
+		default:
+			break;
+	}
+}
+

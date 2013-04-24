@@ -6,7 +6,6 @@
 #include <ui_mainwindow.h>
 #include <servicemanager.h>
 #include <syslogparser.h>
-//#include <femtectester.h>
 #include <femtotester.h>
 #include <procedurefootswitch.h>
 #include <calsessionmodel.h>
@@ -17,6 +16,7 @@
 #include <testersettingspage.h>
 #include <supportinfoopendialog.h>
 #include <testerstatuswidget.h>
+#include <autodock.h>
 
 #include <QNetworkAccessManager>
 #include <QFileDialog>
@@ -35,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_logParser(0),
 	m_serviceMgr(0),
 	m_test(new FemtoTester(this)),
+	m_dock(0),
 	m_fs(0),
 	m_ascHistoryModel(new QStringListModel(this))
 {
@@ -42,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
 	m_logParser = new SysLogParser(netMgr, this);
 	m_serviceMgr = new ServiceManager(netMgr, this);
 	m_fs = new ProcedureFootswitch(m_logParser, m_test, this);
+	m_dock = new AutoDock(m_logParser, m_test, this);
 
 	ui->setupUi(this);
 	statusBar()->addPermanentWidget(m_test->statusWidget());
@@ -316,9 +318,8 @@ void MainWindow::on_actionSettings_triggered()
 {
 	SettingsDialog dialog(this);
 	dialog.addPage(new LogSettingsPage(this));
-	//dialog.addPage(new TesterSettingsPage(m_test));
 	dialog.addPage(new TesterSettingsPage(m_test, m_fs));
-	dialog.addPage(new DockSettingsPage(m_test));
+	dialog.addPage(new DockSettingsPage(m_dock));
 	dialog.exec();
 }
 

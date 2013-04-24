@@ -3,6 +3,7 @@
 
 #include <QDialog>
 
+class QAbstractButton;
 class QListWidgetItem;
 class AbstractSettingsPage;
 
@@ -20,6 +21,10 @@ public:
 
 public slots:
 	void accept();
+	void reject();
+	void apply();
+	void reset();
+	void buttonClicked(QAbstractButton *button);
 	void addPage(AbstractSettingsPage *page);
 	void changePage(QListWidgetItem *current, QListWidgetItem *previous);
 

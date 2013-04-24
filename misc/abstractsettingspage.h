@@ -14,8 +14,10 @@ public:
 
 	virtual QIcon icon() const = 0;
 
-	virtual void loadSettings() = 0;
-	virtual void saveSettings() = 0;
+	virtual void accept() = 0;
+	virtual void reject() = 0;
+	virtual void apply() = 0;
+	virtual void reset() = 0;
 };
 
 #endif // ABSTRACTSETTINGSPAGE_H

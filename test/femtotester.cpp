@@ -271,7 +271,7 @@ void FemtoTester::readMessages()
 			default:
 				qDebug() << "FemtoTester: received unknown message (identifier: " << msg->identifier() << ")";
 		}
-		qDebug() << "FemtoTester: read message" << msg->toByteArray().toHex();
+		//qDebug() << "FemtoTester: read message" << msg->toByteArray().toHex();
 		delete msg;
 	}
 }
