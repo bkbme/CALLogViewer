@@ -80,13 +80,10 @@ void SettingsDialog::apply()
 
 void SettingsDialog::reset()
 {
-	for (int i = 0; i < ui->swPages->count(); ++i)
+	AbstractSettingsPage *page = qobject_cast<AbstractSettingsPage*>(ui->swPages->currentWidget());
+	if (page)
 	{
-		AbstractSettingsPage *page = qobject_cast<AbstractSettingsPage*>(ui->swPages->widget(i));
-		if (page)
-		{
-			page->reset();
-		}
+		page->reset();
 	}
 }
 
