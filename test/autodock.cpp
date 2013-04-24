@@ -24,6 +24,7 @@ AutoDock::AutoDock(SysLogParser *parser, FemtoTester *tester, QObject *parent) :
 	//connect(m_parser, SIGNAL(treatmentFinished()), this, SLOT(undock()));
 	connect(m_parser, SIGNAL(suctionRingVacuumDisabled()), this, SLOT(undock()));
 	connect(m_parser, SIGNAL(treatmentAborted()), this, SLOT(undock()));
+	connect(m_parser, SIGNAL(treatmentStarted()), this, SLOT(stop())); // lock when treatment starts
 }
 
 void AutoDock::loadSettings()
