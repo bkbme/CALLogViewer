@@ -9,7 +9,6 @@
 #include <footswitchmessage.h>
 #include <dockinglimitmessage.h>
 #include <dockingforcemessage.h>
-#include <testerstatuswidget.h>
 #include <config.h>
 
 #include <QDebug>
@@ -26,8 +25,8 @@ FemtoTester::FemtoTester(QObject *parent) :
 	m_readBuffer(),
 	m_sendBuffer(),
 	m_sendTimer(new QTimer(this)),
-	m_statusWidget(0),
-	m_testerConnected(false)
+	m_testerConnected(false),
+	m_dockAvailable(false)
 {
 	connect(m_serialPort, SIGNAL(readyRead()), this, SLOT(readMessages()));
 	connect(m_sendTimer, SIGNAL(timeout()), this, SLOT(timeout()));
@@ -38,25 +37,6 @@ FemtoTester::FemtoTester(QObject *parent) :
 FemtoTester::~FemtoTester()
 {
 	setEnabled(false);
-
-	// delete status widget unless it has been reparented to another widget
-	if (m_statusWidget && !m_statusWidget->parent())
-	{
-		delete m_statusWidget;
-	}
-}
-
-TesterStatusWidget *FemtoTester::statusWidget()
-{
-	if (!m_statusWidget)
-	{
-		m_statusWidget = new TesterStatusWidget();
-		connect(this, SIGNAL(connectedStateChanged(bool)), m_statusWidget, SLOT(setVisible(bool)));
-		connect(this, SIGNAL(footswitchState(ProcedureFootswitch::FootswitchState)), m_statusWidget, SLOT(setFootswitchState(ProcedureFootswitch::FootswitchState)));
-		m_statusWidget->setVisible(m_testerConnected);
-	}
-
-	return m_statusWidget;
 }
 
 void FemtoTester::loadSettings()
@@ -140,6 +120,7 @@ void FemtoTester::setEnabled(bool enabled)
 	{
 		if (m_testerConnected)
 		{
+			m_dockAvailable = false;
 			m_testerConnected = false;
 			sendMessage(new ErrorMessage(++m_seqCount, ErrorMessage::ErrorDisconnect)); // notify test tool about disconnect (will be send immmediately as send queue is empty)
 			emit statusMessage(QString("FemtoTester disconnected"));
@@ -166,7 +147,6 @@ void FemtoTester::setEnabled(bool enabled)
 		return;
 	}
 
-	//emit connectedStateChanged(false);
 	emit statusMessage(QString("FemtoTester: failed to open serial port '%1': %2").arg(m_serialPort->portName(), m_serialPort->errorString()));
 }
 
@@ -369,6 +349,7 @@ void FemtoTester::handleDockingForce(DockingForceMessage* msg)
 		return;
 	}
 
+	m_dockAvailable = true;
 	emit dockingForceChanged(msg->dms(), msg->ref());
 
 	qDebug() << "FemtoTester: Docking force: vDMS=" << msg->dms() << "vREF=" << msg->ref();

@@ -1,9 +1,10 @@
 #include "testerstatuswidget.h"
-
+#include <femtotester.h>
+#include <autodock.h>
 #include <QLabel>
 #include <QHBoxLayout>
 
-const QString CSS_DMS				= "border: 1px solid LightSlateGray; border-radius: 5px;";
+const QString CSS_DOCK				= "border: 1px solid LightSlateGray; border-radius: 5px;";
 const QString CSS_FS_INTERMEDIATE	= "border: 1px solid LightSlateGray; border-radius: 5px; background-color: #FFFF4D";
 const QString CSS_FS_RELEASED		= "border: 1px solid LightSlateGray; border-radius: 5px; text-align:center";
 const QString CSS_FS_PRESSED		= "border: 1px solid LightSlateGray; border-radius: 5px; background-color: #66FF33";
@@ -14,15 +15,20 @@ const QString TEXT_FS_RELEASED		= "PedalUp";
 const QString TEXT_FS_PRESSED		= "PedalDown";
 const QString TEXT_FS_ERROR			= "Error";
 
-const QString FORMAT_TEXT_DMS		= "Z-Force: %1";
+const QString FORMAT_TEXT_FORCE		= "Z-Force: %1";
+const QString FORMAT_TEXT_VOLTAGE	= "Ref: %1V";
 
-TesterStatusWidget::TesterStatusWidget(QWidget *parent) :
+TesterStatusWidget::TesterStatusWidget(FemtoTester *tester, AutoDock *dock, QWidget *parent) :
 	QWidget(parent),
+	m_tester(tester),
+	m_dock(dock),
 	m_lFS(new QLabel(this)),
-	m_lDMS(new QLabel(this))
+	m_lForce(new QLabel(this)),
+	m_lVoltage(new QLabel(this))
 {
 	QHBoxLayout *layout = new QHBoxLayout(this);
-	layout->addWidget(m_lDMS);
+	layout->addWidget(m_lForce);
+	layout->addWidget(m_lVoltage);
 	layout->addWidget(m_lFS);
 
 	m_lFS->setMinimumWidth(m_lFS->fontMetrics().width(TEXT_FS_PRESSED) + 10);
@@ -31,8 +37,17 @@ TesterStatusWidget::TesterStatusWidget(QWidget *parent) :
 	m_lFS->setStyleSheet(CSS_FS_RELEASED);
 	m_lFS->setAlignment(Qt::AlignHCenter);
 
-	m_lDMS->setStyleSheet(CSS_DMS);
-	m_lDMS->hide();
+	m_lForce->setStyleSheet(CSS_DOCK);
+	m_lVoltage->setStyleSheet(CSS_DOCK);
+
+	connect(m_tester, SIGNAL(connectedStateChanged(bool)), this, SLOT(setVisible(bool)));
+	connect(m_tester, SIGNAL(connectedStateChanged(bool)), m_lForce, SLOT(hide()));
+	connect(m_tester, SIGNAL(connectedStateChanged(bool)), m_lVoltage, SLOT(hide()));
+	connect(m_tester, SIGNAL(footswitchState(ProcedureFootswitch::FootswitchState)), this, SLOT(setFootswitchState(ProcedureFootswitch::FootswitchState)));
+	connect(m_dock, SIGNAL(referenceVoltageChanged(qreal)), this, SLOT(setReferenceVoltage(qreal)));
+	connect(m_dock, SIGNAL(zForceChanged(quint16)), this, SLOT(setZForce(quint16)));
+
+	hide();
 }
 
 void TesterStatusWidget::setFootswitchState(ProcedureFootswitch::FootswitchState state)
@@ -58,12 +73,23 @@ void TesterStatusWidget::setFootswitchState(ProcedureFootswitch::FootswitchState
 	}
 }
 
-void TesterStatusWidget::setDockingPressure(double dms)
+void TesterStatusWidget::setZForce(quint16 force)
 {
-	m_lDMS->setText(QString(FORMAT_TEXT_DMS).arg(QString::number(dms, 'f', 2)));
+	if (m_lForce->isHidden())
+	{
+		m_lForce->show();
+	}
+
+	m_lForce->setText(QString(FORMAT_TEXT_FORCE).arg(force));
 }
 
-void TesterStatusWidget::setDockingStatusEnabled(bool enabled)
+void TesterStatusWidget::setReferenceVoltage(qreal voltage)
 {
-	m_lDMS->setVisible(enabled);
+	if (m_lVoltage->isHidden())
+	{
+		m_lVoltage->show();
+	}
+
+	m_lVoltage->setText(QString(FORMAT_TEXT_VOLTAGE).arg(QString::number(voltage, 'f', 2)));
 }
+

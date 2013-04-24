@@ -8,7 +8,6 @@
 #include <QObject>
 #include <QQueue>
 
-class TesterStatusWidget;
 class AbstractMessage;
 class AckMessage;
 class ErrorMessage;
@@ -24,8 +23,8 @@ public:
 	virtual ~FemtoTester();
 
 	QString port() const;
-	TesterStatusWidget *statusWidget();
 	bool connected() const { return m_testerConnected; }
+	bool dockAvailable() const { return m_dockAvailable; }
 
 public slots:
 	void setFootswitchState(ProcedureFootswitch::FootswitchState state);
@@ -62,8 +61,8 @@ private:
 	QByteArray m_readBuffer;
 	QQueue<AbstractMessage*> m_sendBuffer;
 	QTimer *m_sendTimer;
-	TesterStatusWidget *m_statusWidget;
 	bool m_testerConnected;
+	bool m_dockAvailable;
 };
 
 #endif // FEMTOTESTER_H
