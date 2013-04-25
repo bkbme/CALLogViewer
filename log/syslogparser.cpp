@@ -366,6 +366,12 @@ void SysLogParser::analyzeMessage(const LogMessage &msg)
 				return;
 			}
 			break;
+		case LogMessage::Warning:
+			if (msg.message().startsWith("obsolete SOAP command 'StartLaserSelfTest' used to reset the DMS sensor"))
+			{
+				emit dmsSensorReset();
+				return;
+			}
 		case LogMessage::Error:
 			if (msg.message().contains("(ERR_"))
 			{

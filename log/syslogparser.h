@@ -38,6 +38,7 @@ signals:
 	void powerCheckStarted();
 	void powerCheckStopped();
 //	void procShutterOpened();
+	void dmsSensorReset();
 	void suctionRingVacuumDisabled();
 	void dockingModeSelected(AutoDock::DockingMode mode);
 	void emergencyShutdown(int code, const QString &msg);
