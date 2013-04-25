@@ -72,15 +72,20 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(ui->tvSessionView, SIGNAL(supportInfoDropped(QUrl)), this, SLOT(onSupportInfoDropped(QUrl)));
 	connect(ui->cbHost->lineEdit(), SIGNAL(returnPressed()), ui->pbConnect, SIGNAL(clicked()));
 
+	connect(ui->pbUnDock, SIGNAL(clicked()), m_dock, SLOT(undock()));
+	connect(ui->pbDockUp, SIGNAL(pressed()), m_dock, SLOT(moveUp()));
+	connect(ui->pbDockUp, SIGNAL(released()), m_dock, SLOT(stop()));
+	connect(ui->pbDockDown, SIGNAL(pressed()), m_dock, SLOT(moveDown()));
+	connect(ui->pbDockDown, SIGNAL(released()), m_dock, SLOT(stop()));
 	connect(ui->pbProcedureFS, SIGNAL(pressed()), m_fs, SLOT(pressProcedureFootswitch()));
 	connect(ui->pbProcedureFS, SIGNAL(released()), m_fs, SLOT(releaseProcedureFootswitch()));
-	connect(ui->actionFemtecTesterEnabled, SIGNAL(toggled(bool)), m_test, SLOT(setEnabled(bool)));
+	connect(ui->actionFemtoTesterEnabled, SIGNAL(toggled(bool)), m_test, SLOT(setEnabled(bool)));
 
 	connect(ui->wSearch, SIGNAL(newSearch(QString,Qt::CaseSensitivity)), ui->wvLogView, SLOT(search(QString,Qt::CaseSensitivity)));
 	connect(ui->wSearch, SIGNAL(continueSearch(SearchDirection)), ui->wvLogView, SLOT(continueSearch(SearchDirection)));
 	connect(ui->wSearch, SIGNAL(closed()), ui->wvLogView, SLOT(clearSearch()));
 
-	connect(m_test, SIGNAL(connectedStateChanged(bool)), ui->actionFemtecTesterEnabled, SLOT(setChecked(bool)));
+	connect(m_test, SIGNAL(connectedStateChanged(bool)), ui->actionFemtoTesterEnabled, SLOT(setChecked(bool)));
 	connect(m_test, SIGNAL(statusMessage(QString,int)), statusBar(), SLOT(showMessage(QString, int)));
 	connect(m_fs, SIGNAL(statusMessage(QString,int)), statusBar(), SLOT(showMessage(QString,int)));
 /// @todo fix logging from Tester
@@ -267,8 +272,6 @@ void MainWindow::loadSettings()
 		cb->setChecked(settings.value(cb->objectName(), true).toBool());
 	}
 	settings.endArray();
-	
-	ui->actionFemtecTesterEnabled->setChecked(settings.value("FemtecTesterEnabled", false).toBool());
 }
 
 QList<QCheckBox*> MainWindow::getLogFilter()
@@ -310,8 +313,6 @@ void MainWindow::closeEvent(QCloseEvent * /*event*/)
 		settings.setValue(cb->objectName(), cb->isChecked());
 	}
 	settings.endArray();
-	
-	settings.setValue("FemtecTesterEnabled", ui->actionFemtecTesterEnabled->isChecked());
 }
 
 void MainWindow::on_actionSettings_triggered()
