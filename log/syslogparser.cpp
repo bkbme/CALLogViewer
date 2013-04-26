@@ -372,6 +372,7 @@ void SysLogParser::analyzeMessage(const LogMessage &msg)
 				emit dmsSensorReset();
 				return;
 			}
+			break;
 		case LogMessage::Error:
 			if (msg.message().contains("(ERR_"))
 			{
