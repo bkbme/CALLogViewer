@@ -1,46 +1,39 @@
 #include "dockinglimitmessage.h"
 
-const quint16 DOCKING_RANGE_MIN = 0;
-const quint16 DOCKING_RANGE_MAX = 1023;
-
-DockingLimitMessage::DockingLimitMessage(quint8 seq, uint lowerLimit, uint upperLimit) :
+DockingLimitMessage::DockingLimitMessage(quint8 seq, int lowerLimit, int upperLimit) :
 	AbstractMessage(seq)
 {
-	if (lowerLimit >= DOCKING_RANGE_MIN && lowerLimit <= DOCKING_RANGE_MAX &&
-		upperLimit >= DOCKING_RANGE_MIN && upperLimit <= DOCKING_RANGE_MAX)
-	{
-		m_data.append(static_cast<quint8>((lowerLimit & 0xFF00) >> 8));
-		m_data.append(static_cast<quint8>(lowerLimit & 0x00FF));
-		m_data.append(static_cast<quint8>((upperLimit & 0xFF00) >> 8));
-		m_data.append(static_cast<quint8>(upperLimit & 0x00FF));
-	}
+	qint16 lower = static_cast<qint16>(lowerLimit * 10);
+	qint16 upper = static_cast<qint16>(upperLimit * 10);
+	m_data.append(static_cast<quint8>((lower & 0xFF00) >> 8));
+	m_data.append(static_cast<quint8>(lower & 0x00FF));
+	m_data.append(static_cast<quint8>((upper & 0xFF00) >> 8));
+	m_data.append(static_cast<quint8>(upper & 0x00FF));
 }
 
 
 bool DockingLimitMessage::isValid() const
 {
-	quint16 upper = upperLimit();
-	quint16 lower = lowerLimit();
-
-	return (upper <= DOCKING_RANGE_MAX && upper >= DOCKING_RANGE_MIN &&
-			lower <= DOCKING_RANGE_MAX && lower >= DOCKING_RANGE_MIN);
+	return (m_data.size() == 4);
 }
 
-uint DockingLimitMessage::lowerLimit() const
+int DockingLimitMessage::lowerLimit() const
 {
 	if (m_data.size() == 4)
 	{
-		return (static_cast<quint8>(m_data.at(0) << 8) | static_cast<quint8>(m_data.at(1)));
+		int limit = (static_cast<quint8>(m_data.at(0) << 8) | static_cast<quint8>(m_data.at(1))) * 10;
+		return limit;
 	}
 
 	return 0;
 }
 
-uint DockingLimitMessage::upperLimit() const
+int DockingLimitMessage::upperLimit() const
 {
 	if (m_data.size() == 4)
 	{
-		return (static_cast<quint8>(m_data.at(2) << 8) | static_cast<quint8>(m_data.at(3)));
+		int limit = (static_cast<quint8>(m_data.at(2) << 8) | static_cast<quint8>(m_data.at(3))) * 10;
+		return limit;
 	}
 
 	return 0;

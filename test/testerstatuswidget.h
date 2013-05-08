@@ -16,8 +16,7 @@ public:
 
 public slots:
 	void setFootswitchState(ProcedureFootswitch::FootswitchState state);
-	void setZForce(quint16 force);
-	void setReferenceVoltage(qreal voltage);
+	void setZForce(qreal force);
 
 	//void setDockingStatusEnabled(bool enabled);
 
@@ -26,7 +25,6 @@ private:
 	AutoDock *m_dock;
 	QLabel *m_lFS;
 	QLabel *m_lForce;
-	QLabel *m_lVoltage;
 };
 
 #endif // TESTERSTATUSWIDGET_H

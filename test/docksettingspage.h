@@ -27,8 +27,7 @@ public:
 	void saveSettings();
 
 public slots:
-	void setZForce(quint16 force);
-	void setReferenceVoltage(qreal voltage);
+	void setZForce(qreal force);
 
 private slots:
 	void on_pbBottom_clicked();

@@ -2,6 +2,7 @@
 #define FEMTOTESTER_H
 
 #include <procedurefootswitch.h>
+#include <dockingstatemessage.h>
 #include <qextserialport.h>
 
 #include <QByteArray>
@@ -27,8 +28,9 @@ public:
 	bool dockAvailable() const { return m_dockAvailable; }
 
 public slots:
+	void tare();
+	void setDockingLimit(int lowerLimit, int upperLimit);
 	void setFootswitchState(ProcedureFootswitch::FootswitchState state);
-	void setDockingLimit(uint lowerLimit, uint upperLimit);
 	void setServo(int value);
 	void setPort(const QString &portName);
 	void setEnabled(bool enabled);
@@ -41,14 +43,16 @@ protected:
 	void handleAck(AckMessage *msg);
 	void handleError(ErrorMessage *msg);
 	void handleVersion(VersionMessage *msg);
-	void handleDockingForce(DockingForceMessage* msg);
+	void handleDockingForce(DockingForceMessage *msg);
+	void handleDockingState(DockingStateMessage *msg);
 	void onSendMessageSuccess(AbstractMessage *msg);
 
 signals:
 	void connectedStateChanged(bool connected);
 	void statusMessage(const QString &msg, int timeout = 0);
 	void footswitchState(ProcedureFootswitch::FootswitchState state);
-	void dockingForceChanged(quint16 dms, quint16 ref);
+	void dockingForceChanged(qreal zForce, bool isSteady);
+	void dockingStateChanged(DockingStateMessage::DockingState state);
 
 private slots:
 	void timeout();

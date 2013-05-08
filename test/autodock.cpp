@@ -15,11 +15,12 @@ AutoDock::AutoDock(SysLogParser *parser, FemtoTester *tester, QObject *parent) :
 	m_dockingMode(ManualDocking),
 	m_servoSpeedUp(40),
 	m_servoSpeedDown(-40),
-	m_dms(0),
-	m_ref(0)
+	m_zForce(0),
+	m_forceIsSteady(false)
 {
 	loadSettings();
-	connect(tester, SIGNAL(dockingForceChanged(quint16,quint16)), this, SLOT(setDockingForce(quint16,quint16)));
+	connect(tester, SIGNAL(dockingForceChanged(qreal,bool)), this, SLOT(setDockingForce(qreal,bool)));
+	connect(tester, SIGNAL(dockingStateChanged(DockingStateMessage::DockingState)), this, SLOT(onDockingStateChange(DockingStateMessage::DockingState)));
 	connect(m_parser, SIGNAL(dockingModeSelected(AutoDock::DockingMode)), this, SLOT(setDockingMode(AutoDock::DockingMode)));
 	//connect(m_parser, SIGNAL(treatmentFinished()), this, SLOT(undock()));
 	connect(m_parser, SIGNAL(suctionRingVacuumDisabled()), this, SLOT(undock()));
@@ -32,12 +33,12 @@ void AutoDock::loadSettings()
 {
 	QSettings settings;
 	settings.beginGroup("AutoDock");
-	m_softDockingLimits.lower = static_cast<quint16>(settings.value("lowerSoftDockingLimit", 150).toUInt());
-	m_softDockingLimits.upper = static_cast<quint16>(settings.value("upperSoftDockingLimit", 300).toUInt());
-	m_zeroDockingLimits.lower = static_cast<quint16>(settings.value("lowerZeroDockingLimit", 700).toUInt());
-	m_zeroDockingLimits.upper = static_cast<quint16>(settings.value("upperZeroDockingLimit", 800).toUInt());
-	m_regularDockingLimits.lower = static_cast<quint16>(settings.value("lowerRegularDockingLimit", 0).toUInt());
-	m_regularDockingLimits.upper = static_cast<quint16>(settings.value("upperRegularDockingLimit", 120).toUInt());
+	m_softDockingLimits.lower = settings.value("lowerSoftDockingLimit", 35).toInt();
+	m_softDockingLimits.upper = settings.value("upperSoftDockingLimit", 60).toInt();
+	m_zeroDockingLimits.lower = settings.value("lowerZeroDockingLimit", -100).toInt();
+	m_zeroDockingLimits.upper = settings.value("upperZeroDockingLimit", 10).toInt();
+	m_regularDockingLimits.lower = settings.value("lowerRegularDockingLimit", 300).toInt();
+	m_regularDockingLimits.upper = settings.value("upperRegularDockingLimit", 380).toInt();
 	m_servoSpeedUp = settings.value("servoSpeedUp", 25).toInt();
 	m_servoSpeedDown = settings.value("servoSpeedDown", -25).toInt();
 	m_autoDock = settings.value("autoDockEnabled", false).toBool();
@@ -79,12 +80,17 @@ void AutoDock::stop()
 
 void AutoDock::undock()
 {
-	if (!m_autoUndock && sender() == m_parser)
+	if (sender() == m_parser && !m_autoUndock)
 	{
 		return;
 	}
 
 	setDockingMode(ZeroDocking);
+}
+
+void AutoDock::tare()
+{
+	m_tester->tare();
 }
 
 void AutoDock::setDockingLimits(DockingMode mode, DockingLimits limits)
@@ -151,27 +157,27 @@ void AutoDock::setDockingMode(AutoDock::DockingMode mode)
 	}
 }
 
+/*
 qreal AutoDock::referenceVoltage() const
 {
-	return (3 * 2.56 * static_cast<qreal>(m_ref)) / 1024;
+	return (3 * 2.56 * static_cast<qreal>(m_forceIsSteady)) / 1024;
 }
+*/
 
-quint16 AutoDock::zForce() const
+void AutoDock::setDockingForce(qreal zForce, bool isSteady)
 {
-	return m_dms;
-}
-
-void AutoDock::setDockingForce(quint16 dms, quint16 ref)
-{
-	if (dms != m_dms)
+	if (zForce != m_zForce || isSteady != m_forceIsSteady)
 	{
-		m_dms = dms;
-		emit zForceChanged(m_dms);
+		m_zForce = zForce;
+		m_forceIsSteady = isSteady;
+		emit zForceChanged(m_zForce);
 	}
+}
 
-	if (ref != m_ref)
+void AutoDock::onDockingStateChange(DockingStateMessage::DockingState state)
+{
+	if (state == DockingStateMessage::DockedBottom)
 	{
-		m_ref = ref;
-		emit referenceVoltageChanged(referenceVoltage());
+		tare();
 	}
 }

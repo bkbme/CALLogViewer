@@ -9,6 +9,8 @@
 #include <footswitchmessage.h>
 #include <dockinglimitmessage.h>
 #include <dockingforcemessage.h>
+#include <dockingtaremessage.h>
+#include <dockingstatemessage.h>
 #include <config.h>
 
 #include <QDebug>
@@ -64,7 +66,16 @@ void FemtoTester::setFootswitchState(ProcedureFootswitch::FootswitchState state)
 	}
 }
 
-void FemtoTester::setDockingLimit(uint lowerLimit, uint upperLimit)
+void FemtoTester::tare()
+{
+	if (m_testerConnected)
+	{
+		qDebug() << "FemtoTester: tare()";
+		sendMessage(new DockingTareMessage(++m_seqCount));
+	}
+}
+
+void FemtoTester::setDockingLimit(int lowerLimit, int upperLimit)
 {
 	if (m_testerConnected)
 	{
@@ -248,6 +259,9 @@ void FemtoTester::readMessages()
 			case MessageParser::IdDockingForceMessage:
 				handleDockingForce(dynamic_cast<DockingForceMessage*>(msg));
 				break;
+			case MessageParser::IdDockingStateMessage:
+				handleDockingState(dynamic_cast<DockingStateMessage*>(msg));
+				break;
 			default:
 				qDebug() << "FemtoTester: received unknown message (identifier: " << msg->identifier() << ")";
 		}
@@ -350,9 +364,22 @@ void FemtoTester::handleDockingForce(DockingForceMessage* msg)
 	}
 
 	m_dockAvailable = true;
-	emit dockingForceChanged(msg->dms(), msg->ref());
+	emit dockingForceChanged(msg->zForce(), msg->isSteady());
 
-	qDebug() << "FemtoTester: Docking force: vDMS=" << msg->dms() << "vREF=" << msg->ref();
+//	qDebug() << "FemtoTester: Docking force: vDMS=" << msg->dms() << "vREF=" << msg->ref();
+}
+
+void FemtoTester::handleDockingState(DockingStateMessage *msg)
+{
+	if (!msg || !msg->isValid())
+	{
+		qDebug() << "FemtoTester: invalid DockingStateMessage passed to handleDockingState()";
+		sendMessage(new ErrorMessage(++m_seqCount, ErrorMessage::ErrorParser));
+		return;
+	}
+
+	qDebug() << "Docking State: " << msg->state();
+	emit dockingStateChanged(msg->state());
 }
 
 void FemtoTester::timeout()

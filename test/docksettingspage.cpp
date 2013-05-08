@@ -18,8 +18,7 @@ DockSettingsPage::DockSettingsPage(AutoDock *dock, QWidget *parent) :
 
 	if (m_dock)
 	{
-		connect(m_dock, SIGNAL(zForceChanged(quint16)), this, SLOT(setZForce(quint16)));
-		connect(m_dock, SIGNAL(referenceVoltageChanged(qreal)), this, SLOT(setReferenceVoltage(qreal)));
+		connect(m_dock, SIGNAL(zForceChanged(qreal)), this, SLOT(setZForce(qreal)));
 		connect(ui->pbUp, SIGNAL(pressed()), m_dock, SLOT(moveUp()));
 		connect(ui->pbDown, SIGNAL(pressed()), m_dock, SLOT(moveDown()));
 		connect(ui->pbUp, SIGNAL(released()), m_dock, SLOT(stop()));
@@ -65,12 +64,12 @@ void DockSettingsPage::apply()
 
 void DockSettingsPage::reset()
 {
-	ui->sbLowerZero->setValue(0);
-	ui->sbUpperZero->setValue(130);
-	ui->sbLowerSoft->setValue(150);
-	ui->sbUpperSoft->setValue(300);
-	ui->sbLowerRegular->setValue(600);
-	ui->sbUpperRegular->setValue(700);
+	ui->sbLowerZero->setValue(-100);
+	ui->sbUpperZero->setValue(10);
+	ui->sbLowerSoft->setValue(35);
+	ui->sbUpperSoft->setValue(60);
+	ui->sbLowerRegular->setValue(300);
+	ui->sbUpperRegular->setValue(380);
 	ui->rbRegularDocking->setChecked(true);
 }
 
@@ -117,9 +116,9 @@ void DockSettingsPage::saveSettings()
 		return;
 	}
 
-	m_zeroLimits = AutoDock::DockingLimits(static_cast<quint16>(ui->sbUpperZero->value()), 0);
-	m_softLimits = AutoDock::DockingLimits(static_cast<quint16>(ui->sbUpperSoft->value()), static_cast<quint16>(ui->sbLowerSoft->value()));
-	m_regularLimits = AutoDock::DockingLimits(static_cast<quint16>(ui->sbUpperRegular->value()), static_cast<quint16>(ui->sbLowerRegular->value()));
+	m_zeroLimits = AutoDock::DockingLimits(ui->sbUpperZero->value(), ui->sbLowerZero->value());
+	m_softLimits = AutoDock::DockingLimits(ui->sbUpperSoft->value(), ui->sbLowerSoft->value());
+	m_regularLimits = AutoDock::DockingLimits(ui->sbUpperRegular->value(), ui->sbLowerRegular->value());
 	
 	if (ui->rbRegularDocking->isChecked())
 	{
@@ -138,14 +137,9 @@ void DockSettingsPage::saveSettings()
 	m_dock->saveSettings();
 }
 
-void DockSettingsPage::setZForce(quint16 force)
+void DockSettingsPage::setZForce(qreal force)
 {
-	ui->lDMS->setText(QString::number(force));
-}
-
-void DockSettingsPage::setReferenceVoltage(qreal voltage)
-{
-	ui->lRef->setText(QString("%1V").arg(QString::number(voltage, 'f', 2)));
+	ui->lDMS->setText(QString::number(force, 'f', 1).append(m_dock->forceIsSteady() ? 'g' : ' '));
 }
 
 void DockSettingsPage::on_pbBottom_clicked()
@@ -160,7 +154,7 @@ void DockSettingsPage::on_pbUndock_clicked()
 {
 	if (m_dock)
 	{
-		m_dock->setDockingLimits(AutoDock::ZeroDocking, AutoDock::DockingLimits(static_cast<quint16>(ui->sbUpperZero->value()), 0));
+		m_dock->setDockingLimits(AutoDock::ZeroDocking, AutoDock::DockingLimits(ui->sbUpperZero->value(), ui->sbLowerZero->value()));
 		m_dock->setDockingMode(AutoDock::ZeroDocking);
 	}
 }
@@ -174,13 +168,13 @@ void DockSettingsPage::on_pbDock_clicked()
 
 	if (ui->rbRegularDocking->isChecked())
 	{
-		AutoDock::DockingLimits limits(static_cast<quint16>(ui->sbUpperRegular->value()), static_cast<quint16>(ui->sbLowerRegular->value()));
+		AutoDock::DockingLimits limits(ui->sbUpperRegular->value(), ui->sbLowerRegular->value());
 		m_dock->setDockingLimits(AutoDock::RegularDocking, limits);
 		m_dock->setDockingMode(AutoDock::RegularDocking);
 	}
 	if (ui->rbSoftDocking->isChecked())
 	{
-		AutoDock::DockingLimits limits(static_cast<quint16>(ui->sbUpperSoft->value()), static_cast<quint16>(ui->sbLowerSoft->value()));
+		AutoDock::DockingLimits limits(ui->sbUpperSoft->value(), ui->sbLowerSoft->value());
 		m_dock->setDockingLimits(AutoDock::SoftDocking, limits);
 		m_dock->setDockingMode(AutoDock::SoftDocking);
 	}
@@ -193,8 +187,8 @@ void DockSettingsPage::on_pbGrabRegular_clicked()
 		return;
 	}
 
-	quint16 force = m_dock->zForce();
-	int lower = qMax(0, (force - 50));
+	int force = static_cast<int>(m_dock->zForce());
+	int lower = qMax(0, force - 50);
 	int upper = qMin(900, force + 50);
 	ui->sbLowerRegular->setValue(lower);
 	ui->sbUpperRegular->setValue(upper);
@@ -207,8 +201,8 @@ void DockSettingsPage::on_pbGrabSoft_clicked()
 		return;
 	}
 
-	quint16 force = m_dock->zForce();
-	int lower = qMax(0, (force - 50));
+	int force = static_cast<int>(m_dock->zForce());
+	int lower = qMax(0, force - 50);
 	int upper = qMin(900, force + 75);
 	ui->sbLowerSoft->setValue(lower);
 	ui->sbUpperSoft->setValue(upper);
@@ -221,7 +215,12 @@ void DockSettingsPage::on_pbTare_clicked()
 		return;
 	}
 
-	int upper = qMin(400, m_dock->zForce() + 10); // lower limit is fixed to 0
+/*	int force = static_cast<int>(m_dock->zForce());
+	int lower = qMax(-100, force - 50);
+	int upper = qMin(400, force + 10);
+	ui->sbLowerZero->setValue(lower);
 	ui->sbUpperZero->setValue(upper);
+*/
+	m_dock->tare();
 }
 

@@ -5,6 +5,7 @@
 #include <versionmessage.h>
 #include <footswitchmessage.h>
 #include <dockingforcemessage.h>
+#include <dockingstatemessage.h>
 
 #include <QDebug>
 #include <QByteArray>
@@ -44,6 +45,8 @@ AbstractMessage* MessageParser::nextMessage()
 				return new VersionMessage(msgData);
 			case IdDockingForceMessage:
 				return new DockingForceMessage(msgData);
+			case IdDockingStateMessage:
+				return new DockingStateMessage(msgData);
 			default:
 				qDebug() << "Failed to parse message (identifier: " << identifier << ")";
 				break;

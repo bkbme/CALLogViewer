@@ -7,7 +7,7 @@ const QString APPLICATION_NAME = "CALLogView";
 const QString ORGANIZATION_NAME = "TPV-ARGES";
 
 const int VERSION_MAJOR = 1;
-const int VERSION_MINOR = 1;
+const int VERSION_MINOR = 2;
 const bool DEVELOPER_BUILD = true;
 
 #ifdef Q_WS_WIN
@@ -17,7 +17,7 @@ const QString GZIP_EXEC = "gzip.exe";
 const QString TAR_EXEC = "/bin/tar";
 #endif
 
-const QString FEMTO_TEST_VERSION = "13040501"; /// @todo define version for FemtoTest protocol
+const QString FEMTO_TEST_VERSION = "130508";
 
 namespace CAL
 {

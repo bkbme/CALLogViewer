@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+#include <dockingstatemessage.h>
+
 class SysLogParser;
 class FemtoTester;
 
@@ -12,9 +14,9 @@ class AutoDock : public QObject
 public:
 	struct DockingLimits
 	{
-		DockingLimits(quint16 up, quint16 low) : upper(up), lower(low) {}
-		quint16 upper;
-		quint16 lower;
+		DockingLimits(int up, int low) : upper(up), lower(low) {}
+		int upper;
+		int lower;
 	};
 
 	enum DockingMode
@@ -36,8 +38,8 @@ public:
 	bool autoDockingEnabled() const { return m_autoDock; }
 	bool autoUndockingEnabled() const { return m_autoUndock; }
 
-	qreal referenceVoltage() const;
-	quint16 zForce() const;
+	qreal zForce() const { return m_zForce; }
+	bool forceIsSteady() const { return m_forceIsSteady; }
 	
 	void loadSettings();
 	void saveSettings();
@@ -47,17 +49,20 @@ public slots:
 	void moveUp();
 	void stop();
 	void undock();
+	void tare();
 	void setDockingMode(AutoDock::DockingMode mode);
-	void setDockingForce(quint16 dms, quint16 ref);
+	void setDockingForce(qreal zForce, bool isSteady);
 	void setServoSpeedUp(int speed) { m_servoSpeedUp = speed; }
 	void setServoSpeedDown(int speed) { m_servoSpeedDown = speed; }
 	void setAutoDockingEnabled(bool enabled) { m_autoDock = enabled; }
 	void setAutoUndockingEnabled(bool enabled) { m_autoUndock = enabled; }
 
 signals:
-	void zForceChanged(quint16 force);
-	void referenceVoltageChanged(qreal voltage);
-	
+	void zForceChanged(qreal force);
+
+private slots:
+	void onDockingStateChange(DockingStateMessage::DockingState state);
+
 private:
 	SysLogParser *m_parser;
 	FemtoTester *m_tester;
@@ -67,8 +72,8 @@ private:
 	DockingMode m_dockingMode;
 	int m_servoSpeedUp;
 	int m_servoSpeedDown;
-	quint16 m_dms;
-	quint16 m_ref;
+	qreal m_zForce;
+	bool m_forceIsSteady;
 	bool m_autoDock;
 	bool m_autoUndock;
 };

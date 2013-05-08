@@ -27,14 +27,24 @@ bool ErrorMessage::isValid() const
 	return m_data.size() > 0;
 }
 
-quint8 ErrorMessage::errorCode() const
+ErrorMessage::ErrorCode ErrorMessage::errorCode() const
 {
 	if (m_data.size())
 	{
-		return static_cast<quint8>(m_data.at(0));
+		switch (m_data.at(0))
+		{
+			case ErrorDisconnect: return ErrorDisconnect;
+			case ErrorSequence: return ErrorSequence;
+			case ErrorVersion: return ErrorVersion;
+			case ErrorTimeout: return ErrorTimeout;
+			case ErrorUnhandled: return ErrorUnhandled;
+			case DockCommunicationError: return DockCommunicationError;
+			case DockTimeoutError: return DockTimeoutError;
+			default: return ErrorUnknown;
+		}
 	}
 
-	return 0;
+	return ErrorUnknown;
 }
 
 quint8 ErrorMessage::errorSeq() const

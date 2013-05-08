@@ -39,7 +39,7 @@
         <item row="2" column="1">
          <widget class="QSpinBox" name="sbUpperRegular">
           <property name="maximum">
-           <number>900</number>
+           <number>5000</number>
           </property>
           <property name="value">
            <number>700</number>
@@ -49,7 +49,7 @@
         <item row="1" column="2">
          <widget class="QSpinBox" name="sbLowerSoft">
           <property name="maximum">
-           <number>900</number>
+           <number>5000</number>
           </property>
           <property name="value">
            <number>150</number>
@@ -99,7 +99,7 @@
         <item row="2" column="2">
          <widget class="QSpinBox" name="sbUpperSoft">
           <property name="maximum">
-           <number>900</number>
+           <number>5000</number>
           </property>
           <property name="value">
            <number>300</number>
@@ -109,7 +109,7 @@
         <item row="1" column="1">
          <widget class="QSpinBox" name="sbLowerRegular">
           <property name="maximum">
-           <number>900</number>
+           <number>5000</number>
           </property>
           <property name="value">
            <number>600</number>
@@ -143,7 +143,10 @@
         <item row="1" column="3">
          <widget class="QSpinBox" name="sbLowerZero">
           <property name="enabled">
-           <bool>false</bool>
+           <bool>true</bool>
+          </property>
+          <property name="minimum">
+           <number>-100</number>
           </property>
           <property name="maximum">
            <number>100</number>
@@ -159,7 +162,7 @@
            <bool>true</bool>
           </property>
           <property name="maximum">
-           <number>400</number>
+           <number>500</number>
           </property>
           <property name="value">
            <number>100</number>
@@ -275,34 +278,7 @@
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
          <layout class="QGridLayout" name="gridLayout_2">
-          <item row="0" column="0">
-           <widget class="QLabel" name="lRefDesc">
-            <property name="text">
-             <string>Reference Voltage:</string>
-            </property>
-           </widget>
-          </item>
           <item row="0" column="1">
-           <widget class="QLabel" name="lRef">
-            <property name="text">
-             <string>0V</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="lDMSDesc">
-            <property name="font">
-             <font>
-              <weight>75</weight>
-              <bold>true</bold>
-             </font>
-            </property>
-            <property name="text">
-             <string>DMS (raw value):</string>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="1">
            <widget class="QLabel" name="lDMS">
             <property name="font">
              <font>
@@ -312,6 +288,19 @@
             </property>
             <property name="text">
              <string>0</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="lDMSDesc">
+            <property name="font">
+             <font>
+              <weight>75</weight>
+              <bold>true</bold>
+             </font>
+            </property>
+            <property name="text">
+             <string>DMS (raw value):</string>
             </property>
            </widget>
           </item>

@@ -20,9 +20,11 @@ public:
 		IdDockingLimitMessage = 0x08,
 		IdDockingForceMessage = 0x09,
 		IdServoCtrlMessage = 0x0A,
-		IdInvalidIdentifier = 0x0B // must remain at end for parsing!!!
+		IdDockingTareMessage = 0x0B,
+		IdDockingStateMessage = 0x0C,
+		IdInvalidIdentifier = 0xFF // must remain at end for parsing!!!
 	};
-			
+
 	explicit MessageParser(QByteArray *readBuffer);
 
 	AbstractMessage* nextMessage();
