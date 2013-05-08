@@ -231,6 +231,9 @@
              <property name="enabled">
               <bool>false</bool>
              </property>
+             <property name="toolTip">
+              <string>Undock</string>
+             </property>
              <property name="text">
               <string/>
              </property>
@@ -245,6 +248,9 @@
              <property name="enabled">
               <bool>false</bool>
              </property>
+             <property name="toolTip">
+              <string>Move Down</string>
+             </property>
              <property name="text">
               <string/>
              </property>
@@ -258,6 +264,9 @@
             <widget class="QPushButton" name="pbDockUp">
              <property name="enabled">
               <bool>false</bool>
+             </property>
+             <property name="toolTip">
+              <string>Move Up</string>
              </property>
              <property name="text">
               <string/>
