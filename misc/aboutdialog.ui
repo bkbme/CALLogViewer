@@ -19,7 +19,10 @@
      <item>
       <widget class="QLabel" name="lAppIcon">
        <property name="text">
-        <string>&lt;App_Icon&gt;</string>
+        <string/>
+       </property>
+       <property name="pixmap">
+        <pixmap resource="../icons.qrc">:/icons/app.png</pixmap>
        </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
@@ -90,7 +93,9 @@
    </item>
   </layout>
  </widget>
- <resources/>
+ <resources>
+  <include location="../icons.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>pbOk</sender>

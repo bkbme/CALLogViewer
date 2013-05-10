@@ -28,6 +28,7 @@
         <file alias="dock_tare.png">icons/Pyconic-Free/PNG/162.png</file>
         <file alias="dock_dock.png">icons/Pyconic-Free/PNG/193.png</file>
         <file alias="dock_undock.png">icons/Pyconic-Free/PNG/355.png</file>
-        <file alias="dock.png">icons/Pyconic-Free/PNG/192.png</file>
+        <file alias="app.png">icons/CALLogView.png</file>
+        <file alias="dock.png">icons/dock_warning.png</file>
     </qresource>
 </RCC>
