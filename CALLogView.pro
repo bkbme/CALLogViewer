@@ -100,3 +100,8 @@ FORMS += \
 
 RESOURCES += \
 	icons.qrc
+
+RC_FILE = CALLogView.rc
+
+OTHER_FILES += \
+    CALLogView.rc
