@@ -30,5 +30,6 @@
         <file alias="dock_undock.png">icons/Pyconic-Free/PNG/355.png</file>
         <file alias="app.png">icons/CALLogView.png</file>
         <file alias="dock.png">icons/dock_warning.png</file>
+        <file alias="app_small.png">icons/CALLogView_small.png</file>
     </qresource>
 </RCC>

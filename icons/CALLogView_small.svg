@@ -1,0 +1,249 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="744.09448819"
+   height="1052.3622047"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.3.1 r9886"
+   sodipodi:docname="CALLogView_small.svg"
+   inkscape:export-filename="/home/mlohse/Documents/projects/bkbme-CALLogViewer/icons/CALLogView.ico.png"
+   inkscape:export-xdpi="91.907074"
+   inkscape:export-ydpi="91.907074">
+  <defs
+     id="defs4">
+    <linearGradient
+       id="linearGradient4091">
+      <stop
+         style="stop-color:#0075ff;stop-opacity:0;"
+         offset="0"
+         id="stop4093" />
+      <stop
+         style="stop-color:#0075ff;stop-opacity:1;"
+         offset="1"
+         id="stop4095" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient3998"
+       osb:paint="gradient">
+      <stop
+         style="stop-color:#000000;stop-opacity:1;"
+         offset="0"
+         id="stop4000" />
+      <stop
+         style="stop-color:#000000;stop-opacity:0;"
+         offset="1"
+         id="stop4002" />
+    </linearGradient>
+    <inkscape:path-effect
+       effect="skeletal"
+       id="path-effect3935"
+       is_visible="true"
+       pattern="M 0,5 C 0,2.24 2.24,0 5,0 7.76,0 10,2.24 10,5 10,7.76 7.76,10 5,10 2.24,10 0,7.76 0,5 z"
+       copytype="single_stretched"
+       prop_scale="1"
+       scale_y_rel="false"
+       spacing="0"
+       normal_offset="0"
+       tang_offset="0"
+       prop_units="false"
+       vertical_pattern="false"
+       fuse_tolerance="0" />
+    <inkscape:perspective
+       sodipodi:type="inkscape:persp3d"
+       inkscape:vp_x="42 : 707.18109 : 1"
+       inkscape:vp_y="0 : 1000 : 0"
+       inkscape:vp_z="744.09448 : 526.18109 : 1"
+       inkscape:persp3d-origin="372.04724 : 350.78739 : 1"
+       id="perspective2985" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4091"
+       id="linearGradient4097"
+       x1="154.59103"
+       y1="147.86218"
+       x2="194.40897"
+       y2="147.86218"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="matrix(-0.04625683,-0.98913984,1.0131426,0.04625683,32.766327,313.62746)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4091"
+       id="linearGradient5607"
+       x1="183.5"
+       y1="146.61218"
+       x2="207.5"
+       y2="162.61218"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0,-2)" />
+    <linearGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient4091"
+       id="linearGradient5615"
+       x1="170.66667"
+       y1="122.94552"
+       x2="181.16667"
+       y2="132.77885"
+       gradientUnits="userSpaceOnUse"
+       gradientTransform="translate(0,-2)" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="4"
+     inkscape:cx="190.12184"
+     inkscape:cy="830.07925"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:object-paths="true"
+     inkscape:snap-nodes="false"
+     inkscape:window-width="1920"
+     inkscape:window-height="1025"
+     inkscape:window-x="1917"
+     inkscape:window-y="-3"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <text
+       xml:space="preserve"
+       style="font-size:61.23112488px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#1a1a1a;fill-opacity:1;stroke:none;font-family:Ubuntu Mono;-inkscape-font-specification:Ubuntu Mono Bold"
+       x="92.585289"
+       y="169.69212"
+       id="text3948"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/mlohse/CALLogView.png"
+       inkscape:export-xdpi="91.907074"
+       inkscape:export-ydpi="91.907074"
+       transform="scale(1.04522,0.95673636)"><tspan
+         sodipodi:role="line"
+         id="tspan3950"
+         x="92.585289"
+         y="169.69212">C</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:61.3186264px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#1a1a1a;fill-opacity:1;stroke:none;font-family:Ubuntu Mono;-inkscape-font-specification:Ubuntu Mono Bold"
+       x="95.258492"
+       y="209.90652"
+       id="text3952"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/mlohse/CALLogView.png"
+       inkscape:export-xdpi="91.907074"
+       inkscape:export-ydpi="91.907074"
+       transform="scale(1.0437285,0.95810356)"><tspan
+         sodipodi:role="line"
+         id="tspan3954"
+         x="95.258492"
+         y="209.90652">A</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:62.10658646px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#1a1a1a;fill-opacity:1;stroke:none;font-family:Ubuntu Mono;-inkscape-font-specification:Ubuntu Mono Bold"
+       x="88.884628"
+       y="256.83505"
+       id="text3956"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/mlohse/CALLogView.png"
+       inkscape:export-xdpi="91.907074"
+       inkscape:export-ydpi="91.907074"
+       transform="scale(1.0718781,0.9329419)"><tspan
+         sodipodi:role="line"
+         id="tspan3958"
+         x="88.884628"
+         y="256.83505">L</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-size:60.16123962px;font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;text-align:start;line-height:125%;letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;text-anchor:start;fill:#4d4d4d;fill-opacity:1;stroke:none;font-family:TlwgMono;-inkscape-font-specification:TlwgMono"
+       x="114.82523"
+       y="265.49359"
+       id="text3972"
+       sodipodi:linespacing="125%"
+       inkscape:export-filename="/home/mlohse/CALLogView.png"
+       inkscape:export-xdpi="91.907074"
+       inkscape:export-ydpi="91.907074"
+       transform="scale(1.155238,0.86562251)"><tspan
+         sodipodi:role="line"
+         id="tspan3974"
+         x="114.82523"
+         y="265.49359"
+         style="font-size:60.16123962px;font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:Ubuntu Mono;-inkscape-font-specification:Ubuntu Mono Bold">og</tspan></text>
+    <path
+       sodipodi:type="arc"
+       style="fill:#ff7500;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path3020"
+       sodipodi:cx="181.125"
+       sodipodi:cy="156.73718"
+       sodipodi:rx="30.875"
+       sodipodi:ry="30.375"
+       d="M 198.69135,181.71672 A 30.875,30.375 0 0 1 162.96096,132.17485"
+       transform="matrix(1.2256371,0.0908376,-0.08973753,1.2406622,-36.214467,-47.112507)"
+       sodipodi:start="0.96556693"
+       sodipodi:end="4.0834231"
+       sodipodi:open="true" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#005fff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path3020-7"
+       sodipodi:cx="181.125"
+       sodipodi:cy="156.73718"
+       sodipodi:rx="30.875"
+       sodipodi:ry="30.375"
+       d="m 163.67023,131.68205 a 30.875,30.375 0 0 1 35.40753,49.76735 L 181.125,156.73718 z"
+       transform="matrix(1.2256371,0.0908376,-0.08973753,1.2406622,-37.104307,-46.521588)"
+       sodipodi:start="4.1115475"
+       sodipodi:end="7.2334524" />
+    <path
+       sodipodi:type="arc"
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       id="path3848"
+       sodipodi:cx="179.33333"
+       sodipodi:cy="161.02885"
+       sodipodi:rx="20.833334"
+       sodipodi:ry="21.142231"
+       d="m 168.04334,143.26028 a 20.833334,21.142231 0 1 1 22.11005,35.83574"
+       sodipodi:start="4.1396695"
+       sodipodi:end="7.3078761"
+       transform="matrix(1.3224801,0,0,1.3838952,-61.9591,-50.373132)"
+       sodipodi:open="true" />
+    <path
+       sodipodi:open="true"
+       transform="matrix(-1.3224801,0,0,-1.3838952,403.2426,379.44099)"
+       sodipodi:end="7.3078761"
+       sodipodi:start="4.1396695"
+       d="m 168.04334,143.26028 a 20.833334,21.142231 0 1 1 22.11005,35.83574"
+       sodipodi:ry="21.142231"
+       sodipodi:rx="20.833334"
+       sodipodi:cy="161.02885"
+       sodipodi:cx="179.33333"
+       id="path3870"
+       style="fill:#ffffff;fill-opacity:1;fill-rule:nonzero;stroke:#000000;stroke-width:0;stroke-linecap:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       sodipodi:type="arc" />
+  </g>
+</svg>
