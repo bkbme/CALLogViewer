@@ -1,0 +1,185 @@
+FemtoTester Protocol (DRAFT)
+
+date: 	2013-05-08
+author: 	Markus Lohse <m.lohse@technolaspv.com>
+Version: "13050801" (as used as version_str in VersionMessage)
+
+
+AbstractMessage:
++-------+------------+------+--------+-------------------------------+----------+
+| Byte  | 0          | 1    | 2      | [3 .. (n -1)]                 | n        |
++-------+------------+------+--------+-------------------------------+----------+
+| Value | identifier | size | seq_no | data (msg specific structure) | checksum |
++-------+------------+------+--------+-------------------------------+----------+
+
+uint8_t identifier	-> message identifier
+uint8_t size			-> for entire message: identifier + size + seq_no + data + checksum)
+uint8_t seq_no		-> can be freely chosen by sender
+uint8_t data[]		-> message specific structure up to 16 bytes (optional)
+uint8_t checksum		-> = 0xFF - (identifier + size + seq_no + data)
+
+
+AckMessage:
++-------+------+------+---------+--------------+----------+
+| Byte  | 0    | 1    | 2       | 3            | 4        |
++-------+------+------+---------+--------------+----------+
+| Value | 0x01 | 0x05 | seq. no | seq_no_recvd | checksum |
++-------+------+------+---------+--------------+----------+
+
+uint8_t seq_no_recvd -> sequence number of the message being acknowledged
+
+
+ErrorMessage:
++-------+------+--------+---------+------------+--------------+----------+
+| Byte  | 0    | 1      | 2       | 3          | [4]          | 4/5      |
++-------+------+--------+---------+------------+--------------+----------+
+| Value | 0x02 | 0x05/6 | seq. no | error_code | seq_no_recvd | checksum |
++-------+------+--------+---------+------------+--------------+----------+
+
+uint8_t error_code	-> to be defined
+uint8_t seq_no_recvd	-> sequence number of the message causing the error (optional)
+
+May be sent by both TestTool and GUI any time. Terminates any active connection.
+
+
+InitMessage:
++-------+------+------+---------+----------+
+| Byte  | 0    | 1    | 2       | 3        |
++-------+------+------+---------+----------+
+| Value | 0x03 | 0x04 | seq. no | checksum |
++-------+------+------+---------+----------+
+
+Sent by the GUI to initiate a new connection.
+Response: AckMsg, VersionMsg
+
+
+VersionMessage:
++-------+------+------+---------+-------------+----------+
+| Byte  | 0    | 1    | 2       | 3 .. 10     | 11       |
++-------+------+------+---------+-------------+----------+
+| Value | 0x04 | 0x0C | seq. no | version_str | checksum |
++-------+------+------+---------+-------------+----------+
+
+char version_str[8] -> format: "yymmddxx" (year, month, day, build number), see header of this document for current protocol version
+
+This message is sent by the Test-Tool. It is up to the GUI application to decide whether
+it supports the given protocol version or not.
+
+
+FootSwitchMessage:
++-------+------+------+---------+-----------------+----------+
+| Byte  | 0    | 1    | 2       | 3               | 4        |
++-------+------+------+---------+-----------------+----------+
+| Value | 0x05 | 0x05 | seq. no | FootSwitchState | checksum |
++-------+------+------+---------+-----------------+----------+
+
+enum FootSwitchState
+{
+	PedalIntermediate = 0x00;
+	PedalDown = 0x01;
+	PedalUp = 0x02;
+	PedalError = 0x03
+}
+
+
+InterlockOpenMessage:
++-------+------+------+---------+--------+----------+
+| Byte  | 0    | 1    | 2       | 3      | 4        |
++-------+------+------+---------+--------+----------+
+| Value | 0x06 | 0x05 | seq. no | states | checksum |
++-------+------+------+---------+--------+----------+
+
+enum InterlockState
+{
+	Ok = 0x00,
+	ZZTst = 0x01,
+	Scanner = 0x02,
+	EnMon = 0x04,
+	Safety = 0x08,
+	Ext = 0x10
+};
+
+To be used as Flag, e.g.: QDECLARE_FLAGS(states, InterlockState)
+Not yet implemented!
+
+
+InterlockResetMessage:
++-------+------+------+---------+----------+
+| Byte  | 0    | 1    | 2       | 3        |
++-------+------+------+---------+----------+
+| Value | 0x07 | 0x04 | seq. no | checksum |
++-------+------+------+---------+----------+
+
+Not yet implemented!
+
+
+DockingLimitMessage:
++------+------+------+------+-------------+-------------+----------+
+| Byte | 0    | 1    | 2    | 3, 4        | 5, 6        | 7        |
++------+------+------+------+-------------+-------------+----------+
+| Data | 0x08 | 0x08 | seq. | lower_limit | upper_limit | checksum |
++------+------+------+------+-------------+-------------+----------+
+ 
+int16_t lower_limit	-> min docking force
+int16_t upper_limit	-> max docking force
+
+Limits are send in fixed point format: force in g * 10
+example: 51,6g -> 516
+Range: -100 - 5000
+ 
+ 
+DockingForceMessage:
++------+------+------+------+--------+--------+----------+
+| Byte | 0    | 1    | 2    | 3, 4   | 5      | 6        |
++------+------+------+------+--------+--------+----------+
+| Data | 0x09 | 0x07 | seq. | zForce | steady | checksum |
++------+------+------+------+--------+--------+----------+
+ 
+int16_t zForce (can be negative)
+bool   steady
+
+Note: zForce is in fixed point format: force in g * 10
+This message is sent from the TestTool every 500ms (if a dock table is connected)
+ 
+ 
+ServoCtrlMessage:
++------+------+------+------+----------+----------+
+| Byte | 0    | 1    | 2    | 4        | 5        |
++------+------+------+------+----------+----------+
+| Data | 0x0A | 0x06 | seq. | position | checksum |
++------+------+------+------+----------+----------+
+ 
+uint8_t position
+Provides low level control over the docks servo motor (for manual docking).
+Bottom/Top/MaxForce shutoff levels are still honored, so there's no risk to cause any damage by using this function.
+
+
+DockingTareMessage:
++-------+------+------+---------+----------+
+| Byte  | 0    | 1    | 2       | 3        |
++-------+------+------+---------+----------+
+| Value | 0x0B | 0x04 | seq. no | checksum |
++-------+------+------+---------+----------+
+
+Set the dock's force sensor zero.
+
+
+DockingStateMessage:
++-------+------+------+---------+--------------+----------+
+| Byte  | 0    | 1    | 2       | 3            | 4        |
++-------+------+------+---------+--------------+----------+
+| Value | 0x0C | 0x05 | seq. no | DockingState | checksum |
++-------+------+------+---------+--------------+----------+
+
+enum DockingState
+{
+	DockedManually = 0x00,
+	DockedBottom = 0x01,
+	DockedTop = 0x02,
+	DockedLimit = 0x03,
+	DockMovingUp = 0x04,
+	DockMovingDown = 0x05,
+	DockError = 0xFF
+}
+
+Sent from the TestTool whenever the DockingState changes
