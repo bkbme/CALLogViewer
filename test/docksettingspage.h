@@ -36,6 +36,9 @@ private slots:
 	void on_pbGrabRegular_clicked();
 	void on_pbGrabSoft_clicked();
 	void on_pbTare_clicked();
+	void on_cbSlot_currentIndexChanged(int index);
+	void on_sbSlotPos_valueChanged(int pos);
+	void on_sbSlotCount_valueChanged(int count);
 
 private:
 	Ui::DockSettingsPage *ui;

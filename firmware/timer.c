@@ -5,7 +5,6 @@
  *  Author: mlohse
  */ 
 
-//#include "dms.h"
 #include "dock.h"
 #include "timer.h"
 #include "config.h"
@@ -15,8 +14,10 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
+#define SERVO_COUNT 2
+
 volatile uint8_t servo_clk = 0;
-volatile uint8_t servo_pos;
+volatile uint8_t servo_pos[SERVO_COUNT];
 volatile uint16_t servo_stop_timer;
 
 void timer_init()
@@ -30,26 +31,38 @@ void timer_init()
 	TIMSK0 &= (uint8_t)~(1 << TOIE0); // TOIE0 = 0 (Timer0 overflow IRQ)
 	TIMSK0 |= (1 << OCIE0A);  // OCIE0 = 1 (Timer0 Compare IRQ)
 
-	servo_pos = DOCK_SERVO_STOP;
+	servo_pos[DOCK_SERVO_ZAXIS_ID] = INIT_SERVO_ZAXIS;//INIT_SERVO_ZAXIS;
+	servo_pos[DOCK_SERVO_XAXIS_ID] = INIT_SERVO_XAXIS;
 }
 
-void servo_set_position(uint8_t position)
+void servo_set_position(uint8_t id, uint8_t position)
 {
-		servo_pos = position;
-}
-
-void servo_set_position_timeout(uint8_t position, uint16_t timeout)
-{
-	if (timeout > 20) // minimum timer resolution 20ms
+	if (id == DOCK_SERVO_ZAXIS_ID || id == DOCK_SERVO_XAXIS_ID)
 	{
-		servo_stop_timer = timeout;
-		servo_pos = position;
+		for (uint8_t i = 0; i < SERVO_COUNT; ++i)
+		{
+			servo_pos[i] = ((i == id) ? position : DOCK_SERVO_POWER_OFF); // make sure only 1 servo moves at a time - USB is limited to 500mA!
+		}
 	}
 }
 
-uint8_t servo_get_position()
+void servo_set_position_timeout(uint8_t id, uint8_t position, uint16_t timeout)
 {
-	return servo_pos;
+	if (timeout > 20 && (id == DOCK_SERVO_ZAXIS_ID || id == DOCK_SERVO_XAXIS_ID)) // minimum timer resolution 20ms
+	{
+		servo_stop_timer = timeout;
+		servo_pos[id] = position;
+	}
+}
+
+uint8_t servo_get_position(uint8_t id)
+{
+	if (id == DOCK_SERVO_ZAXIS_ID || id == DOCK_SERVO_XAXIS_ID)
+	{
+		return servo_pos[id];
+	}
+
+	return 0;
 }
 
 /*************************************************************************
@@ -66,9 +79,13 @@ ISR (SIG_OUTPUT_COMPARE0A)
 	switch (OCR0A) // generate 50Hz pwm for servos
 	{
 		case TMG_SERVO_PWM: //                         1.77777 ms (interval: 0.00347ms)
-			if (servo_pos < servo_clk)
+			if (servo_pos[0] < servo_clk)
 			{
 				PORT_SERVO0 &= (uint8_t)~(1 << PIN_SERVO0);
+			}
+			if (servo_pos[1] < servo_clk)
+			{
+				PORT_SERVO1 &= (uint8_t)~(1 << PIN_SERVO1);
 			}
 			if (!++servo_clk)
 			{
@@ -84,15 +101,22 @@ ISR (SIG_OUTPUT_COMPARE0A)
 			if (++servo_clk > TMG_SERVO_STOP_MULT) // 20.0034 ms (~50 Hz)
 			{
 				OCR0A = TMG_SERVO_START;
-				if ((servo_pos < 110 || servo_pos > 120))
+//				if ((servo_pos < 110 || servo_pos > 120))
+//				{
+//					PORT_SERVO0 |= (1 << PIN_SERVO0);
+//				}
+				if (servo_pos[0] != DOCK_SERVO_POWER_OFF)
 				{
 					PORT_SERVO0 |= (1 << PIN_SERVO0);
+				}
+				if (servo_pos[1] != DOCK_SERVO_POWER_OFF)
+				{
+					PORT_SERVO1 |= (1 << PIN_SERVO1);
 				}
 
 				uptime += 20; // every 20ms
 				if (uptime % DOCK_UPDATE_INTERVAL == 0) // twice per sec...
 				{
-					//dms_update();
 					dock_update_force();
 				}
 				if (servo_stop_timer)
@@ -101,7 +125,8 @@ ISR (SIG_OUTPUT_COMPARE0A)
 					if (servo_stop_timer < 20)
 					{
 						servo_stop_timer = 0;
-						servo_pos = DOCK_SERVO_STOP;
+						servo_pos[DOCK_SERVO_ZAXIS_ID] = DOCK_SERVO_POWER_OFF;
+						servo_pos[DOCK_SERVO_XAXIS_ID] = DOCK_SERVO_POWER_OFF;
 					}
 				}
 			}

@@ -1,8 +1,8 @@
 FemtoTester Protocol (DRAFT)
 
-date: 	2013-05-08
+date: 	2013-06-21
 author: 	Markus Lohse <m.lohse@technolaspv.com>
-Version: "13050801" (as used as version_str in VersionMessage)
+Version: "13062101" (as used as version_str in VersionMessage)
 
 
 AbstractMessage:
@@ -143,12 +143,13 @@ This message is sent from the TestTool every 500ms (if a dock table is connected
  
  
 ServoCtrlMessage:
-+------+------+------+------+----------+----------+
-| Byte | 0    | 1    | 2    | 4        | 5        |
-+------+------+------+------+----------+----------+
-| Data | 0x0A | 0x06 | seq. | position | checksum |
-+------+------+------+------+----------+----------+
- 
++------+------+------+------+---------+----------+----------+
+| Byte | 0    | 1    | 2    | 4       | 5        | 6        |
++------+------+------+------+---------+----------+----------+
+| Data | 0x0A | 0x06 | seq. | servoid | position | checksum |
++------+------+------+------+---------+----------+----------+
+
+uint8_t servoid (must be 0 or 1)
 uint8_t position
 Provides low level control over the docks servo motor (for manual docking).
 Bottom/Top/MaxForce shutoff levels are still honored, so there's no risk to cause any damage by using this function.

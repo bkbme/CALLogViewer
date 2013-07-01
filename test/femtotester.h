@@ -31,7 +31,8 @@ public slots:
 	void tare();
 	void setDockingLimit(int lowerLimit, int upperLimit);
 	void setFootswitchState(ProcedureFootswitch::FootswitchState state);
-	void setServo(int value);
+	void stopServo(int id);
+	void setServo(int id, int value);
 	void setPort(const QString &portName);
 	void setEnabled(bool enabled);
 

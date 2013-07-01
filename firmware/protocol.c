@@ -24,11 +24,12 @@ uint8_t sequence = 0;
 void send_error(ErrorCode code, uint8_t seq)
 {
 	// flush read buffer?
-	uint8_t size = seq ? 0x06 : 0x05;
+	uint8_t size = (seq ? 0x06 : 0x05);
 	uint8_t checksum = IdErrorMessage + size + sequence + code;
 	state = StateDisconnected;
 	led_off(5);
-	servo_set_position(DOCK_SERVO_STOP);
+	servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_POWER_OFF);
+	servo_set_position(DOCK_SERVO_XAXIS_ID, DOCK_SERVO_POWER_OFF);
 	cli();
 	uart0_write(IdErrorMessage);
 	uart0_write(size);
@@ -126,7 +127,8 @@ void handle_error()
 {
 	state = StateDisconnected;
 	led_off(5);
-	servo_set_position(DOCK_SERVO_STOP);
+	servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_POWER_OFF);
+	servo_set_position(DOCK_SERVO_XAXIS_ID, DOCK_SERVO_POWER_OFF);
 	cli();
 	uart0_flush();
 	sei();
@@ -178,7 +180,13 @@ void handle_docking_limit()
 		send_error(ErrorDisconnect, message.sequence);
 		return;
 	}
-	
+
+	if (message.data_size != 4)
+	{
+		send_error(ErrorParser, message.sequence);
+		return;
+	}
+
 	int16_t lowerLimit = ((message.data[0] << 8) | message.data[1]);
 	int16_t upperLimit = ((message.data[2] << 8) | message.data[3]);
 
@@ -194,8 +202,19 @@ void handle_servo_ctrl()
 		return;
 	}
 
-	dock_set_docktype(ManualDocking);
-	servo_set_position(message.data[0]);
+	if (message.data_size != 2)
+	{
+		send_error(ErrorParser, message.sequence);
+		return;
+	}
+
+	uint8_t id = message.data[0];
+	if (id == DOCK_SERVO_ZAXIS_ID)
+	{
+		dock_set_docktype(ManualDocking);
+	}
+
+	servo_set_position(id, message.data[1]);
 	send_ack(message.sequence);
 }
 

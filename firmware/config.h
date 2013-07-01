@@ -13,21 +13,23 @@
  * IO Ports                        *
  ***********************************/
 #define IO_DDRA					0xF0 // PortA [4..7] LED output, PortA [0..3] sensor input
-#define IO_DDRB					0x80 // PortB input, except PB7 (output for ext. interlock)
+#define IO_DDRB					0x80 // PortB input, except PB7 (output for ext. interlock / Servo 1)
 #define IO_DDRC					0xC3 // PortC 6,7 LED output 0,1 Servo out
 #define IO_DDRD					0x30 // PortD 4,5 output for footswitch
 
 // servo
 #define PORT_SERVO0				PORTC
 #define PIN_SERVO0				1
-//#define PORT_SERVO1				PORTC
-//#define OUT_SERVO1				0
+#define PORT_SERVO1				PORTB
+#define PIN_SERVO1				7
 
-// dms
-#define ADC_VOLTAGE_DMS			(1 << MUX0) // ADC1
+// sensors
+#define ADC_VOLTAGE_FSR			(1 << MUX0) // ADC1
 #define ADC_VOLTAGE_REF			0			// ADC0
-#define PIN_PHOTO_SENSOR_BOT	2
-#define PIN_PHOTO_SENSOR_TOP	3
+#define PORT_PHOTO_SENSOR_BOT	PINA
+#define PORT_PHOTO_SENSOR_TOP	PINA
+#define PIN_PHOTO_SENSOR_BOT		2
+#define PIN_PHOTO_SENSOR_TOP		3
 
 // footswitch
 #define PORT_FOOTSWITCH			PORTD
@@ -59,6 +61,8 @@
 #define INIT_FOOTSWITCH_STATE	0x02
 #define INIT_LOWER_DOCKING		0
 #define INIT_UPPER_DOCKING		1023
+#define INIT_SERVO_ZAXIS			0	//116 // DOCK_SERVO_STOP
+#define INIT_SERVO_XAXIS			0
 
 
 /***********************************
@@ -73,7 +77,7 @@
 /***********************************
  * UART Settings                   *
  ***********************************/
-#define PROTOCOL_VERSION			"13050801" // <- 2013-05-06 Build 01 (must be 8 Byte!)
+#define PROTOCOL_VERSION			"13062101" // <- 2013-06-21 Build 01 (must be 8 Byte!)
 #define BUFFER_SIZE_TX0			24         // in bytes (must be between 1 and 255)
 #define BUFFER_SIZE_TX1			1
 #define BUFFER_SIZE_RX0			32
@@ -94,7 +98,13 @@
 #define DOCK_SERVO_UP_SLOW		100
 #define DOCK_SERVO_DOWN_SLOW		122
 #define DOCK_SERVO_STOP			116
-#define DOCK_FORCE_TIMEOUT		1500 // 1.5 sec
+#define DOCK_SERVO_POWER_OFF		0	 // setting this position will power down the servo (no pwm signal)
+#define DOCK_FORCE_TIMEOUT		2500 // 2.5 sec
+#define DOCK_FORCE_SLOWDOWN_TRH  2000 // 200g - slow down when getting close to docking limit
+#define DOCK_FORCE_DELTA_TRH_INC 10   //	positive threshold for stopping servo (incresing docking force)
+#define DOCK_FORCE_DELTA_TRH_DEC -5   // negative threshold for stopping servo (decresing docking force)
 #define DOCK_UPDATE_INTERVAL		500  // 500ms
+#define DOCK_SERVO_ZAXIS_ID		0
+#define DOCK_SERVO_XAXIS_ID		1
 
 #endif /* CONFIG_H_ */

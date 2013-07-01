@@ -17,7 +17,10 @@ const QString GZIP_EXEC = "gzip.exe";
 const QString TAR_EXEC = "/bin/tar";
 #endif
 
-const QString FEMTO_TEST_VERSION = "130508";
+const QString FEMTO_TEST_VERSION = "130621"; //"130508";
+
+const int SERVO_ZAXIS_ID = 0;
+const int SERVO_XAXIS_ID = 1;
 
 namespace CAL
 {

@@ -93,6 +93,8 @@ void DockSettingsPage::loadSettings()
 	ui->sbUpperRegular->setValue(m_regularLimits.upper);
 	ui->cbAutoDock->setChecked(m_dock->autoDockingEnabled());
 	ui->cbAutoUndock->setChecked(m_dock->autoUndockingEnabled());
+	ui->cbAutoSlotSelect->setChecked(m_dock->autoSlotSelectEnabled());
+	ui->sbSlotCount->setValue(m_dock->dockingSlotCount());
 
 	switch (m_dockingMode)
 	{
@@ -134,12 +136,13 @@ void DockSettingsPage::saveSettings()
 	m_dock->setDockingLimits(AutoDock::RegularDocking, m_regularLimits);
 	m_dock->setAutoDockingEnabled(ui->cbAutoDock->isChecked());
 	m_dock->setAutoUndockingEnabled(ui->cbAutoUndock->isChecked());
+	m_dock->setAutoSlotSelectEnabled(ui->cbAutoSlotSelect->isChecked());
 	m_dock->saveSettings();
 }
 
 void DockSettingsPage::setZForce(qreal force)
 {
-	ui->lDMS->setText(QString::number(force, 'f', 1).append(m_dock->forceIsSteady() ? 'g' : ' '));
+	ui->lZForce->setText(QString::number(force, 'f', 1).append(m_dock->forceIsSteady() ? 'g' : ' '));
 }
 
 void DockSettingsPage::on_pbBottom_clicked()
@@ -224,3 +227,37 @@ void DockSettingsPage::on_pbTare_clicked()
 	m_dock->tare();
 }
 
+
+void DockSettingsPage::on_cbSlot_currentIndexChanged(int index)
+{
+	if (index >= 0)
+	{
+		m_dock->setDockingSlot(index);
+		ui->sbSlotPos->setValue(m_dock->dockingSlotPosition(index));
+	}
+}
+
+void DockSettingsPage::on_sbSlotPos_valueChanged(int pos)
+{
+	m_dock->setDockingSlotPosition(ui->cbSlot->currentIndex(), pos);
+}
+
+void DockSettingsPage::on_sbSlotCount_valueChanged(int count)
+{
+	if (count > ui->cbSlot->count())
+	{
+		while (count != ui->cbSlot->count())
+		{
+			ui->cbSlot->addItem(QString("Slot %1").arg(ui->cbSlot->count()));
+		}
+	}
+	if (count < ui->cbSlot->count())
+	{
+		while (count != ui->cbSlot->count())
+		{
+			ui->cbSlot->removeItem(ui->cbSlot->count() - 1);
+		}
+	}
+
+	m_dock->setDockingSlotCount(count);
+}

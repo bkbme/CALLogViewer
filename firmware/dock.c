@@ -153,43 +153,43 @@ void dock_parse_forcedata()
 void dock_check_limits()
 {
 	// check end positions...
-	const uint8_t servo = servo_get_position();
-	if (servo < DOCK_SERVO_STOP) // moving up
+	const uint8_t servo = servo_get_position(DOCK_SERVO_ZAXIS_ID);
+	if (servo != DOCK_SERVO_POWER_OFF && servo < DOCK_SERVO_STOP) // moving up
 	{
 		set_docking_state(DockMovingUp);
-		if (!(PINA & (1 << PIN_PHOTO_SENSOR_TOP)))
+		if (!(PORT_PHOTO_SENSOR_TOP & (1 << PIN_PHOTO_SENSOR_TOP)))
 		{
-			servo_set_position(DOCK_SERVO_STOP);
+			servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_POWER_OFF);
 			dock_type = ManualDocking;
 			set_docking_state(DockedTop);
 		}
 		if (dock_force > DOCK_RANGE_MAX) // safety shutoff when max. docking pressure is reached
 		{
-			servo_set_position(DOCK_SERVO_STOP);
+			servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_POWER_OFF);
 			set_docking_state(DockedLimit);
 			//dock_type = ManualDocking;
 		}
 		if ((dock_force_timestamp + DOCK_FORCE_TIMEOUT) < uptime) // docking force update timeout
 		{
-			servo_set_position(DOCK_SERVO_STOP);
+			servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_POWER_OFF);
 			dock_type = ManualDocking;
 			set_docking_state(DockError);
 			send_error(DockTimeoutError, 0);
 		}
 	}
 
-	if (servo > DOCK_SERVO_STOP) // moving down
+	if (servo != DOCK_SERVO_POWER_OFF && servo > DOCK_SERVO_STOP) // moving down
 	{
 		set_docking_state(DockMovingDown);
-		if (PINA & (1 << PIN_PHOTO_SENSOR_BOT))
+		if (PORT_PHOTO_SENSOR_BOT & (1 << PIN_PHOTO_SENSOR_BOT))
 		{
-			servo_set_position(DOCK_SERVO_STOP);
+			servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_POWER_OFF);
 			dock_type = ManualDocking;
 			set_docking_state(DockedBottom);
 		}
 	}
 
-	if (servo == DOCK_SERVO_STOP && dock_type == ManualDocking && (dock_state == DockMovingUp || dock_state == DockMovingDown))
+	if (servo == DOCK_SERVO_POWER_OFF && dock_type == ManualDocking && (dock_state == DockMovingUp || dock_state == DockMovingDown))
 	{
 		set_docking_state(DockedManually);
 	}
@@ -198,30 +198,31 @@ void dock_check_limits()
 	{
 		if (dock_force > upper_docking_limit && lower_docking_limit < 0) // undock, must be fast - overshooting is ok
 		{
-			servo_set_position(DOCK_SERVO_DOWN);
+			servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_DOWN);
 			set_docking_state(DockMovingDown);
 			return;
 		}
 
-		if (dock_force > upper_docking_limit) // very slowly lower docking force, wait for next zForce update...
+		if (dock_force > upper_docking_limit) // very slowly decrease docking force, wait for next zForce update if close to docking limit...
 		{
-			if (dock_force_delta > -5 || dock_force_steady)
+			if (dock_force_delta > DOCK_FORCE_DELTA_TRH_DEC || dock_force_steady)
 			{
-				dock_wait_update = 1;
-				servo_set_position_timeout(DOCK_SERVO_DOWN_SLOW, 60);
+				dock_wait_update = ((upper_docking_limit - dock_force) > DOCK_FORCE_SLOWDOWN_TRH) ? 0 : 1;
+				servo_set_position_timeout(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_DOWN_SLOW, 60);
 				set_docking_state(DockMovingDown);
 			}
 			return;
 		}
 
-		if (dock_force < lower_docking_limit && dock_force_delta < 10) // increase docking pressure...
+		if (dock_force < lower_docking_limit && dock_force_delta < DOCK_FORCE_DELTA_TRH_INC) // increase docking pressure...
 		{
-			servo_set_position((dock_force_delta > 0) ? DOCK_SERVO_UP_SLOW : DOCK_SERVO_UP);
+			uint8_t speed = (dock_force_delta > 0 || (lower_docking_limit - dock_force) < DOCK_FORCE_SLOWDOWN_TRH) ? DOCK_SERVO_UP_SLOW : DOCK_SERVO_UP;
+			servo_set_position(DOCK_SERVO_ZAXIS_ID, speed);
 			set_docking_state(DockMovingUp);
 			return;
 		}
 
-		servo_set_position(DOCK_SERVO_STOP);
+		servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_POWER_OFF);
 		set_docking_state(DockedLimit);
 	}
 }

@@ -84,12 +84,21 @@ void FemtoTester::setDockingLimit(int lowerLimit, int upperLimit)
 	}
 }
 
-void FemtoTester::setServo(int value)
+void FemtoTester::stopServo(int id)
 {
 	if (m_testerConnected)
 	{
-		qDebug() << "FemtoTester: setServo(" << value << ")";
-		sendMessage(new ServoCtrlMessage(++m_seqCount, value));
+		qDebug() << "FemtoTester: stopServo(" << id << ")";
+		sendMessage(new ServoCtrlMessage(++m_seqCount, id));
+	}
+}
+
+void FemtoTester::setServo(int id, int value)
+{
+	if (m_testerConnected)
+	{
+		qDebug() << "FemtoTester: setServo(" << id << ", " << value << ")";
+		sendMessage(new ServoCtrlMessage(++m_seqCount, id, value));
 	}
 }
 
@@ -158,6 +167,7 @@ void FemtoTester::setEnabled(bool enabled)
 		return;
 	}
 
+	emit connectedStateChanged(false); // update ui-elements in main-window
 	emit statusMessage(QString("FemtoTester: failed to open serial port '%1': %2").arg(m_serialPort->portName(), m_serialPort->errorString()));
 }
 
