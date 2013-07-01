@@ -41,7 +41,7 @@ public:
 signals:
 	void procedureFootswitchStateChanged(FootswitchState state);
 	void statusMessage(const QString &msg, int timeout = 0);
-	void logMessage(const LogMessage& msg);
+	void logMessage(const QString &message);
 
 public slots:
 	void onProcShutterOpen();
@@ -69,8 +69,7 @@ private:
 	void setFSState(FootswitchState state);
 	int randomTimerInterval(const TimingLimits &limit) const;
 	void showCountdown(const QString& msgFormat, int length, int interval = 1000);
-	
-	SysLogParser* m_logParser;
+
 	FemtoTester* m_tester;
 	FootswitchState m_currentProcedureFSState;
 	FootswitchState m_targetProcedureFSState;

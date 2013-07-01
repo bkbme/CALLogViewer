@@ -88,8 +88,6 @@ MainWindow::MainWindow(QWidget *parent) :
 	connect(m_test, SIGNAL(connectedStateChanged(bool)), ui->actionFemtoTesterEnabled, SLOT(setChecked(bool)));
 	connect(m_test, SIGNAL(statusMessage(QString,int)), statusBar(), SLOT(showMessage(QString, int)));
 	connect(m_fs, SIGNAL(statusMessage(QString,int)), statusBar(), SLOT(showMessage(QString,int)));
-/// @todo fix logging from Tester
-//	connect(m_test, SIGNAL(logMessage(LogMessage)), ui->wvLogView, SLOT(newLogMessage(LogMessage)));
 
 	CALSessionModel *sessionModel = new CALSessionModel(m_logParser, this);
 	ui->tvSessionView->setModel(sessionModel);

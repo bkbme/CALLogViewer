@@ -205,6 +205,14 @@ void SysLogParser::closeLog()
 	m_log = 0;
 }
 
+void SysLogParser::injectLogMessage(const QString &message)
+{
+	if (m_log && m_log->isOpen())
+	{
+		emit newLogMessage(LogMessage(LogMessage::Info, LogMessage::Other, QDateTime::currentDateTimeUtc(), "CLV", message));
+	}
+}
+
 void SysLogParser::onReadyRead()
 {
 	while (m_log && !m_log->atEnd() && (!m_log->isSequential() || m_log->canReadLine()))

@@ -11,7 +11,6 @@
 
 ProcedureFootswitch::ProcedureFootswitch(SysLogParser *parser, FemtoTester *tester, QObject *parent) :
 	QObject(parent),
-	m_logParser(parser),
 	m_tester(tester),
 	m_currentProcedureFSState(FSPedalUp),
 	m_targetProcedureFSState(FSPedalUp),
@@ -32,13 +31,14 @@ ProcedureFootswitch::ProcedureFootswitch(SysLogParser *parser, FemtoTester *test
 
 	loadSettings();
 
-	connect(m_logParser, SIGNAL(treatmentStarted()), this, SLOT(pressProcedureFootswitchDelayed()));
-	connect(m_logParser, SIGNAL(treatmentFinished()), this, SLOT(releaseProcedureFootswitch()));
-	connect(m_logParser, SIGNAL(treatmentAborted()), this, SLOT(releaseProcedureFootswitch()));
-	connect(m_logParser, SIGNAL(calStopped(int)), this, SLOT(releaseProcedureFootswitch()));
-	connect(m_logParser, SIGNAL(executingTreatment()), this, SLOT(pauseTreatment()));
-	connect(m_logParser, SIGNAL(powerCheckStarted()), this, SLOT(pressProcedureFootswitch()));
-	connect(m_logParser, SIGNAL(powerCheckStopped()), this, SLOT(releaseProcedureFootswitch()));
+	connect(this, SIGNAL(logMessage(QString)), parser, SLOT(injectLogMessage(QString)));
+	connect(parser, SIGNAL(treatmentStarted()), this, SLOT(pressProcedureFootswitchDelayed()));
+	connect(parser, SIGNAL(treatmentFinished()), this, SLOT(releaseProcedureFootswitch()));
+	connect(parser, SIGNAL(treatmentAborted()), this, SLOT(releaseProcedureFootswitch()));
+	connect(parser, SIGNAL(calStopped(int)), this, SLOT(releaseProcedureFootswitch()));
+	connect(parser, SIGNAL(executingTreatment()), this, SLOT(pauseTreatment()));
+	connect(parser, SIGNAL(powerCheckStarted()), this, SLOT(pressProcedureFootswitch()));
+	connect(parser, SIGNAL(powerCheckStopped()), this, SLOT(releaseProcedureFootswitch()));
 	//connect(m_logParser, SIGNAL(procShutterOpened()), this, SLOT(onProcShutterOpen()));
 	connect(m_tester, SIGNAL(connectedStateChanged(bool)), this, SLOT(reset()));
 }
@@ -115,22 +115,16 @@ void ProcedureFootswitch::setFSState(FootswitchState state)
 	{
 		case FSPedalUp:
 			m_tester->setFootswitchState(FSPedalUp);
-			//qDebug() << "footswitch released";
-			emit logMessage(LogMessage(LogMessage::Info, LogMessage::Other, QDateTime::currentDateTimeUtc(), "CALLogView", "footswitch released"));
-			//emit statusMessage("footswitch released");
+			emit logMessage("footswitch released");
 			break;
 		case FSPedalDown:
 			m_tester->setFootswitchState(FSPedalDown);
-			//qDebug() << "footswitch pressed";
-			emit logMessage(LogMessage(LogMessage::Info, LogMessage::Other, QDateTime::currentDateTimeUtc(), "CALLogView", "footswitch pressed"));
-			//emit statusMessage("footswitch pressed");
+			emit logMessage("footswitch pressed");
 			break;
 		case FSIntermediate:
 			m_statusMessageTimer->stop();
 			m_tester->setFootswitchState(FSIntermediate);
-			//qDebug() << "footswitch in state 'Intermediate'";
-			emit logMessage(LogMessage(LogMessage::Info, LogMessage::Other, QDateTime::currentDateTimeUtc(), "CALLogView", "footswitch intermediate"));
-			//emit statusMessage("footswitch in state 'Intermediate'");
+			emit logMessage("footswitch in state 'Intermediate'");
 			break;
 		default:
 			//qDebug() << "footswitch in (invalid) state: " << state;
@@ -296,7 +290,7 @@ void ProcedureFootswitch::onProcShutterOpen()
 	
 	int timeout = randomTimerInterval(TimingLimits(2.5, 4));
 	showCountdown("aborting powercheck in %1 seconds...", timeout, 100);
-	emit logMessage(LogMessage(LogMessage::Info, LogMessage::Other, QDateTime::currentDateTimeUtc(), "CALLogView", QString("aborting PwrCheck in %1 msec...").arg(timeout)));
+	emit logMessage(QString("aborting PwrCheck in %1 msec...").arg(timeout));
 	QTimer::singleShot(timeout, this, SLOT(releaseProcedureFootswitch()));
 }
 

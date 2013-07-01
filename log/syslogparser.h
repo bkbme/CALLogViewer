@@ -46,6 +46,7 @@ signals:
 public slots:
 	void openLog(const QUrl &url);
 	void openLog(const QString &filename);
+	void injectLogMessage(const QString &message);
 	void closeLog();
 
 private slots:
