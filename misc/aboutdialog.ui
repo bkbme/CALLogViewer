@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>468</width>
-    <height>250</height>
+    <height>270</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -38,7 +38,7 @@
         </sizepolicy>
        </property>
        <property name="text">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;%1&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Version %2.%3 %4&lt;br/&gt;using Qt %5&lt;/p&gt;&lt;p&gt;Authors:&lt;br/&gt;Markus Lohse &amp;lt;&lt;a href=&quot;mailto://markus.lohse@bausch.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;markus.lohse@bausch.com&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;br/&gt;Bernhard Kiesbauer &amp;lt;&lt;a href=&quot;mailto://kiesbauer@arges.de&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;kiesbauer@arges.de&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;p&gt;This application contains artwork &amp;quot;&lt;span style=&quot; font-style:italic;&quot;&gt;Pyconic Icons FREE&amp;quot;&lt;/span&gt; by &lt;span style=&quot; font-weight:600;&quot;&gt;Pyconic &lt;/span&gt;released under the Creative Commons Attribution 3.0 Unported (CC BY 3.0) license.&lt;br/&gt;&lt;a href=&quot;http://www.pyconic.com/pyconic-icons-free/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;http://www.pyconic.com/pyconic-icons-free/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:14pt; font-weight:600;&quot;&gt;%1&lt;/span&gt;&lt;/p&gt;&lt;p&gt;Version %2.%3 %4&lt;br/&gt;using Qt %5&lt;/p&gt;&lt;p&gt;FemtoTester protocol version %6xx&lt;/p&gt;&lt;p&gt;Authors:&lt;br/&gt;Markus Lohse &amp;lt;&lt;a href=&quot;mailto://markus.lohse@bausch.com&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;markus.lohse@bausch.com&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;br/&gt;Bernhard Kiesbauer &amp;lt;&lt;a href=&quot;mailto://kiesbauer@arges.de&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;kiesbauer@arges.de&lt;/span&gt;&lt;/a&gt;&amp;gt;&lt;/p&gt;&lt;p&gt;This application contains artwork &amp;quot;&lt;span style=&quot; font-style:italic;&quot;&gt;Pyconic Icons FREE&amp;quot;&lt;/span&gt; by &lt;span style=&quot; font-weight:600;&quot;&gt;Pyconic &lt;/span&gt;released under the Creative Commons Attribution 3.0 Unported (CC BY 3.0) license.&lt;br/&gt;&lt;a href=&quot;http://www.pyconic.com/pyconic-icons-free/&quot;&gt;&lt;span style=&quot; text-decoration: underline; color:#0057ae;&quot;&gt;http://www.pyconic.com/pyconic-icons-free/&lt;/span&gt;&lt;/a&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
        </property>
        <property name="wordWrap">
         <bool>true</bool>
