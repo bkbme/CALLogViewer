@@ -26,6 +26,7 @@
 #include <QApplication>
 #include <QStringListModel>
 #include <QMetaObject>
+#include <stdlib.h>
 
 const int MAX_HISTORY_ASC = 10;
 
@@ -270,6 +271,13 @@ void MainWindow::loadSettings()
 		cb->setChecked(settings.value(cb->objectName(), true).toBool());
 	}
 	settings.endArray();
+    settings.beginGroup("FemtoTester");
+    if(settings.value("connected").toBool() && getenv("AUTOCONNECT_FEMTOTESTER") != NULL)
+    {
+        ui->cbTesterEnabled->setChecked(true);
+        ui->actionFemtoTesterEnabled->trigger();
+    }
+    settings.endGroup();
 }
 
 QList<QCheckBox*> MainWindow::getLogFilter()
@@ -311,6 +319,12 @@ void MainWindow::closeEvent(QCloseEvent * /*event*/)
 		settings.setValue(cb->objectName(), cb->isChecked());
 	}
 	settings.endArray();
+    settings.beginGroup("FemtoTester");
+    if(ui->cbTesterEnabled->isChecked())
+    {
+        settings.setValue("connected", QVariant(true));
+    }
+    settings.endGroup();
 }
 
 void MainWindow::on_actionSettings_triggered()
