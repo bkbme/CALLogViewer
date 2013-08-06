@@ -7,7 +7,7 @@ const QString APPLICATION_NAME = "CALLogView";
 const QString ORGANIZATION_NAME = "TPV-ARGES";
 
 const int VERSION_MAJOR = 1;
-const int VERSION_MINOR = 3;
+const int VERSION_MINOR = 4;
 const bool DEVELOPER_BUILD = true;
 
 #ifdef Q_WS_WIN
