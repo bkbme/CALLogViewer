@@ -32,7 +32,7 @@ void SysLogParser::openLog(const QUrl &url)
 	m_log = reply;
 
 	emit logOpened(true);
-	emit statusMessage(QString("Connected to %1").arg(url.host()), 5000);
+	emit statusMessage(QString("Establishing connection to %1").arg(url.host()), 3000);
 }
 
 void SysLogParser::openLog(const QString &filename)
