@@ -1,11 +1,11 @@
 #include "servoctrlmessage.h"
 
-const quint8 SERVO_POS_CENTER = 128;
+const quint8 SERVO_POS_CENTER = 127;
 
 ServoCtrlMessage::ServoCtrlMessage(quint8 seq, int id, int position) :
 	AbstractMessage(seq)
 {
-	quint8 pos = static_cast<quint8>(-position) + SERVO_POS_CENTER;
+	quint8 pos = static_cast<quint8>(position + SERVO_POS_CENTER);
 	m_data.append(static_cast<quint8>(id));
 	m_data.append(pos);
 }

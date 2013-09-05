@@ -232,6 +232,17 @@ void handle_docking_tare()
 
 void process_messages()
 {
+#ifdef UART0_DISCONNECT_ON_DTR
+	if ((PORT_UART0_DTR & (1 << PIN_UART0_DTR)))
+	{
+		if (state == StateConnected)
+		{
+			send_error(ErrorDisconnect, 0);
+		}
+		uart0_flush();
+		return;
+	}
+#endif
 	MessageParseResult res;
 	while ((res = message_parse()) == ParseOk)
 	{
