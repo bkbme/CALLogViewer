@@ -37,6 +37,12 @@ void timer_init()
 
 void servo_set_position(uint8_t id, uint8_t position)
 {
+#ifdef DOCK_SERVO_REVERSE_Z
+	if (position != DOCK_SERVO_POWER_OFF && id == DOCK_SERVO_ZAXIS_ID)
+	{
+		position = ~position;
+	}
+#endif
 	if (id == DOCK_SERVO_ZAXIS_ID || id == DOCK_SERVO_XAXIS_ID)
 	{
 		for (uint8_t i = 0; i < SERVO_COUNT; ++i)
@@ -48,6 +54,12 @@ void servo_set_position(uint8_t id, uint8_t position)
 
 void servo_set_position_timeout(uint8_t id, uint8_t position, uint16_t timeout)
 {
+#ifdef DOCK_SERVO_REVERSE_Z
+	if (position != DOCK_SERVO_POWER_OFF && id == DOCK_SERVO_ZAXIS_ID)
+	{
+		position = ~position;
+	}
+#endif
 	if (timeout > 20 && (id == DOCK_SERVO_ZAXIS_ID || id == DOCK_SERVO_XAXIS_ID)) // minimum timer resolution 20ms
 	{
 		servo_stop_timer = timeout;
@@ -59,7 +71,15 @@ uint8_t servo_get_position(uint8_t id)
 {
 	if (id == DOCK_SERVO_ZAXIS_ID || id == DOCK_SERVO_XAXIS_ID)
 	{
+#ifdef DOCK_SERVO_REVERSE_Z
+		if (servo_pos[id] == DOCK_SERVO_POWER_OFF)
+		{
+			return DOCK_SERVO_POWER_OFF;
+		}
+		return ~servo_pos[id];
+#else
 		return servo_pos[id];
+#endif
 	}
 
 	return 0;
@@ -101,10 +121,6 @@ ISR (SIG_OUTPUT_COMPARE0A)
 			if (++servo_clk > TMG_SERVO_STOP_MULT) // 20.0034 ms (~50 Hz)
 			{
 				OCR0A = TMG_SERVO_START;
-//				if ((servo_pos < 110 || servo_pos > 120))
-//				{
-//					PORT_SERVO0 |= (1 << PIN_SERVO0);
-//				}
 				if (servo_pos[0] != DOCK_SERVO_POWER_OFF)
 				{
 					PORT_SERVO0 |= (1 << PIN_SERVO0);

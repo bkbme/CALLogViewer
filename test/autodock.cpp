@@ -47,7 +47,7 @@ void AutoDock::loadSettings()
 	m_regularDockingLimits.lower = settings.value("lowerRegularDockingLimit", 300).toInt();
 	m_regularDockingLimits.upper = settings.value("upperRegularDockingLimit", 380).toInt();
 	m_servoSpeedUp = settings.value("servoSpeedUp", 70).toInt();
-	m_servoSpeedDown = settings.value("servoSpeedDown", -30).toInt();
+	m_servoSpeedDown = settings.value("servoSpeedDown", -70).toInt();
 	m_autoDock = settings.value("autoDockEnabled", false).toBool();
 	m_autoUndock = settings.value("autoUndockEnabled", false).toBool();
 	m_autoSlotSelect = settings.value("autoSlotSelect", false).toBool();
@@ -175,7 +175,6 @@ void AutoDock::setDockingMode(AutoDock::DockingMode mode)
 			m_tester->setDockingLimit(m_zeroDockingLimits.lower, m_zeroDockingLimits.upper);
 			break;
 		case ManualDocking:
-			//m_tester->setServo(SERVO_ZAXIS_ID, 0); // disables autodocking
 			m_tester->stopServo(SERVO_ZAXIS_ID);
 			break;
 		default:
@@ -183,13 +182,6 @@ void AutoDock::setDockingMode(AutoDock::DockingMode mode)
 			break;
 	}
 }
-
-/*
-qreal AutoDock::referenceVoltage() const
-{
-	return (3 * 2.56 * static_cast<qreal>(m_forceIsSteady)) / 1024;
-}
-*/
 
 void AutoDock::setDockingForce(qreal zForce, bool isSteady)
 {
@@ -250,7 +242,7 @@ void AutoDock::setDockingSlotCount(int count)
 	}
 	if (m_slots.count() > count)
 	{
-		m_slots.remove(m_slots.count(), m_slots.count() - count);
+		m_slots.remove(m_slots.count() - 1, m_slots.count() - count);
 		if (m_currentSlot > (count - 1))
 		{
 			setDockingSlot(count - 1);

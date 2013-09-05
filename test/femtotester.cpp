@@ -160,11 +160,19 @@ void FemtoTester::setEnabled(bool enabled)
 
 	if (m_serialPort->open(QIODevice::ReadWrite))
 	{
-		qDebug() << "FemtoTester: serial port opened: " << m_serialPort->portName();
-		emit statusMessage(QString("establishing connection with FemtoTester on serial port: %1").arg(m_serialPort->portName()));
-		sendMessage(new InitMessage(++m_seqCount));
-		m_sendTimer->start(SEND_TIMER_INTERVAL);
-		return;
+		/// @todo 2nd generation (rev. B) test tool reports 'ConnectedState' via DCD control line...
+		/// if (m_serialPort->lineStatus() & LS_DCD)
+		/// {
+			qDebug() << "FemtoTester: serial port opened: " << m_serialPort->portName();
+			emit statusMessage(QString("establishing connection with FemtoTester on serial port: %1").arg(m_serialPort->portName()));
+			sendMessage(new InitMessage(++m_seqCount));
+			m_sendTimer->start(SEND_TIMER_INTERVAL);
+			return;
+		/// }
+		/// qDebug() << "Test tool already in use!";
+		/// emit statusMessage("Test tool already in use!");
+		/// setEnabled(false);
+		/// return;
 	}
 
 	emit connectedStateChanged(false); // update ui-elements in main-window
@@ -375,8 +383,6 @@ void FemtoTester::handleDockingForce(DockingForceMessage* msg)
 
 	m_dockAvailable = true;
 	emit dockingForceChanged(msg->zForce(), msg->isSteady());
-
-//	qDebug() << "FemtoTester: Docking force: vDMS=" << msg->dms() << "vREF=" << msg->ref();
 }
 
 void FemtoTester::handleDockingState(DockingStateMessage *msg)
