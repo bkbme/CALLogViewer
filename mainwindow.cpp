@@ -271,13 +271,20 @@ void MainWindow::loadSettings()
 		cb->setChecked(settings.value(cb->objectName(), true).toBool());
 	}
 	settings.endArray();
-    settings.beginGroup("FemtoTester");
-    if(settings.value("connected").toBool() && getenv("AUTOCONNECT_FEMTOTESTER") != NULL)
-    {
-        ui->cbTesterEnabled->setChecked(true);
-        ui->actionFemtoTesterEnabled->trigger();
-    }
-    settings.endGroup();
+	settings.beginGroup("FemtoTester");
+	if(settings.value("connected").toBool() && getenv("AUTOCONNECT_FEMTOTESTER") != NULL)
+	{
+		ui->cbTesterEnabled->setChecked(true);
+		ui->actionFemtoTesterEnabled->trigger();
+	}
+	settings.endGroup();
+
+	if(!settings.value("showAutoDockUI", "false").toBool())
+	{
+		ui->pbUnDock->hide();
+		ui->pbDockUp->hide();
+		ui->pbDockDown->hide();
+	}
 }
 
 QList<QCheckBox*> MainWindow::getLogFilter()
@@ -329,10 +336,16 @@ void MainWindow::closeEvent(QCloseEvent * /*event*/)
 
 void MainWindow::on_actionSettings_triggered()
 {
+	QSettings settings;
 	SettingsDialog dialog(this);
+
 	dialog.addPage(new LogSettingsPage(this));
 	dialog.addPage(new TesterSettingsPage(m_test, m_fs));
-	dialog.addPage(new DockSettingsPage(m_dock));
+	if (settings.value("showAutoDockUI", "false").toBool())
+	{
+		dialog.addPage(new DockSettingsPage(m_dock));
+	}
+
 	dialog.exec();
 }
 

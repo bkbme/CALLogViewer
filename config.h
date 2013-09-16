@@ -8,7 +8,7 @@ const QString ORGANIZATION_NAME = "TPV-ARGES";
 
 const int VERSION_MAJOR = 1;
 const int VERSION_MINOR = 5;
-const bool DEVELOPER_BUILD = true;
+const bool DEVELOPER_BUILD = false;
 
 #ifdef Q_WS_WIN
 const QString TAR_EXEC = "tar.exe";
@@ -17,7 +17,7 @@ const QString GZIP_EXEC = "gzip.exe";
 const QString TAR_EXEC = "/bin/tar";
 #endif
 
-const QString FEMTO_TEST_VERSION = "130621"; //"130508";
+const QString FEMTO_TEST_VERSION = "130621";
 
 const int SERVO_ZAXIS_ID = 0;
 const int SERVO_XAXIS_ID = 1;
