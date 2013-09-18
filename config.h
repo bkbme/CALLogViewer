@@ -7,8 +7,8 @@ const QString APPLICATION_NAME = "CALLogView";
 const QString ORGANIZATION_NAME = "TPV-ARGES";
 
 const int VERSION_MAJOR = 1;
-const int VERSION_MINOR = 5;
-const bool DEVELOPER_BUILD = false;
+const int VERSION_MINOR = 6;
+const bool DEVELOPER_BUILD = true;
 
 #ifdef Q_WS_WIN
 const QString TAR_EXEC = "tar.exe";
