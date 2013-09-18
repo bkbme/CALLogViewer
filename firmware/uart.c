@@ -11,15 +11,19 @@
 #include "buffer.h"
 
 #ifdef UART0_ENABLE
-volatile RingBuffer buffer_tx0;
-volatile RingBuffer buffer_rx0;
+//volatile RingBuffer buffer_tx0;
+//volatile RingBuffer buffer_rx0;
+RingBuffer buffer_tx0;
+RingBuffer buffer_rx0;
 uint8_t buffer_data_tx0[BUFFER_SIZE_TX0];
 uint8_t buffer_data_rx0[BUFFER_SIZE_RX0];
 #endif
 
 #ifdef UART1_ENABLE
-volatile RingBuffer buffer_tx1;
-volatile RingBuffer buffer_rx1;
+//volatile RingBuffer buffer_tx1;
+//volatile RingBuffer buffer_rx1;
+RingBuffer buffer_tx1;
+RingBuffer buffer_rx1;
 uint8_t buffer_data_tx1[BUFFER_SIZE_TX1];
 uint8_t buffer_data_rx1[BUFFER_SIZE_RX1];
 #endif
@@ -70,17 +74,52 @@ ISR(USART0_RX_vect)
 	buffer_write(&buffer_rx0, UDR0);
 }
 
+void uart0_int_enable()
+{
+	UCSR0B |= (1 << TXCIE0) | (1<<RXCIE0); // enable receive/transmit complete interrupt
+}
+
+void uart0_int_disable()
+{
+	UCSR0B &= (uint8_t)~((1 << TXCIE0) | (1<<RXCIE0)); // disable receive/transmit complete interrupt
+}
+
 void uart0_flush()
 {
-	cli();
+	uart0_int_disable();
 	buffer_clear(&buffer_rx0);
 	buffer_clear(&buffer_tx0);
-	sei();
+	uart0_int_enable();
+}
+
+void uart0_write_buffer(uint8_t *data, uint8_t size)
+{
+	uint8_t i = 0;
+	if (buffer_count(&buffer_tx0) == 0 && (UCSR0A & (1 << UDRE0)))
+	{
+		if (size > 1)
+		{
+			UCSR0B &= (uint8_t)~((1 << TXCIE0)); // disable tx interrupt to have at least 1 byte in tx buffer before interrupt handler is called
+		}
+		UDR0 = data[i++]; // write buffer empty and no uart write in progress -> write out first byte directly
+	}
+
+	while (i < size)
+	{
+		while (buffer_is_full(&buffer_tx0))
+		{
+			UCSR0B |= (1 << TXCIE0); // write buffer full, enable tx irq to send out data and wait...
+		}
+		UCSR0B &= (uint8_t)~((1 << TXCIE0)); // disable transmit interrupt to protect tx buffer
+		buffer_write(&buffer_tx0, data[i]);
+		++i;
+	}
+	UCSR0B |= (1 << TXCIE0); // enable transmit interrupt
 }
 
 void uart0_write(uint8_t byte)
 {
-	if ((UCSR0A & (1 << UDRE0)) && buffer_count(&buffer_tx0) == 0)
+	if (buffer_count(&buffer_tx0) == 0 && (UCSR0A & (1 << UDRE0)))
 	{
 		UDR0 = byte; // write buffer empty and no uart write in progress -> write out directly
 		return;
@@ -88,17 +127,17 @@ void uart0_write(uint8_t byte)
 
 	while (buffer_is_full(&buffer_tx0)); // write buffer full - wait!
 
-	cli();
+	uart0_int_disable();
 	buffer_write(&buffer_tx0, byte);
-	sei();
+	uart0_int_enable();
 }
 
 uint8_t uart0_read()
 {
 	uint8_t byte;
-	cli();
+	uart0_int_disable();
 	byte = buffer_read(&buffer_rx0);
-	sei();
+	uart0_int_enable();
 	return byte;
 }
 
@@ -134,12 +173,22 @@ ISR(USART1_RX_vect)
 	buffer_write(&buffer_rx1, UDR1);
 }
 
+void uart1_int_enable()
+{
+	UCSR1B |= (1 << TXCIE1) | (1<<RXCIE1); // enable receive/transmit complete interrupt
+}
+
+void uart1_int_disable()
+{
+	UCSR1B &= (uint8_t)~((1 << TXCIE1) | (1<<RXCIE1)); // disable receive/transmit complete interrupt
+}
+
 void uart1_flush()
 {
-	cli();
+	uart1_int_disable();
 	buffer_clear(&buffer_rx1);
 	buffer_clear(&buffer_tx1);
-	sei();
+	uart1_int_enable();
 }
 
 void uart1_write(uint8_t byte)
@@ -152,17 +201,17 @@ void uart1_write(uint8_t byte)
 
 	while (buffer_is_full(&buffer_tx1)); // write buffer full - wait!
 
-	cli();
+	uart1_int_disable();
 	buffer_write(&buffer_tx1, byte);
-	sei();
+	uart1_int_enable();
 }
 
 uint8_t uart1_read()
 {
 	uint8_t byte;
-	cli();
+	uart1_int_disable();
 	byte = buffer_read(&buffer_rx1);
-	sei();
+	uart1_int_enable();
 	return byte;
 }
 

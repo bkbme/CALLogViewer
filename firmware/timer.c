@@ -113,8 +113,22 @@ ISR (SIG_OUTPUT_COMPARE0A)
 			}
 			break;
 		case TMG_SERVO_START: //                       0.4479 ms
-			OCR0A = TMG_SERVO_PWM;
+			OCR0A = TMG_SERVO_STOP;//TMG_SERVO_PWM;
+			//OCR0A = TMG_SERVO_PWM;
 			servo_clk = 0;
+			while(++servo_clk)
+			{
+				TCNT0 = 0;
+				if (servo_pos[0] < servo_clk)
+				{
+					PORT_SERVO0 &= (uint8_t)~(1 << PIN_SERVO0);
+				}
+				if (servo_pos[1] < servo_clk)
+				{
+					PORT_SERVO1 &= (uint8_t)~(1 << PIN_SERVO1);
+				}
+				while(TCNT0 < 2);
+			}
 			break;
 		case TMG_SERVO_STOP: // fall                  17.7777 ms
 		default: //                                  -------------------------------

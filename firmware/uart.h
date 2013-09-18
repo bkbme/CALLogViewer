@@ -19,6 +19,7 @@ uint8_t uart0_read();
 uint8_t uart0_bytes_available();
 uint8_t uart0_peek(uint8_t position);
 void uart0_write(uint8_t byte);
+void uart0_write_buffer(uint8_t *data, uint8_t size);
 #endif
 
 #ifdef UART1_ENABLE

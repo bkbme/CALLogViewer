@@ -173,13 +173,13 @@ void dock_check_limits()
 			set_docking_state(DockedLimit);
 			//dock_type = ManualDocking;
 		}
-/*		if ((dock_force_timestamp + DOCK_FORCE_TIMEOUT) < uptime) // docking force update timeout
+		if ((dock_force_timestamp + DOCK_FORCE_TIMEOUT) < uptime) // docking force update timeout
 		{
 			servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_POWER_OFF);
 			dock_type = ManualDocking;
 			set_docking_state(DockError);
 			send_error(DockTimeoutError, 0);
-		}*/
+		}
 	}
 
 	if (servo != DOCK_SERVO_POWER_OFF && servo < DOCK_SERVO_STOP) // moving down
@@ -220,7 +220,7 @@ void dock_check_limits()
 
 		if (dock_force < lower_docking_limit && dock_force_delta < DOCK_FORCE_DELTA_TRH_INC) // increase docking pressure...
 		{
-			uint8_t speed = (dock_force_delta > 0 || (lower_docking_limit - dock_force) < DOCK_FORCE_SLOWDOWN_TRH && dock_force > DOCK_FORCE_ZERO_TRH) ? DOCK_SERVO_UP_SLOW : DOCK_SERVO_UP;
+			uint8_t speed = (dock_force_delta > 0 || ((lower_docking_limit - dock_force) < DOCK_FORCE_SLOWDOWN_TRH && dock_force > DOCK_FORCE_ZERO_TRH)) ? DOCK_SERVO_UP_SLOW : DOCK_SERVO_UP;
 			servo_set_position(DOCK_SERVO_ZAXIS_ID, speed);
 			set_docking_state(DockMovingUp);
 			return;

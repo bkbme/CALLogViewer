@@ -23,79 +23,78 @@ uint8_t sequence = 0;
 
 void send_error(ErrorCode code, uint8_t seq)
 {
-	// flush read buffer?
-	uint8_t size = (seq ? 0x06 : 0x05);
-	uint8_t checksum = IdErrorMessage + size + sequence + code;
+	const uint8_t size = (seq ? 0x06 : 0x05);
+	uint8_t msg[size];
+
 	state = StateDisconnected;
 	led_off(5);
 	servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_POWER_OFF);
 	servo_set_position(DOCK_SERVO_XAXIS_ID, DOCK_SERVO_POWER_OFF);
-	cli();
-	uart0_write(IdErrorMessage);
-	uart0_write(size);
-	uart0_write(sequence++);
-	uart0_write(code);
 
+	msg[0] = IdErrorMessage;
+	msg[1] = size;
+	msg[2] = sequence++;
+	msg[3] = code;
 	if (seq)
 	{
-		uart0_write(seq);
-		checksum += seq;
+		msg[4] = seq;
+	}
+	msg[size - 1] = 0xFF; 
+
+	for (uint8_t i = 0; i < (size - 1); ++i) // calculate checksum
+	{
+		msg[size - 1] -= msg[i];
 	}
 
-	uart0_write(0xFF - checksum);
-	sei();
+	uart0_write_buffer(msg, size);
 }
 
 void send_docking_force(uint16_t force, uint8_t steady)
 {
 	const uint8_t size = 0x07;
-	uint8_t checksum = IdDockingForceMessage + size + sequence;
-	uint8_t temp;
+	uint8_t msg[size];
 
-	cli();
-	uart0_write(IdDockingForceMessage);
-	uart0_write(size);
-	uart0_write(sequence++);
+	msg[0] = IdDockingForceMessage;
+	msg[1] = size;
+	msg[2] = sequence++;
+	msg[3] = (uint8_t)(force >> 8);
+	msg[4] = (uint8_t)(force);
+	msg[5] = steady;
+	msg[6] = 0xFF;
 
-	temp = (uint8_t)(force >> 8);
-	checksum += temp;
-	uart0_write(temp);
-	temp = (uint8_t)(force);
-	checksum += temp;
-	uart0_write(temp);
+	for (uint8_t i = 0; i < (size - 1); ++i) // calc checksum
+	{
+		msg[6] -= msg[i];
+	}
 
-	checksum += steady;
-	uart0_write(steady);
-
-	uart0_write(0xFF - checksum);
-	sei();
+	uart0_write_buffer(msg, size);
 }
 
 void send_docking_state(uint8_t state)
 {
 	const uint8_t size = 0x05;
-	const uint8_t checksum = IdDockingStateMessage + size + sequence + state;
+	uint8_t msg[size];
 
-	cli();
-	uart0_write(IdDockingStateMessage);
-	uart0_write(size);
-	uart0_write(sequence++);
-	uart0_write(state);
-	uart0_write(0xFF - checksum);
-	sei();
+	msg[0] = IdDockingStateMessage;
+	msg[1] = size;
+	msg[2] = sequence++;
+	msg[3] = state;
+	msg[4] = 0xFF - (IdDockingStateMessage + size + sequence + state);
+
+	uart0_write_buffer(msg, size);
 }
 
 void send_ack(uint8_t seq)
 {
 	const uint8_t size = 0x05;
-	uint8_t checksum = IdAckMessage + size + sequence + seq;
-	cli();
-	uart0_write(IdAckMessage);
-	uart0_write(size);
-	uart0_write(sequence++);
-	uart0_write(seq);
-	uart0_write(0xFF - checksum);
-	sei();
+	uint8_t msg[size];
+	msg[0] = IdAckMessage;
+	msg[1] = size;
+	msg[2] = sequence++;
+	msg[3] = seq;
+	msg[4] = 0XFF - (IdAckMessage + size + sequence + seq);
+	
+	uart0_write_buffer(msg, size);
 }
 
 void send_version()
@@ -129,9 +128,7 @@ void handle_error()
 	led_off(5);
 	servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_POWER_OFF);
 	servo_set_position(DOCK_SERVO_XAXIS_ID, DOCK_SERVO_POWER_OFF);
-	cli();
 	uart0_flush();
-	sei();
 }
 
 void handle_init()
