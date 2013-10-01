@@ -79,7 +79,7 @@ void send_docking_state(uint8_t state)
 	msg[1] = size;
 	msg[2] = sequence++;
 	msg[3] = state;
-	msg[4] = 0xFF - (IdDockingStateMessage + size + sequence + state);
+	msg[4] = 0xFF - (IdDockingStateMessage + size + msg[2] + state);
 
 	uart0_write_buffer(msg, size);
 }
@@ -92,7 +92,7 @@ void send_ack(uint8_t seq)
 	msg[1] = size;
 	msg[2] = sequence++;
 	msg[3] = seq;
-	msg[4] = 0XFF - (IdAckMessage + size + sequence + seq);
+	msg[4] = 0XFF - (IdAckMessage + size + msg[2] + seq);
 	
 	uart0_write_buffer(msg, size);
 }
