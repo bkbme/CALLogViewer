@@ -12,7 +12,11 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>
 
-#define LED_COUNT 6
+#if defined PORT_LED7 && defined PIN_LED7
+#	define LED_COUNT 8
+#else
+#	define LED_COUNT 6
+#endif
 #define LED_FLASH_INTERVAL 100 //ms
 
 void led_init()
@@ -42,6 +46,12 @@ void led_on(uint8_t num)
 		case 3: bit_set(PORT_LED4, PIN_LED4); break;
 		case 4: bit_set(PORT_LED5, PIN_LED5); break;
 		case 5: bit_set(PORT_LED6, PIN_LED6); break;
+#if defined PORT_LED7 && defined PIN_LED7
+		case 6: bit_set(PORT_LED7, PIN_LED7); break;
+#endif
+#if defined PORT_LED8 && defined PIN_LED8
+		case 7: bit_set(PORT_LED8, PIN_LED8); break;
+#endif
 		default:
 			break;
 	}
@@ -57,6 +67,12 @@ void led_off(uint8_t num)
 		case 3: bit_clear(PORT_LED4, PIN_LED4); break;
 		case 4: bit_clear(PORT_LED5, PIN_LED5); break;
 		case 5: bit_clear(PORT_LED6, PIN_LED6); break;
+#if defined PORT_LED7 && defined PIN_LED7
+		case 6: bit_clear(PORT_LED7, PIN_LED7); break;
+#endif
+#if defined PORT_LED8 && defined PIN_LED8
+		case 7: bit_clear(PORT_LED8, PIN_LED8); break;
+#endif
 		default:
 			break;
 	}
@@ -72,6 +88,12 @@ void led_toggle(uint8_t num)
 		case 3: bit_toggle(PORT_LED4, PIN_LED4); break;
 		case 4: bit_toggle(PORT_LED5, PIN_LED5); break;
 		case 5: bit_toggle(PORT_LED6, PIN_LED6); break;
+#if defined PORT_LED7 && defined PIN_LED7
+		case 6: bit_toggle(PORT_LED7, PIN_LED7); break;
+#endif
+#if defined PORT_LED8 && defined PIN_LED8
+		case 7: bit_toggle(PORT_LED8, PIN_LED8); break;
+#endif
 		default:
 			break;
 	}

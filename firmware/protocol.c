@@ -27,7 +27,7 @@ void send_error(ErrorCode code, uint8_t seq)
 	uint8_t msg[size];
 
 	state = StateDisconnected;
-	led_off(5);
+	led_off(UART0_LED_STATE);
 	servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_POWER_OFF);
 	servo_set_position(DOCK_SERVO_XAXIS_ID, DOCK_SERVO_POWER_OFF);
 
@@ -125,7 +125,7 @@ void handle_ack()
 void handle_error()
 {
 	state = StateDisconnected;
-	led_off(5);
+	led_off(UART0_LED_STATE);
 	servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_POWER_OFF);
 	servo_set_position(DOCK_SERVO_XAXIS_ID, DOCK_SERVO_POWER_OFF);
 	uart0_flush();
@@ -136,7 +136,7 @@ void handle_init()
 	send_ack(message.sequence);
 	send_version();
 	state = StateConnected;
-	led_on(5);
+	led_on(UART0_LED_STATE);
 }
 
 void handle_footswitch()

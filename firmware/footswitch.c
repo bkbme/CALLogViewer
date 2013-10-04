@@ -23,20 +23,20 @@ void footswitch_set(uint8_t state)
 	switch (state)
 	{
 		case 0x00: // intermediate state
-			led_off(0);
-			led_off(1);
+			led_off(FS_LED_STATE0);
+			led_off(FS_LED_STATE1);
 			break;
 		case 0x01: // pedal down
-			led_on(0);
-			led_off(1);
+			led_on(FS_LED_STATE0);
+			led_off(FS_LED_STATE1);
 			break;
 		case 0x02: // pedal up
-			led_off(0);
-			led_on(1);
+			led_off(FS_LED_STATE0);
+			led_on(FS_LED_STATE1);
 			break;
 		default: // error state
-			led_on(0);
-			led_on(1);
+			led_on(FS_LED_STATE0);
+			led_on(FS_LED_STATE1);
 			break;
 	}
 	// debug end

@@ -76,12 +76,9 @@ void dock_init()
 	lower_docking_limit = INIT_LOWER_DOCKING;
 	upper_docking_limit = INIT_UPPER_DOCKING;
 
-	/// @todo dock auto-detection
-
-//	if (v > DMS_REF_MIN && v < DMS_REF_MAX)
-//	{
-		con_state = DockConnected;
-//	}
+#if TARGET == VICTUS_DOCK_TARGET || TARGET == EITECH_DOCK_TARGET
+	uart1_write('w'); // auto-dected dock: scale must be connected during init!
+#endif
 }
 
 void dock_tare()
@@ -146,6 +143,7 @@ void dock_parse_forcedata()
 		dock_force_delta /= 2;
 		dock_force_timestamp = uptime;
 		dock_force = force;
+		con_state = DockConnected;
 		send_docking_force(dock_force, dock_force_steady);
 	}
 }
@@ -157,7 +155,7 @@ void dock_check_limits()
 	if (servo != DOCK_SERVO_POWER_OFF && servo > DOCK_SERVO_STOP) // moving up
 	{
 		set_docking_state(DockMovingUp);
-#ifdef DOCK_TYPE_EITECH
+#if TARGET == EITECH_DOCK_TARGET
 		if (!(PORT_PHOTO_SENSOR_TOP & (1 << PIN_PHOTO_SENSOR_TOP)))
 #else
 		if (PORT_PHOTO_SENSOR_TOP & (1 << PIN_PHOTO_SENSOR_TOP))

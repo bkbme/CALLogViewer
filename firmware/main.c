@@ -43,8 +43,10 @@ int main(void)
 
 	while(1)
 	{
+#if TARGET == VICTUS_DOCK_TARGET || TARGET == EITECH_DOCK_TARGET
 		dock_parse_forcedata();
 		dock_check_limits();
+#endif
 		process_messages();
 	}
 }
