@@ -14,7 +14,7 @@
 #define VICTUS_DOCK_TARGET 3
 #define EITECH_DOCK_TARGET 4
 
-#define TARGET VICTUS_FS_TARGET	// build target
+#define TARGET VICTUS_DOCK_TARGET	// build target
 
 /***********************************
  * IO Ports                        *
@@ -136,7 +136,7 @@
  * Footswitch Settings             *
  ***********************************/
 #if TARGET == VICTUS_DOCK_TARGET
-#define FS_LED_STATE0			8
+#define FS_LED_STATE0			6
 #define FS_LED_STATE1			7
 #else
 #define FS_LED_STATE0			0
