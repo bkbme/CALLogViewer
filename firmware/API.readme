@@ -2,7 +2,7 @@ FemtoTester Protocol (DRAFT)
 
 date: 	2013-06-21
 author: 	Markus Lohse <m.lohse@technolaspv.com>
-Version: "13062101" (as used as version_str in VersionMessage)
+Version: "13062106" (as used as version_str in VersionMessage)
 
 
 AbstractMessage:
@@ -15,7 +15,7 @@ AbstractMessage:
 uint8_t identifier	-> message identifier
 uint8_t size			-> for entire message: identifier + size + seq_no + data + checksum)
 uint8_t seq_no		-> can be freely chosen by sender
-uint8_t data[]		-> message specific structure up to 16 bytes (optional)
+uint8_t data[]		-> message specific structure up to 12 bytes (optional)
 uint8_t checksum		-> = 0xFF - (identifier + size + seq_no + data)
 
 
@@ -54,16 +54,23 @@ Response: AckMsg, VersionMsg
 
 
 VersionMessage:
-+-------+------+------+---------+-------------+----------+
-| Byte  | 0    | 1    | 2       | 3 .. 10     | 11       |
-+-------+------+------+---------+-------------+----------+
-| Value | 0x04 | 0x0C | seq. no | version_str | checksum |
-+-------+------+------+---------+-------------+----------+
++-------+------+--------+---------+-------------+-------------+----------+
+| Byte  | 0    | 1      | 2       | 3 .. 10     | [11]        | 11/12    |
++-------+------+--------+---------+-------------+-------------+----------+
+| Value | 0x04 | 0x0C/D | seq. no | version_str | BuildTarget | checksum |
++-------+------+--------+---------+-------------+-------------+----------+
 
 char version_str[8] -> format: "yymmddxx" (year, month, day, build number), see header of this document for current protocol version
+enum BuildTarget
+{							// see firmware/config.h (TARGET)
+	TargetVictusFS = 0x01,	// VICTUS_FS_TARGET
+	TargetExcimerFS = 0x02,	// EXCIMER_FS_TARGET
+	TargetVictusDock = 0x03,	// VICTUS_DOCK_TARGET
+	TargetEitechDock = 0x04	// EITECH_DOCK_TARGET
+}
 
 This message is sent by the Test-Tool. It is up to the GUI application to decide whether
-it supports the given protocol version or not.
+it supports the given protocol version or not. BuildTarget is optional (not sent by older firmware versions).
 
 
 FootSwitchMessage:

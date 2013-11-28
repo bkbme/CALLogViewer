@@ -99,7 +99,7 @@ void send_ack(uint8_t seq)
 
 void send_version()
 {
-	const uint8_t size = 0x0C;
+	const uint8_t size = 0x0D;
 	uint8_t checksum = IdVersionMessage + size + sequence;
 
 	cli();
@@ -112,6 +112,9 @@ void send_version()
 		uart0_write(version[i]);
 		checksum += version[i];
 	}
+
+	uart0_write((uint8_t) TARGET);
+	checksum += (uint8_t) TARGET;
 
 	uart0_write(0xFF - checksum);
 	sei();

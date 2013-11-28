@@ -9,6 +9,7 @@
 #ifndef CONFIG_H_
 #define CONFIG_H_
 
+// keep build targts consistent with enum in versionmessage.h
 #define VICTUS_FS_TARGET 1
 #define EXCIMER_FS_TARGET 2
 #define VICTUS_DOCK_TARGET 3
@@ -117,7 +118,7 @@
 /***********************************
  * UART Settings                   *
  ***********************************/
-#define PROTOCOL_VERSION			"13062105" // <- 2013-06-21 Build 05 (must be 8 Byte!)
+#define PROTOCOL_VERSION			"13062106" // <- 2013-06-21 Build 06 (must be 8 Byte!)
 #define BUFFER_SIZE_TX0			24         // in bytes (must be between 1 and 255)
 #define BUFFER_SIZE_TX1			1
 #define BUFFER_SIZE_RX0			32

@@ -363,7 +363,7 @@ void FemtoTester::handleVersion(VersionMessage *msg)
 		m_testerConnected = true;
 		emit connectedStateChanged(true);
 		emit statusMessage("FemtoTester connected");
-		qDebug() << "FemtoTester connected";
+		qDebug() << "FemtoTester connected. Firmware: " << msg->version() << " build target: " << msg->buildTarget();
 		return;
 	}
 
