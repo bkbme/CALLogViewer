@@ -70,7 +70,7 @@ void send_docking_force(uint16_t force, uint8_t steady)
 	uart0_write_buffer(msg, size);
 }
 
-void send_docking_state(uint8_t state)
+void send_docking_state(uint8_t dockstate)
 {
 	const uint8_t size = 0x05;
 	uint8_t msg[size];
@@ -78,8 +78,8 @@ void send_docking_state(uint8_t state)
 	msg[0] = IdDockingStateMessage;
 	msg[1] = size;
 	msg[2] = sequence++;
-	msg[3] = state;
-	msg[4] = 0xFF - (IdDockingStateMessage + size + msg[2] + state);
+	msg[3] = dockstate;
+	msg[4] = 0xFF - (IdDockingStateMessage + size + msg[2] + dockstate);
 
 	uart0_write_buffer(msg, size);
 }

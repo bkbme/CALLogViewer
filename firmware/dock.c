@@ -24,7 +24,6 @@ volatile uint8_t dock_wait_update;
 int16_t lower_docking_limit;
 int16_t upper_docking_limit;
 
-DockConnectivityState con_state;
 DockingType dock_type;
 DockingState dock_state;
 
@@ -72,7 +71,6 @@ void dock_init()
 	dock_force_steady = 0;
 	dock_type = ManualDocking;
 	dock_state = DockedManually;
-	con_state = DockDisconnected;
 	lower_docking_limit = INIT_LOWER_DOCKING;
 	upper_docking_limit = INIT_UPPER_DOCKING;
 
@@ -83,15 +81,12 @@ void dock_init()
 
 void dock_tare()
 {
-	if (con_state == DockConnected)
-	{
-		uart1_write('t');
-	}
+	uart1_write('t');
 }
 
 void dock_update_force()
 {
-	if (con_state == DockConnected && connection_state() == StateConnected)
+	if (connection_state() == StateConnected)
 	{
 		uart1_write('w');
 	}
@@ -143,7 +138,6 @@ void dock_parse_forcedata()
 		dock_force_delta /= 2;
 		dock_force_timestamp = uptime;
 		dock_force = force;
-		con_state = DockConnected;
 		send_docking_force(dock_force, dock_force_steady);
 	}
 }
@@ -174,9 +168,10 @@ void dock_check_limits()
 		if ((dock_force_timestamp + DOCK_FORCE_TIMEOUT) < uptime) // docking force update timeout
 		{
 			servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_POWER_OFF);
-			dock_type = ManualDocking;
+			//dock_type = ManualDocking;
 			set_docking_state(DockError);
-			send_error(DockTimeoutError, 0);
+			//send_error(DockTimeoutError, 0);
+			dock_wait_update = 1;
 		}
 	}
 

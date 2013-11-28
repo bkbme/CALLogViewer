@@ -13,12 +13,6 @@
 
 typedef enum
 {
-	DockDisconnected = 0,
-	DockConnected = 1
-} DockConnectivityState;
-
-typedef enum
-{
 	ManualDocking = 0,
 	AutoDocking = 1
 } DockingType;
@@ -42,6 +36,5 @@ void dock_parse_forcedata();
 void dock_check_limits();
 void dock_set_docktype(DockingType type);
 void dock_set_dockinglimits(int16_t lower, int16_t upper);
-
 
 #endif /* DOCK_H_ */

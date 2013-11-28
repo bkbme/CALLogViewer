@@ -14,7 +14,7 @@
 #define VICTUS_DOCK_TARGET 3
 #define EITECH_DOCK_TARGET 4
 
-#define TARGET VICTUS_DOCK_TARGET	// build target
+#define TARGET EITECH_DOCK_TARGET	// build target
 
 /***********************************
  * IO Ports                        *
@@ -160,10 +160,10 @@
 
 #if TARGET == EITECH_DOCK_TARGET
 // Eitech prototype
-#define DOCK_SERVO_UP			150
+#define DOCK_SERVO_UP			165
 #define DOCK_SERVO_DOWN			85
-#define DOCK_SERVO_UP_SLOW		122
-#define DOCK_SERVO_DOWN_SLOW		140
+#define DOCK_SERVO_UP_SLOW		145
+#define DOCK_SERVO_DOWN_SLOW		110
 #define DOCK_SERVO_STOP			116
 #define DOCK_SERVO_REVERSE_Z
 #define DOCK_LED_BOT				2
