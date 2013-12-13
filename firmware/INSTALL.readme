@@ -1,0 +1,80 @@
+
++- INSTALL.readme ----------------------------------+
+| Building and programming of Femto-Tester firmware |
+| date:   2013-12-13                                |
+| author: Markus Lohse <markus.lohse@bausch.com>    |
++---------------------------------------------------+
+
+1. Requirements
+
+For building you'll need to have the AVR toolchain (including avr-gcc, linker and avr-libc) installed.
+For programming the firmware you'll either need avrdude and Atmel's Dragon Programmer/Debugger
+(see http://de.farnell.com/atmel/atavrdragon/emulator-programmer-f-avr/dp/1455088 ) or any other
+JTAG-capable programmer (in which case you most likely need to modify the Makefile).
+
+
+2. Installation
+This readme focuses on Linux development, but it is also possible to install AVR Studio on Windows,
+create a new project and import the existing source code of course.
+
+2.1 Gentoo
+
+On Gentoo all toolchains for other than the native platform are managed through Crossdev, so is AVR.
+Install crossdev...
+# emerge crossdev
+
+Get rid of any previously installed AVR toolchain...
+# crossdev -C avr
+
+Install AVR toolchain
+# USE="-openmp" crossdev -t avr -s4 --without-headers
+
+Known Problems:
+The ebuild seems to fail creating a symlink for the linker, resulting in errors like these:
+> avr-gcc main.o uart.o dock.o timer.o buffer.o message.o protocol.o footswitch.o led.o -mmcu=atmega644a -Wl,-Map=FemtoTester.map -o FemtoTester.elf
+> /usr/libexec/gcc/avr/ld: cannot open linker script file ldscripts/avr5.x: No such file or directory
+> collect2: error: ld returned 1 exit status
+> make: *** [FemtoTester.elf] Error 1
+
+Solution:
+Create the symlink manually, like this (update version numbers as needed):
+# ln -s /usr/lib/binutils/avr/2.23.2/ldscripts /usr/x86_64-pc-linux-gnu/avr/binutils-bin/2.23.2/ldscripts
+
+2.2 (K)Ubuntu
+
+todo...
+
+
+3. Building
+
+Change to the firmware directory and run make...
+$ cd CALLogViewer/firmware
+$ make
+
+
+4. Programming
+
+Plug the Dragon Programmer into your development machine. If you are using a laptop make sure that it's USB port deliveres enough current or better use a powered USB hub inbetween.
+The Dragon is known to react allergic to an unstable power supply (resulting in permanent damage of it's on board power regulator). Also you shouldn't make use of your operating system's
+hibernation or sleep mode while the Dragon is connected.
+Now connect the Dragon and Femto-Tester boards via JTAG. Make sure to use the connector labeled 'JTAG' on the Femto-Tester. On the Dragon the ribbon cable connector's arrow needs to be alligned
+with pin '1' label on the board.
+Now power up the Femto-Tester by plugging it into a USB-Port or USB-powersupply.
+
+4.1 Fuses
+
+For a new board beeing programmed for the first time you need to start with programming the fuses:
+# make fuses
+
+Once Fuses are programmed there is no need to program them again unless you want to change them. If you need to change them you can do that in the Makefile - but you better know what you
+are doing as there is a high potential to brick the Femto-Tester board (yes, technically it can be fixed, but that requires high voltage programming and therefore removal of the processor).
+
+4.2 Firmware
+
+# make program
+
+4.3 EEProm
+
+Current firmware doesn't make use of the internal eeprom, so there's no need to program any default values yet.
+
+
