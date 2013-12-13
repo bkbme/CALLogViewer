@@ -11,13 +11,9 @@ ErrorMessage::ErrorMessage(quint8 seq, ErrorCode errorCode, quint8 seqError) :
 ErrorMessage::ErrorMessage(const QByteArray &rawData) :
 	AbstractMessage(rawData.size() > 4 ? static_cast<quint8>(rawData.at(2)) : 0)
 {
+	if (rawData.size() > 4 && rawData.at(0) == identifier() && (static_cast<quint8>(rawData.at(rawData.size() - 1)) != checksum()))
 	{
 		m_data.append(rawData.mid(3, rawData.size() - 4));
-	}
-
-	if (rawData.at(0) != identifier() || (static_cast<quint8>(rawData.at(rawData.size() - 1)) != checksum()))
-	{
-		m_data.clear(); // invalidate message
 	}
 }
 
@@ -35,6 +31,7 @@ ErrorMessage::ErrorCode ErrorMessage::errorCode() const
 			case ErrorDisconnect: return ErrorDisconnect;
 			case ErrorSequence: return ErrorSequence;
 			case ErrorVersion: return ErrorVersion;
+			case ErrorParser: return ErrorParser;
 			case ErrorTimeout: return ErrorTimeout;
 			case ErrorUnhandled: return ErrorUnhandled;
 			case DockCommunicationError: return DockCommunicationError;

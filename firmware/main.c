@@ -35,6 +35,7 @@ void init()
 	led_init();
 	footswitch_init();
 	dock_init();
+	uart0_flush();
 }
 
 int main(void)

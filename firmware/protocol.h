@@ -34,7 +34,7 @@ typedef enum
 void process_messages();
 
 void send_docking_force(uint16_t force, uint8_t steady);
-void send_docking_state(uint8_t state);
+void send_docking_state(uint8_t dockstate);
 void send_error(ErrorCode code, uint8_t seq);
 void send_ack(uint8_t seq);
 void send_version();
