@@ -31,15 +31,35 @@
        </widget>
       </item>
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Scroll buffer maximun length</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSpinBox" name="sbMaxScrollBuffer">
+          <property name="toolTip">
+           <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;0 = unlimited (this may eat up all your memory - you have been warned!)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+          </property>
+          <property name="maximum">
+           <number>100000</number>
+          </property>
+          <property name="singleStep">
+           <number>100</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
          <widget class="QLabel" name="label">
           <property name="text">
            <string>History length requested from ASC during connect</string>
           </property>
          </widget>
         </item>
-        <item>
+        <item row="1" column="1">
          <widget class="QSpinBox" name="sbASCHistoryLength">
           <property name="toolTip">
            <string>0 = unlimited (use with caution!)</string>
@@ -63,7 +83,7 @@
       <item>
        <widget class="QLabel" name="lASCHistoryDescription">
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Please note:&lt;/span&gt; This is the max. amount of log messages requested from the ASC controller when a new connection is being established. Requesting an excessively large history will increase CPU load on the ASC considerably. Therefore it is recommended to keep this number as low as possible (&amp;lt;= 10000).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;Please note:&lt;/span&gt; &amp;quot;History length&amp;quot; means the max. amount of log messages requested from the ASC controller when a new connection is being established. Requesting an excessively large history will increase CPU load on the ASC considerably. Therefore it is recommended to keep this number as low as possible (&amp;lt;= 15000).&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>

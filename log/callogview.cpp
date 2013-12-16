@@ -10,6 +10,7 @@
 #include <QWebElement>
 #include <QMetaObject>
 #include <QDropEvent>
+#include <QSettings>
 
 const QString FORMAT_MSG = "<div id='log_%6' class='%2'>%3 %4: %1%5</div>";
 const QString FORMAT_SEARCH_MATCH = "<div id='match_%1' class='match'>%2</div>";
@@ -21,7 +22,10 @@ const QString PAGE = "<?xml version='1.0' encoding='UTF-8'?>"
 					 "		<title>CAL log view</title>"
 					 "		<style type='text/css'>\n%1</style>"
 					 "	</head>"
-					 "	<body>%2</body>"
+					 "	<body>"
+					 "		<div id='show_all_button' class='button hidden' onclick='logView.showAllMessages()'>&lt;&lt;&lt; Show all (be patient... this may take a while!) &gt;&gt;&gt;</div>"
+					 "		<div id='messages'>%2</div>"
+					 "	</body>"
 					 "</html>";
 
 const QString STYLESHEET =  ".Error { color: #fe1c3c; }\n"
@@ -35,6 +39,9 @@ const QString STYLESHEET =  ".Error { color: #fe1c3c; }\n"
 							".kernel { color: #656565; }\n"
 							".fw { color: #ff6500; }\n"
 							".hidden { display: none; }\n"
+							".button { background: darkBlue; color: white; font-weight: bold; line-height: 20px; text-align: center; border-radius: 5px; }\n"
+							".button:hover { border: 1px; cursor: pointer; }"
+							".button:active { border: 1px; background: blue; }"
 							".match { background: #ffff00; display: inline; color: #000000; font-weight:bold; }\n"
 							".currentMatch { background: #ffff00; display: inline; color: #000000; font-weight:bold; border: dashed 2px red; }\n"
 							"body { font: 12px monospace; background: #000000; }\n";
@@ -57,6 +64,8 @@ struct CALLogView::SearchData
 CALLogView::CALLogView(QWidget *parent) :
 	QWebView(parent),
 	m_autoScroll(true),
+	m_maxScrollBufferLength(0),
+	m_scrollBufferLength(0),
 	m_currentSession(0),
 	m_logLevelVisibility(),
 	m_logFacilityVisibility(),
@@ -79,7 +88,9 @@ CALLogView::~CALLogView()
 void CALLogView::init()
 {
 	setHtml(PAGE.arg(STYLESHEET, ""));
-	connect(page()->mainFrame(), SIGNAL(contentsSizeChanged(QSize)), this, SLOT(onContentSizeChanged(QSize)));
+	QWebFrame *frame = page()->mainFrame();
+	frame->addToJavaScriptWindowObject("logView", this);
+	connect(frame, SIGNAL(contentsSizeChanged(QSize)), this, SLOT(onContentSizeChanged(QSize)));
 }
 
 void CALLogView::onContentSizeChanged(const QSize &size)
@@ -101,9 +112,24 @@ void CALLogView::appendLogMessage(const LogMessage &log)
 	{
 		QWebFrame *frame = page()->mainFrame();
 		QWebElement body = frame->documentElement().findFirst("body");
-		if (!body.isNull())
+		QWebElement messages = body.findFirst("#messages");
+		if (!messages.isNull())
 		{
-			body.appendInside(html);
+			messages.appendInside(html);
+			if (m_maxScrollBufferLength > 0 && ++m_scrollBufferLength > static_cast<unsigned int>(m_maxScrollBufferLength))
+			{
+				QWebElement oldestMessage = messages.firstChild();
+				oldestMessage.removeFromDocument();
+				if (m_currentSession->messages().count() == static_cast<unsigned int>(m_maxScrollBufferLength + 1))
+				{
+					QWebElement showAllButton = frame->documentElement().findFirst("#show_all_button");
+					if (!showAllButton.isNull())
+					{
+						showAllButton.removeClass("hidden");
+					}
+				}
+				--m_scrollBufferLength;
+			}
 		}
 
 		m_autoScroll = frame->scrollPosition().y() == frame->scrollBarMaximum(Qt::Vertical);
@@ -118,20 +144,37 @@ void CALLogView::setSession(CALSession *session)
 	}
 
 	clear();
-	if (!session)
+	if (!session || !page() || !page()->mainFrame())
 	{
 		return;
 	}
 
-	QString body;
-	QTextStream oStream(&body, QIODevice::WriteOnly);
+	QString html;
+	QSettings settings;
+	QTextStream oStream(&html, QIODevice::WriteOnly);
+	QWebFrame *frame = page()->mainFrame();
+	QWebElement body = frame->documentElement().findFirst("body");
+	QWebElement messages = body.findFirst("#messages");
+	QWebElement showAllButton = body.findFirst("#show_all_button");
+
 	m_currentSession = session;
-	foreach (const LogMessage &msg, session->messages())
+	settings.beginGroup("ASC");
+	m_maxScrollBufferLength = settings.value("maxScrollBuffer", 10000).toInt();
+	
+	int i = (m_maxScrollBufferLength && session->messages().count() > m_maxScrollBufferLength) ? (session->messages().count() - m_maxScrollBufferLength) : 0;
+	if  (i > 0)
 	{
-		log2Html(oStream, msg);
+		showAllButton.removeClass("hidden");
 	}
 
-	setHtml(PAGE.arg(STYLESHEET, body));
+	while (i < session->messages().count())
+	{
+		log2Html(oStream, session->messages().at(i++));
+		++m_scrollBufferLength;
+	}
+	messages.appendInside(html);
+	frame->scroll(0, frame->contentsSize().height());
+
 	connect(m_currentSession, SIGNAL(messageAppended(LogMessage)), this, SLOT(appendLogMessage(LogMessage)));
 	connect(m_currentSession, SIGNAL(destroyed()), this, SLOT(clear()));
 }
@@ -148,33 +191,16 @@ void CALLogView::clear()
 	{
 		QWebFrame *frame = page()->mainFrame();
 		QWebElement body = frame->documentElement().findFirst("body");
-		if (!body.isNull())
-		{
-			body.removeAllChildren();
-		}
+		QWebElement showAllButton = body.findFirst("#show_all_button");
+		QWebElement messages = body.findFirst("#messages");
+		messages.removeAllChildren();
+		showAllButton.addClass("hidden");
 	}
 
 	m_search->matchCount = 0;
 	m_search->currentPosition = 0;
+	m_scrollBufferLength = 0;
 }
-
-/*
-void CALLogView::purgeOldLogs()
-{
-	if (!page() || !page()->mainFrame() || m_maxScrollBufferLength <= 0 || !m_autoScroll)
-	{
-		return; // keep all logs if m_maxScrollBufferLength is set to 0 or user is scrolling
-	}
-
-	QWebFrame *frame = page()->mainFrame();
-	QWebElement body = frame->documentElement().findFirst("body");
-	while (!body.isNull() && m_logs.count() > m_maxScrollBufferLength)
-	{
-		LogMessage log(m_logs.dequeue());
-		body.findFirst(QString("#log_%1").arg(log.id())).removeFromDocument();
-	}
-}
-*/
 
 void CALLogView::setLogLevelVisible(LogMessage::LogLevel level, bool visible)
 {
@@ -185,11 +211,12 @@ void CALLogView::setLogLevelVisible(LogMessage::LogLevel level, bool visible)
 
 	QWebFrame *frame = page()->mainFrame();
 	QWebElement body = frame->documentElement().findFirst("body");
+	QWebElement messages = body.findFirst("#messages");
 	foreach (const LogMessage &msg, m_currentSession->messages())
 	{
 		if (msg.level() == level)
 		{
-			QWebElement div = body.findFirst(QString("#log_%1").arg(msg.id()));
+			QWebElement div = messages.findFirst(QString("#log_%1").arg(msg.id()));
 			visible ? div.removeClass("hidden") : div.addClass("hidden");
 		}
 	}
@@ -206,11 +233,12 @@ void CALLogView::setLogFacilityVisible(LogMessage::LogFacility facility, bool vi
 
 	QWebFrame *frame = page()->mainFrame();
 	QWebElement body = frame->documentElement().findFirst("body");
+	QWebElement messages = body.findFirst("#messages");
 	foreach (const LogMessage &msg, m_currentSession->messages())
 	{
 		if (msg.facility() == facility)
 		{
-			QWebElement div = body.findFirst(QString("#log_%1").arg(msg.id()));
+			QWebElement div = messages.findFirst(QString("#log_%1").arg(msg.id()));
 			visible ? div.removeClass("hidden") : div.addClass("hidden");
 		}
 	}
@@ -288,11 +316,12 @@ void CALLogView::clearSearch()
 	
 	QWebFrame *frame = page()->mainFrame();
 	QWebElement body = frame->documentElement().findFirst("body");
+	QWebElement messages = body.findFirst("#messages");
 	foreach (const LogMessage &msg, m_currentSession->messages())
 	{
 		if (msg.toString().contains(m_search->term, m_search->cs))
 		{
-			QWebElement div = body.findFirst(QString("#log_%1").arg(msg.id()));
+			QWebElement div = messages.findFirst(QString("#log_%1").arg(msg.id()));
 			div.setInnerXml(escapeHtml(msg.toString()));
 		}
 	}
@@ -319,9 +348,9 @@ void CALLogView::search(const QString& term, Qt::CaseSensitivity cs)
 	const QString escapedSearchTerm = escapeHtml(term);
 	QWebFrame *frame = page()->mainFrame();
 	QWebElement body = frame->documentElement().findFirst("body");
-	const QList<LogMessage> &messages = m_currentSession->messages();
+	QWebElement messages = body.findFirst("#messages");
 
-	foreach (const LogMessage &msg, messages)
+	foreach (const LogMessage &msg, m_currentSession->messages())
 	{
 		int searchIndex = 0;
 		bool foundMatch = false;
@@ -336,7 +365,7 @@ void CALLogView::search(const QString& term, Qt::CaseSensitivity cs)
 
 		if (foundMatch)
 		{
-			QWebElement divLog = body.findFirst(QString("#log_%1").arg(msg.id()));
+			QWebElement divLog = messages.findFirst(QString("#log_%1").arg(msg.id()));
 			if (!divLog.isNull())
 			{
 				divLog.setInnerXml(msgHtml);
@@ -345,14 +374,14 @@ void CALLogView::search(const QString& term, Qt::CaseSensitivity cs)
 		}
 	}
 
-	QWebElement divMatch = body.findFirst(QString("#match_0"));
+	QWebElement divMatch = messages.findFirst(QString("#match_0"));
 	if (m_search->matchCount && !divMatch.isNull())
 	{
 		divMatch.addClass("currentMatch");
 		frame->setScrollPosition(QPoint(0, divMatch.geometry().y()));
 	}
 
-	emit statusMessage(QString("found %1 matches in %2 of %3 log messges").arg(m_search->matchCount).arg(matchingMessages).arg(messages.count()), 0);
+	emit statusMessage(QString("found %1 matches in %2 of %3 log messges").arg(m_search->matchCount).arg(matchingMessages).arg(m_currentSession->messages().count()), 0);
 }
 
 void CALLogView::continueSearch(SearchDirection direction)
@@ -382,8 +411,9 @@ void CALLogView::continueSearch(SearchDirection direction)
 
 	QWebFrame *frame = page()->mainFrame();
 	QWebElement body = frame->documentElement().findFirst("body");
-	QWebElement divPreviousMatch = body.findFirst(QString("#match_%1").arg(previousSearchPosition));
-	QWebElement divCurrentMatch = body.findFirst(QString("#match_%1").arg(m_search->currentPosition));
+	QWebElement messages = body.findFirst("#messages");
+	QWebElement divPreviousMatch = messages.findFirst(QString("#match_%1").arg(previousSearchPosition));
+	QWebElement divCurrentMatch = messages.findFirst(QString("#match_%1").arg(m_search->currentPosition));
 	if (m_search->matchCount && !divPreviousMatch.isNull() && !divCurrentMatch.isNull())
 	{
 		divPreviousMatch.removeClass("currentMatch");
@@ -408,3 +438,29 @@ void CALLogView::dropEvent(QDropEvent* ev)
 	}
 }
 
+void CALLogView::showAllMessages()
+{
+	qDebug() << "CALLogView::showAllMessages() called";
+	
+	if (page() && page()->mainFrame() && m_currentSession)
+	{
+		QString html;
+		QTextStream oStream(&html, QIODevice::WriteOnly);
+		QWebFrame *frame = page()->mainFrame();
+		QWebElement messages = frame->documentElement().findFirst("#messages");
+		QWebElement showAllButton = frame->documentElement().findFirst("#show_all_button");
+
+		if (!messages.isNull())
+		{
+			for (int i = 0; i < (m_currentSession->messages().count() - m_maxScrollBufferLength); ++i)
+			{
+				log2Html(oStream, m_currentSession->messages().at(i));
+				++m_scrollBufferLength;
+			}
+			messages.prependInside(html);
+		}
+
+		showAllButton.addClass("hidden");
+		m_maxScrollBufferLength = 0;
+	}
+}

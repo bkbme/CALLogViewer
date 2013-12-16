@@ -17,7 +17,7 @@ class CALLogView : public QWebView
 	Q_OBJECT
 public:
 	explicit CALLogView(QWidget *parent = 0);
-	~CALLogView();
+	virtual ~CALLogView();
 
 	void setLogLevelVisible(LogMessage::LogLevel level, bool visible);
 	void setLogFacilityVisible(LogMessage::LogFacility facility, bool visible);
@@ -27,6 +27,7 @@ public slots:
 	void search(const QString& term, Qt::CaseSensitivity cs);
 	void continueSearch(SearchDirection direction);
 	void setSession(CALSession *session);
+	void showAllMessages();
 	void clear();
 
 signals:
@@ -60,6 +61,8 @@ private:
 	QString escapeHtml(const QString &text) const;
 
 	bool m_autoScroll;
+	int m_maxScrollBufferLength;
+	int m_scrollBufferLength;
 	CALSession *m_currentSession;
 	QMap<LogMessage::LogLevel, bool> m_logLevelVisibility;
 	QMap<LogMessage::LogFacility, bool> m_logFacilityVisibility;
