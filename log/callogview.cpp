@@ -23,7 +23,7 @@ const QString PAGE = "<?xml version='1.0' encoding='UTF-8'?>"
 					 "		<style type='text/css'>\n%1</style>"
 					 "	</head>"
 					 "	<body>"
-					 "		<div id='show_all_button' class='button hidden' onclick='logView.showAllMessages()'>&lt;&lt;&lt; Show all (be patient... this may take a while!) &gt;&gt;&gt;</div>"
+					 "		<div id='show_all_button' class='button hidden' onclick='logView.showAllMessages()'>&lt;&lt;&lt; Show all messages (be patient... this may take a while!) &gt;&gt;&gt;</div>"
 					 "		<div id='messages'>%2</div>"
 					 "	</body>"
 					 "</html>";
@@ -116,11 +116,11 @@ void CALLogView::appendLogMessage(const LogMessage &log)
 		if (!messages.isNull())
 		{
 			messages.appendInside(html);
-			if (m_maxScrollBufferLength > 0 && ++m_scrollBufferLength > static_cast<unsigned int>(m_maxScrollBufferLength))
+			if (m_maxScrollBufferLength > 0 && ++m_scrollBufferLength > m_maxScrollBufferLength)
 			{
 				QWebElement oldestMessage = messages.firstChild();
 				oldestMessage.removeFromDocument();
-				if (m_currentSession->messages().count() == static_cast<unsigned int>(m_maxScrollBufferLength + 1))
+				if (m_currentSession->messages().count() == m_maxScrollBufferLength + 1)
 				{
 					QWebElement showAllButton = frame->documentElement().findFirst("#show_all_button");
 					if (!showAllButton.isNull())
