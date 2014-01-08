@@ -2,6 +2,7 @@
 #define ERRORMESSAGE_H
 
 #include <abstractmessage.h>
+#include <messageparser.h>
 
 class ErrorMessage : public AbstractMessage
 {
@@ -22,7 +23,7 @@ public:
 	ErrorMessage(quint8 seq, ErrorCode errorCode, quint8 seqError = 0);
 	ErrorMessage(const QByteArray &rawData);
 
-	quint8 identifier() const { return 0x02; }
+	quint8 identifier() const { return MessageParser::IdErrorMessage; }
 	bool isValid() const;
 
 	ErrorCode errorCode() const;

@@ -2,6 +2,7 @@
 #define VERSIONMESSAGE_H
 
 #include <abstractmessage.h>
+#include <messageparser.h>
 
 #include <QString>
 #include <QDate>
@@ -20,7 +21,7 @@ public:
 	VersionMessage(quint8 seq);
 	VersionMessage(const QByteArray &rawData);
 
-	quint8 identifier() const { return 0x04; }
+	quint8 identifier() const { return MessageParser::IdVersionMessage; }
 	bool isValid() const;
 
 	QString version() const;

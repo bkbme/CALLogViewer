@@ -2,6 +2,7 @@
 #define DOCKINGSTATEMESSAGE_H
 
 #include <abstractmessage.h>
+#include <messageparser.h>
 
 class DockingStateMessage : public AbstractMessage
 {
@@ -20,7 +21,7 @@ public:
 	DockingStateMessage(quint8 seq, DockingState state);
 	DockingStateMessage(const QByteArray &rawData);
 	
-	quint8 identifier() const { return 0x0C; }
+	quint8 identifier() const { return MessageParser::IdDockingStateMessage; }
 	bool isValid() const;
 
 	DockingState state() const;
