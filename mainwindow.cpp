@@ -117,8 +117,12 @@ MainWindow::~MainWindow()
 {
 	m_serviceMgr->disconnect();
 	m_logParser->disconnect();
+	m_dock->disconnect();
+	m_fs->disconnect();
 
 	delete ui;
+	delete m_dock;
+	delete m_fs;
 	delete m_test;
 }
 
@@ -341,7 +345,7 @@ void MainWindow::on_actionSettings_triggered()
 
 	dialog.addPage(new LogSettingsPage(this));
 	dialog.addPage(new TesterSettingsPage(m_test, m_fs));
-	if (settings.value("showAutoDockUI", "false").toBool())
+	if (m_test->dockAvailable())
 	{
 		dialog.addPage(new DockSettingsPage(m_dock));
 	}
