@@ -22,6 +22,7 @@ public:
 		IdServoCtrlMessage = 0x0A,
 		IdDockingTareMessage = 0x0B,
 		IdDockingStateMessage = 0x0C,
+		IdSettingsMessage = 0x0E,
 		IdInvalidIdentifier = 0xFF // must remain at end for parsing!!!
 	};
 

@@ -2,8 +2,10 @@
 #include "config.h"
 #include <femtotester.h>
 #include <syslogparser.h>
+#include <servoctrlmessage.h>
 
 #include <QSettings>
+#include <QVector>
 #include <QDebug>
 
 AutoDock::AutoDock(SysLogParser *parser, FemtoTester *tester, QObject *parent) :
@@ -27,8 +29,12 @@ AutoDock::AutoDock(SysLogParser *parser, FemtoTester *tester, QObject *parent) :
 	m_autoSlotSelect(false)
 {
 	loadSettings();
+	connect(tester, SIGNAL(connectedStateChanged(bool)), this, SLOT(loadHwSettings()));
 	connect(tester, SIGNAL(dockingForceChanged(qreal,bool)), this, SLOT(setDockingForce(qreal,bool)));
+	connect(tester, SIGNAL(settingsByteChanged(quint8,quint8)), this, SLOT(onHwByteSettingChanged(quint8,quint8)));
+	connect(tester, SIGNAL(settingsArrayChanged(quint8,QByteArray)), this, SLOT(onHwArraySettingChanged(quint8,QByteArray)));
 	connect(tester, SIGNAL(dockingStateChanged(DockingStateMessage::DockingState)), this, SLOT(onDockingStateChange(DockingStateMessage::DockingState)));
+	connect(tester, SIGNAL(dockingStateChanged(DockingStateMessage::DockingState)), this, SIGNAL(dockingStateChanged(DockingStateMessage::DockingState)));
 	connect(m_parser, SIGNAL(dockingModeSelected(AutoDock::DockingMode)), this, SLOT(setDockingMode(AutoDock::DockingMode)));
 	connect(m_parser, SIGNAL(suctionRingVacuumDisabled()), this, SLOT(onTreatmentFinished()));
 	connect(m_parser, SIGNAL(treatmentAborted()), this, SLOT(onTreatmentFinished()));
@@ -46,25 +52,77 @@ void AutoDock::loadSettings()
 	m_zeroDockingLimits.upper = settings.value("upperZeroDockingLimit", 10).toInt();
 	m_regularDockingLimits.lower = settings.value("lowerRegularDockingLimit", 300).toInt();
 	m_regularDockingLimits.upper = settings.value("upperRegularDockingLimit", 380).toInt();
-	m_servoSpeedUp = settings.value("servoSpeedUp", 70).toInt();
-	m_servoSpeedDown = settings.value("servoSpeedDown", -70).toInt();
+
 	m_autoDock = settings.value("autoDockEnabled", false).toBool();
 	m_autoUndock = settings.value("autoUndockEnabled", false).toBool();
 	m_autoSlotSelect = settings.value("autoSlotSelect", false).toBool();
-
-	m_slots.clear();
-	int size = settings.beginReadArray("Slot");
-	for (int i = 0; i < size; ++i)
-	{
-		settings.setArrayIndex(i);
-		m_slots.append(settings.value("position").toInt());
-	}
-	settings.endArray();
 	settings.endGroup();
+}
 
-	if (m_slots.isEmpty())
+void AutoDock::loadHwSettings()
+{
+	if (m_tester->connected())
 	{
-		m_slots.insert(0, 6); // initialize with default size: 6 slots
+		QVector<quint8> keys;
+		keys << FemtoTester::KeyDockServoUp
+			 << FemtoTester::KeyDockServoUpSlow
+			 << FemtoTester::KeyDockServoDown
+			 << FemtoTester::KeyDockServoDownSlow
+			 << FemtoTester::KeyDockSlotCount;
+	
+		foreach (const quint8 key, keys)
+		{
+			m_tester->getByteSetting(key);
+		}
+	}
+}
+
+void AutoDock::onHwByteSettingChanged(quint8 key, quint8 value)
+{
+	switch (key)
+	{
+		case FemtoTester::KeyDockServoUp:
+			setServoSpeedUp(ServoCtrlMessage::posHw2PosInt(value));
+			break;
+		case FemtoTester::KeyDockServoUpSlow:
+			setServoSpeedUpSlow(ServoCtrlMessage::posHw2PosInt(value));
+			break;
+		case FemtoTester::KeyDockServoDown:
+			setServoSpeedDown(ServoCtrlMessage::posHw2PosInt(value));
+			break;
+		case FemtoTester::KeyDockServoDownSlow:
+			setServoSpeedDownSlow(ServoCtrlMessage::posHw2PosInt(value));
+			break;
+		case FemtoTester::KeyDockSlotCount:
+			setDockingSlotCount(value);
+			m_tester->getArraySetting(FemtoTester::KeyDockSlots1); // request slots 0..9...
+			if (value > 10)
+			{
+				m_tester->getArraySetting(FemtoTester::KeyDockSlots2); // and slots 10..19 if necessary
+			}
+			break;
+		default:
+			break;
+	}
+}
+
+void AutoDock::onHwArraySettingChanged(quint8 key, const QByteArray &value)
+{
+	int i;
+	int j = 0;
+
+	switch (key)
+	{
+		case FemtoTester::KeyDockSlots2:
+			j += 10;					// fall
+		case FemtoTester::KeyDockSlots1:
+			for (i = 0; i < qMin(value.count(), m_slots.count()); ++i)
+			{
+				setDockingSlotPosition(j + i, static_cast<int>(value.at(i)));
+			}
+			break;
+		default:
+			break;
 	}
 }
 
@@ -78,20 +136,36 @@ void AutoDock::saveSettings()
 	settings.setValue("upperZeroDockingLimit", m_zeroDockingLimits.upper);
 	settings.setValue("lowerRegularDockingLimit", m_regularDockingLimits.lower);
 	settings.setValue("upperRegularDockingLimit", m_regularDockingLimits.upper);
-	settings.setValue("servoSpeedUp", m_servoSpeedUp);
-	settings.setValue("servoSpeedDown", m_servoSpeedDown);
+
 	settings.setValue("autoDockEnabled", m_autoDock);
 	settings.setValue("autoUndockEnabled", m_autoUndock);
 	settings.setValue("autoSlotSelect", m_autoSlotSelect);
 
-	settings.beginWriteArray("Slot", m_slots.count());
-	for (int i = 0; i < m_slots.count(); ++i)
-	{
-		settings.setArrayIndex(i);
-		settings.setValue("position", m_slots.at(i));
-	}
-	settings.endArray();
 	settings.endGroup();
+}
+
+void AutoDock::saveHwSettings()
+{
+	if (m_tester->connected())
+	{
+		m_tester->setByteSetting(FemtoTester::KeyDockServoUp, ServoCtrlMessage::posInt2PosHw(servoSpeedUp()));
+		m_tester->setByteSetting(FemtoTester::KeyDockServoDown, ServoCtrlMessage::posInt2PosHw(servoSpeedDown()));
+		m_tester->setByteSetting(FemtoTester::KeyDockServoUpSlow, ServoCtrlMessage::posInt2PosHw(servoSpeedUpSlow()));
+		m_tester->setByteSetting(FemtoTester::KeyDockServoDownSlow, ServoCtrlMessage::posInt2PosHw(servoSpeedDownSlow()));
+		m_tester->setByteSetting(FemtoTester::KeyDockSlotCount, m_slots.count());
+
+		QByteArray buffer;
+		foreach (const int value, m_slots)
+		{
+			buffer.append(static_cast<char>(value));
+		}
+
+		m_tester->setArraySetting(FemtoTester::KeyDockSlots1, buffer.left(10));
+		if (m_slots.count() > 10)
+		{
+			m_tester->setArraySetting(FemtoTester::KeyDockSlots2, buffer.right(buffer.count() - 10));
+		}
+	}
 }
 
 void AutoDock::moveDown()
@@ -231,14 +305,14 @@ int AutoDock::dockingSlotPosition(int slot) const
 
 void AutoDock::setDockingSlotCount(int count)
 {
-	if (count < 1) // min size = 1
+	if (count < 1 || count > 20) // min size = 1, max size = 20
 	{
 		return;
 	}
 
 	if (m_slots.count() < count)
 	{
-		m_slots.insert(0, count - m_slots.count());
+		m_slots.insert(m_slots.count(), count - m_slots.count(), 0);
 	}
 	if (m_slots.count() > count)
 	{
@@ -271,9 +345,9 @@ void AutoDock::nextDockingSlot()
 void AutoDock::setDockingSlot(int slot)
 {
 	//qDebug() << "selecting docking slot " << slot;
+	m_targetSlot = slot;
 	if (m_dockingState != DockingStateMessage::DockedBottom) // undock first!
 	{
-		m_targetSlot = slot;
 		moveDown();
 		return;
 	}

@@ -30,6 +30,7 @@ typedef enum
 
 
 void dock_init();
+void dock_load_settings();
 void dock_tare();
 void dock_update_force();
 void dock_parse_forcedata();

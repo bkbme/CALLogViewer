@@ -48,7 +48,8 @@ SOURCES += \
 	test/docksettingspage.cpp \
 	test/autodock.cpp \
     test/dockingtaremessage.cpp \
-    test/dockingstatemessage.cpp
+    test/dockingstatemessage.cpp \
+    test/settingsmessage.cpp
 
 HEADERS  += \
 	mainwindow.h \
@@ -86,7 +87,8 @@ HEADERS  += \
 	test/docksettingspage.h \
 	test/autodock.h \
     test/dockingtaremessage.h \
-    test/dockingstatemessage.h
+    test/dockingstatemessage.h \
+    test/settingsmessage.h
 
 FORMS += \
 	mainwindow.ui \

@@ -15,16 +15,26 @@ DockSettingsPage::DockSettingsPage(AutoDock *dock, QWidget *parent) :
 	m_dockingMode(AutoDock::ManualDocking)
 {
 	ui->setupUi(this);
+	ui->gbSlots->hide();
+	ui->gbAdvOptions->hide();
+	ui->lAdvOptionWarning->hide();
 
 	if (m_dock)
 	{
 		connect(m_dock, SIGNAL(zForceChanged(qreal)), this, SLOT(setZForce(qreal)));
+		connect(m_dock, SIGNAL(dockingStateChanged(DockingStateMessage::DockingState)), this, SLOT(setDockingState(DockingStateMessage::DockingState)));
+
 		connect(ui->pbUp, SIGNAL(pressed()), m_dock, SLOT(moveUp()));
 		connect(ui->pbDown, SIGNAL(pressed()), m_dock, SLOT(moveDown()));
 		connect(ui->pbUp, SIGNAL(released()), m_dock, SLOT(stop()));
 		connect(ui->pbDown, SIGNAL(released()), m_dock, SLOT(stop()));
 		//connect(ui->cbAutoDock, SIGNAL(toggled(bool)), m_dock, SLOT(setAutoDockingEnabled(bool)));
 		//connect(ui->cbAutoUndock, SIGNAL(toggled(bool)), m_dock, SLOT(setAutoUndockingEnabled(bool)));
+
+		connect(ui->sbServoUp, SIGNAL(valueChanged(int)), m_dock, SLOT(setServoSpeedUp(int)));
+		connect(ui->sbServoDown, SIGNAL(valueChanged(int)), m_dock, SLOT(setServoSpeedDown(int)));
+		connect(ui->sbServoUpSlow, SIGNAL(valueChanged(int)), m_dock, SLOT(setServoSpeedUpSlow(int)));
+		connect(ui->sbServoDownSlow, SIGNAL(valueChanged(int)), m_dock, SLOT(setServoSpeedDownSlow(int)));
 
 		loadSettings();
 	}
@@ -55,6 +65,8 @@ void DockSettingsPage::reject()
 	m_dock->setDockingLimits(AutoDock::ZeroDocking, m_zeroLimits);
 	m_dock->setDockingLimits(AutoDock::SoftDocking, m_softLimits);
 	m_dock->setDockingLimits(AutoDock::RegularDocking, m_regularLimits);
+
+	m_dock->loadHwSettings();
 }
 
 void DockSettingsPage::apply()
@@ -71,6 +83,8 @@ void DockSettingsPage::reset()
 	ui->sbLowerRegular->setValue(300);
 	ui->sbUpperRegular->setValue(380);
 	ui->rbRegularDocking->setChecked(true);
+
+	m_dock->loadHwSettings();
 }
 
 void DockSettingsPage::loadSettings()
@@ -80,6 +94,7 @@ void DockSettingsPage::loadSettings()
 		return;
 	}
 
+	setDockingState(m_dock->dockingState());
 	m_zeroLimits = m_dock->dockingLimits(AutoDock::ZeroDocking);
 	m_softLimits = m_dock->dockingLimits(AutoDock::SoftDocking);
 	m_regularLimits = m_dock->dockingLimits(AutoDock::RegularDocking);
@@ -95,6 +110,10 @@ void DockSettingsPage::loadSettings()
 	ui->cbAutoUndock->setChecked(m_dock->autoUndockingEnabled());
 	ui->cbAutoSlotSelect->setChecked(m_dock->autoSlotSelectEnabled());
 	ui->sbSlotCount->setValue(m_dock->dockingSlotCount());
+	ui->sbServoUp->setValue(m_dock->servoSpeedUp());
+	ui->sbServoUpSlow->setValue(m_dock->servoSpeedUpSlow());
+	ui->sbServoDown->setValue(m_dock->servoSpeedDown());
+	ui->sbServoDownSlow->setValue(m_dock->servoSpeedDownSlow());
 
 	switch (m_dockingMode)
 	{
@@ -137,12 +156,42 @@ void DockSettingsPage::saveSettings()
 	m_dock->setAutoDockingEnabled(ui->cbAutoDock->isChecked());
 	m_dock->setAutoUndockingEnabled(ui->cbAutoUndock->isChecked());
 	m_dock->setAutoSlotSelectEnabled(ui->cbAutoSlotSelect->isChecked());
+
+	m_dock->saveHwSettings();
 	m_dock->saveSettings();
 }
 
 void DockSettingsPage::setZForce(qreal force)
 {
 	ui->lZForce->setText(QString::number(force, 'f', 1).append(m_dock->forceIsSteady() ? 'g' : ' '));
+}
+
+void DockSettingsPage::setDockingState(DockingStateMessage::DockingState state)
+{
+	switch (state)
+	{
+		case DockingStateMessage::DockedBottom:
+			ui->lDockState->setText("DockedBottom");
+			break;
+		case DockingStateMessage::DockedTop:
+			ui->lDockState->setText("DockedTop");
+			break;
+		case DockingStateMessage::DockedLimit:
+			ui->lDockState->setText("DockedLimit");
+			break;
+		case DockingStateMessage::DockedManually:
+			ui->lDockState->setText("DockedManually");
+			break;
+		case DockingStateMessage::DockMovingUp:
+			ui->lDockState->setText("DockMovingUp");
+			break;
+		case DockingStateMessage::DockMovingDown:
+			ui->lDockState->setText("DockMovingDown");
+			break;
+		default:
+			ui->lDockState->setText("Error");
+			break;
+	}
 }
 
 void DockSettingsPage::on_pbBottom_clicked()
@@ -218,19 +267,13 @@ void DockSettingsPage::on_pbTare_clicked()
 		return;
 	}
 
-/*	int force = static_cast<int>(m_dock->zForce());
-	int lower = qMax(-100, force - 50);
-	int upper = qMin(400, force + 10);
-	ui->sbLowerZero->setValue(lower);
-	ui->sbUpperZero->setValue(upper);
-*/
 	m_dock->tare();
 }
 
 
 void DockSettingsPage::on_cbSlot_currentIndexChanged(int index)
 {
-	if (index >= 0)
+	if (index >= 0 && ui->cbSlot->isVisible())
 	{
 		m_dock->setDockingSlot(index);
 		ui->sbSlotPos->setValue(m_dock->dockingSlotPosition(index));
@@ -260,4 +303,9 @@ void DockSettingsPage::on_sbSlotCount_valueChanged(int count)
 	}
 
 	m_dock->setDockingSlotCount(count);
+}
+
+void DockSettingsPage::on_btnAdvOpt_toggled(bool checked)
+{
+	ui->btnAdvOpt->setText(checked ? "Hide advanced options" : "Show advanced options");
 }

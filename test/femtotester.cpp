@@ -5,6 +5,7 @@
 #include <initmessage.h>
 #include <ackmessage.h>
 #include <versionmessage.h>
+#include <settingsmessage.h>
 #include <servoctrlmessage.h>
 #include <footswitchmessage.h>
 #include <dockinglimitmessage.h>
@@ -17,8 +18,8 @@
 #include <QTimer>
 #include <QSettings>
 
-const int SEND_TIMER_INTERVAL = 1000; // ms
-const qint64 SEND_TIMEOUT = 1500; // ms
+const int SEND_TIMER_INTERVAL = 500; // ms
+const qint64 SEND_TIMEOUT = 2500; // ms
 
 FemtoTester::FemtoTester(QObject *parent) :
 	QObject(parent),
@@ -63,6 +64,60 @@ void FemtoTester::setFootswitchState(ProcedureFootswitch::FootswitchState state)
 	{
 		qDebug() << "FemtoTester: setFootswitchState(" << state << ")";
 		sendMessage(new FootswitchMessage(++m_seqCount, state));
+	}
+}
+
+void FemtoTester::getArraySetting(quint8 key)
+{
+	if (m_testerConnected)
+	{
+		qDebug() << "FemtoTester::getArraySetting(): key=" << key;
+		sendMessage(new SettingsMessage(++m_seqCount, SettingsMessage::SettingsArray, key));
+	}
+}
+
+void FemtoTester::getByteSetting(quint8 key)
+{
+	if (m_testerConnected)
+	{
+		qDebug() << "FemtoTester::getByteSetting(): key=" << key;
+		sendMessage(new SettingsMessage(++m_seqCount, SettingsMessage::SettingsByte, key));
+	}
+}
+
+void FemtoTester::getWordSetting(quint8 key)
+{
+	if (m_testerConnected)
+	{
+		qDebug() << "FemtoTester::getWordSetting(): key=" << key;
+		sendMessage(new SettingsMessage(++m_seqCount, SettingsMessage::SettingsWord, key));
+	}
+}
+
+void FemtoTester::setArraySetting(quint8 key, const QByteArray& value)
+{
+	if (m_testerConnected)
+	{
+		qDebug() << "FemtoTester::setArraySetting(): key=" << key << " value=" << value.toHex();
+		sendMessage(new SettingsMessage(++m_seqCount, SettingsMessage::SettingsArray, key, value));
+	}
+}
+
+void FemtoTester::setByteSetting(quint8 key, quint8 value)
+{
+	if (m_testerConnected)
+	{
+		qDebug() << "FemtoTester::setByteSetting(): key=" << key << " value=" << value;
+		sendMessage(new SettingsMessage(++m_seqCount, SettingsMessage::SettingsByte, key, value));
+	}
+}
+
+void FemtoTester::setWordSetting(quint8 key, quint16 value)
+{
+	if (m_testerConnected)
+	{
+		qDebug() << "FemtoTester::setWordSetting(): key=" << key << " value=" << value;
+		sendMessage(new SettingsMessage(++m_seqCount, SettingsMessage::SettingsWord, key, value));
 	}
 }
 
@@ -186,10 +241,10 @@ void FemtoTester::sendMessage(AbstractMessage *msg)
 		if (m_serialPort->write(msg->toByteArray()) != msg->size())
 		{
 			qDebug() << "FemtoTester: failed to write ack message";
-		} else
+		} /*else
 		{
 			qDebug() << "FemtoTester: wrote ack: " << msg->toByteArray().toHex();
-		}
+		} */
 
 		delete msg;
 		return;
@@ -280,6 +335,9 @@ void FemtoTester::readMessages()
 			case MessageParser::IdDockingStateMessage:
 				handleDockingState(dynamic_cast<DockingStateMessage*>(msg));
 				break;
+			case MessageParser::IdSettingsMessage:
+				handleSettings(dynamic_cast<SettingsMessage*>(msg));
+				break;
 			default:
 				qDebug() << "FemtoTester: received unknown message (identifier: " << msg->identifier() << ")";
 		}
@@ -290,17 +348,36 @@ void FemtoTester::readMessages()
 
 void FemtoTester::onSendMessageSuccess(AbstractMessage *msg)
 {
-	if (!msg)
+	if (!msg || !msg->isValid())
 	{
 		return;
 	}
 
+	SettingsMessage *sMsg;
 	FootswitchMessage *fsMsg;
 	switch (msg->identifier())
 	{
+		case MessageParser::IdSettingsMessage:
+			sMsg = dynamic_cast<SettingsMessage*>(msg);
+			if (sMsg && sMsg->value().isValid())
+			{
+				switch (sMsg->type())
+				{
+					case SettingsMessage::SettingsByte:
+						emit settingsByteChanged(sMsg->key(), static_cast<quint8>(sMsg->value().toUInt()));
+						break;
+					case SettingsMessage::SettingsWord:
+						emit settingsWordChanged(sMsg->key(), static_cast<quint16>(sMsg->value().toUInt()));
+						break;
+					default:
+						/// @todo implement string type
+						break;
+				}
+			}
+			break;
 		case MessageParser::IdFootSwitchMessage:
 			fsMsg = dynamic_cast<FootswitchMessage*>(msg);
-			if (fsMsg && fsMsg->isValid())
+			if (fsMsg)
 			{
 				emit footswitchState(fsMsg->state());
 			}
@@ -325,7 +402,7 @@ void FemtoTester::handleAck(AckMessage *msg)
 		onSendMessageSuccess(msgSent);
 		delete msgSent;
 		sendNextMessage();
-		qDebug() << "FemtoTester: received ack for message #" << msg->sequence();
+		//qDebug() << "FemtoTester: received ack for message #" << msg->sequence();
 		return;
 	}
 
@@ -361,15 +438,53 @@ void FemtoTester::handleVersion(VersionMessage *msg)
 	{
 		sendMessage(new AckMessage(++m_seqCount, msg->sequence()));
 		m_testerConnected = true;
-		emit connectedStateChanged(true);
-		emit statusMessage("FemtoTester connected");
+		m_dockAvailable = msg->buildTarget() == VersionMessage::TargetVictusDock || msg->buildTarget() == VersionMessage::TargetEitechDock;
 		qDebug() << "FemtoTester connected. Firmware: " << msg->version() << " build target: " << msg->buildTarget();
+		emit statusMessage("FemtoTester connected");
+		emit connectedStateChanged(true);
 		return;
 	}
 
 	emit statusMessage(QString("FemtoTester found, but FirmwareVersion '%1' is not supported (expected: '%2xx')").arg(msg->version(), FEMTO_TEST_VERSION));
 	qDebug() << QString("FemtoTester found, but FirmwareVersion '%1' is not supported (expected: '%2xx')").arg(msg->version(), FEMTO_TEST_VERSION);
 	sendMessage(new ErrorMessage(++m_seqCount, ErrorMessage::ErrorVersion));
+}
+
+void FemtoTester::handleSettings(SettingsMessage *msg)
+{
+	if (!msg || !msg->isValid())
+	{
+		qDebug() << "FemtoTester: invalid SettingsMessage passed to handleSettings()";
+		sendMessage(new ErrorMessage(++m_seqCount, ErrorMessage::ErrorParser));
+		return;
+	}
+
+	if (!msg->value().isValid())
+	{
+		qDebug() << "FemtoTester: empty (request) SettingsMessage passed to handleSettings()";
+		return;
+	}
+
+	switch (msg->type())
+	{
+		case SettingsMessage::SettingsByte:
+			qDebug() << QString("FemtoTester received SettingsMessage: type=Byte key=%1 value=%2").arg(msg->key()).arg(msg->value().toUInt());
+			emit settingsByteChanged(msg->key(), static_cast<quint8>(msg->value().toUInt()));
+			break;
+		case SettingsMessage::SettingsWord:
+			qDebug() << QString("FemtoTester received SettingsMessage: type=Word key=%1 value=%2").arg(msg->key()).arg(msg->value().toUInt());
+			emit settingsWordChanged(msg->key(), static_cast<quint16>(msg->value().toUInt()));
+			break;
+		case SettingsMessage::SettingsArray:
+			qDebug() << QString("FemtoTester received SettingsMessage: type=Array key=%1 value=%2").arg(msg->key()).arg(QString(msg->value().toByteArray().toHex()));
+			emit settingsArrayChanged(msg->key(), msg->value().toByteArray());
+			break;
+		default:
+			qDebug() << QString("FemtoTester::handleSettings(): cannot handle SettingsMessage of unknown type %1").arg(msg->type());
+			break;
+	}
+
+	sendMessage(new AckMessage(++m_seqCount, msg->sequence()));
 }
 
 void FemtoTester::handleDockingForce(DockingForceMessage* msg)
@@ -382,6 +497,7 @@ void FemtoTester::handleDockingForce(DockingForceMessage* msg)
 	}
 
 	m_dockAvailable = true;
+	sendMessage(new AckMessage(++m_seqCount, msg->sequence()));
 	emit dockingForceChanged(msg->zForce(), msg->isSteady());
 }
 
@@ -395,6 +511,7 @@ void FemtoTester::handleDockingState(DockingStateMessage *msg)
 	}
 
 	qDebug() << "Docking State: " << msg->state();
+	sendMessage(new AckMessage(++m_seqCount, msg->sequence()));
 	emit dockingStateChanged(msg->state());
 }
 

@@ -10,7 +10,7 @@
 
 #include <stdint.h>
 
-#define MSG_DATA_SIZE_MAX 8
+#define MSG_DATA_SIZE_MAX 12
 
 typedef enum
 {
@@ -26,6 +26,7 @@ typedef enum
 	IdServoCtrlMessage = 0x0A,
 	IdDockingTareMessage = 0x0B,
 	IdDockingStateMessage = 0x0C,
+	IdSettingsMessage = 0x0E,
 	IdInvalidIdentifier = 0xFF // must remain at end for parsing!!!
 } MessageIdentifier;
 

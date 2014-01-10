@@ -13,6 +13,9 @@ public:
 	bool isValid() const;
 
 	int position() const;
+
+	static int posHw2PosInt(quint8 hwPos);
+	static quint8 posInt2PosHw(int pos);
 };
 
 #endif // SERVOCTRLMESSAGE_H

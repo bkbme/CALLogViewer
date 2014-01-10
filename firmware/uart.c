@@ -92,7 +92,7 @@ void uart0_flush()
 	uart0_int_enable();
 }
 
-void uart0_write_buffer(uint8_t *data, uint8_t size)
+void uart0_write_buffer(const uint8_t *data, uint8_t size)
 {
 	uint8_t i = 0;
 	if (buffer_count(&buffer_tx0) == 0 && (UCSR0A & (1 << UDRE0)))

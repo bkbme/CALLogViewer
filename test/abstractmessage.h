@@ -8,6 +8,7 @@ class AbstractMessage
 {
 public:
 	AbstractMessage(quint8 seq = 0);
+	AbstractMessage(const QByteArray &rawData);
 
 	virtual quint8 identifier() const = 0;
 	virtual bool isValid() const = 0;

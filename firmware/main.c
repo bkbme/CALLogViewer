@@ -13,6 +13,7 @@
 #include "uart.h"
 #include "timer.h"
 #include "config.h"
+#include "settings.h"
 #include "protocol.h"
 #include "footswitch.h"
 
@@ -45,6 +46,11 @@ int main(void)
 	while(1)
 	{
 #if TARGET == VICTUS_DOCK_TARGET || TARGET == EITECH_DOCK_TARGET
+		if (settings_changed() & SettingsByte) // ignore Word/Array type changes
+		{
+				dock_load_settings();
+		}
+
 		dock_parse_forcedata();
 		dock_check_limits();
 #endif

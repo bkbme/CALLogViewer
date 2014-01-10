@@ -22,6 +22,7 @@ SRC =	main.c \
 	timer.c \
 	buffer.c \
 	message.c \
+	settings.c \
 	protocol.c \
 	footswitch.c \
 	led.c
@@ -45,10 +46,12 @@ fuses:
 	avrdude -c $(PROGRAMMER) -P usb -p atmega644 -U hfuse:w:$(HFUSE):m -U lfuse:w:$(LFUSE):m # avrdude doesn't seem to know the ATMega644A yet
 
 program:
-	#avrdude -c $(PROGRAMMER) -P usb -p $(MCU) -U flash:w:$(TARGET).hex
-	# sleep 2
-	# avrdude -c $(PROGRAMMER) -P usb -p $(MCU) -U eeprom:w:$(TARGET).eep
+	# avrdude doesn't seem to know atmega644a (yet), use atmega644 instead...
+	# avrdude -c $(PROGRAMMER) -P usb -p $(MCU) -U flash:w:$(TARGET).hex
 	avrdude -c $(PROGRAMMER) -P usb -p atmega644 -U flash:w:$(TARGET).hex
+	sleep 2
+	#avrdude -c $(PROGRAMMER) -P usb -p $(MCU) -U eeprom:w:$(TARGET).eep
+	avrdude -c $(PROGRAMMER) -P usb -p atmega644 -U eeprom:w:$(TARGET).eep
 
 clean:
 	rm -f $(OBJ) $(TARGET).elf $(TARGET).hex $(TARGET).lss $(TARGET).map $(TARGET).eep
@@ -57,7 +60,7 @@ clean:
 ###################################
 # Psudorules:
 
-%.eep: %.hex
+%.eep: %.elf
 	avr-objcopy -j .eeprom --set-section-flags=.eeprom="alloc,load" --change-section-lma .eeprom=0 --no-change-warnings -O ihex $< $@
 
 %.hex: %.elf
@@ -68,6 +71,7 @@ clean:
 
 %.elf: $(OBJ)
 	avr-gcc $^ $(LDFLAGS) -o $@
+	avr-size -C --mcu=$(MCU) $@
 
 %.o : %.c
 	avr-gcc $(CFLAGS) -c $< -o $@

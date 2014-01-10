@@ -3,6 +3,7 @@
 #include <errormessage.h>
 #include <initmessage.h>
 #include <versionmessage.h>
+#include <settingsmessage.h>
 #include <footswitchmessage.h>
 #include <dockingforcemessage.h>
 #include <dockingstatemessage.h>
@@ -47,6 +48,8 @@ AbstractMessage* MessageParser::nextMessage()
 				return new DockingForceMessage(msgData);
 			case IdDockingStateMessage:
 				return new DockingStateMessage(msgData);
+			case IdSettingsMessage:
+				return new SettingsMessage(msgData);
 			default:
 				qDebug() << "Failed to parse message (identifier: " << identifier << ")";
 				break;

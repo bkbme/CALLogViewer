@@ -118,10 +118,11 @@
 /***********************************
  * UART Settings                   *
  ***********************************/
-#define PROTOCOL_VERSION			"13062106" // <- 2013-06-21 Build 06 (must be 8 Byte!)
-#define BUFFER_SIZE_TX0			24         // in bytes (must be between 1 and 255)
+#define PROTOCOL_VERSION_LENGTH	8
+#define PROTOCOL_VERSION			"14010801" // <- 2014-01-08 Build 01 (must be 8 Byte!)
+#define BUFFER_SIZE_TX0			32         // in bytes (must be between 1 and 255)
 #define BUFFER_SIZE_TX1			1
-#define BUFFER_SIZE_RX0			32
+#define BUFFER_SIZE_RX0			48
 #define BUFFER_SIZE_RX1			36
 #define UART0_ENABLE			           // undefine to disable uart interface(s)
 #define UART1_ENABLE
@@ -158,13 +159,22 @@
 #define DOCK_SERVO_ZAXIS_ID		0
 #define DOCK_SERVO_XAXIS_ID		1
 #define DOCK_SERVO_POWER_OFF		0	 // setting this position will power down the servo (no pwm signal)
+#define DOCK_SLOT_COUNT_EE		10   // initial number of slots stored in eeprom
+#define DOCK_SLOTS1_EE			{ -81, -59, -38, -17, 4, 25, 47, 69, 91, 112 } // initial values for slot position 0..9 stored in eeprom
+#define DOCK_SLOTS2_EE			{ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}                // initial values for slot position 10..19 stored in eeprom
+#define DOCK_LIMIT_ZERO_LO_EE	-50	// inital docking limits (in g) stored in eeprom
+#define DOCK_LIMIT_ZERO_UP_EE	14
+#define DOCK_LIMIT_SOFT_LO_EE	35
+#define DOCK_LIMIT_SOFT_UP_EE	75
+#define DOCK_LIMIT_REGULAR_LO_EE	310
+#define DOCK_LIMIT_REGULAR_UP_EE	395
 
 #if TARGET == EITECH_DOCK_TARGET
 // Eitech prototype
-#define DOCK_SERVO_UP			165
-#define DOCK_SERVO_DOWN			85
-#define DOCK_SERVO_UP_SLOW		145
-#define DOCK_SERVO_DOWN_SLOW		110
+#define DOCK_SERVO_UP_EE			165   // initial values for servo speed for eeprom
+#define DOCK_SERVO_DOWN_EE		85
+#define DOCK_SERVO_UP_SLOW_EE	145
+#define DOCK_SERVO_DOWN_SLOW_EE	110
 #define DOCK_SERVO_STOP			116
 #define DOCK_SERVO_REVERSE_Z
 #define DOCK_LED_BOT				2
@@ -172,10 +182,10 @@
 #define DOCK_LED_FORCE			3
 #else
 // RS dock
-#define DOCK_SERVO_UP			160
-#define DOCK_SERVO_DOWN			85
-#define DOCK_SERVO_UP_SLOW		150
-#define DOCK_SERVO_DOWN_SLOW		140
+#define DOCK_SERVO_UP_EE			160   // initial values for servo speed for eeprom
+#define DOCK_SERVO_DOWN_EE		85
+#define DOCK_SERVO_UP_SLOW_EE	150
+#define DOCK_SERVO_DOWN_SLOW_EE	140
 #define DOCK_SERVO_STOP			128
 #define DOCK_LED_BOT				1
 #define DOCK_LED_TOP				3

@@ -28,6 +28,7 @@ public:
 
 public slots:
 	void setZForce(qreal force);
+	void setDockingState(DockingStateMessage::DockingState state);
 
 private slots:
 	void on_pbBottom_clicked();
@@ -39,7 +40,8 @@ private slots:
 	void on_cbSlot_currentIndexChanged(int index);
 	void on_sbSlotPos_valueChanged(int pos);
 	void on_sbSlotCount_valueChanged(int count);
-
+	void on_btnAdvOpt_toggled(bool checked);
+	
 private:
 	Ui::DockSettingsPage *ui;
 	AutoDock *m_dock;

@@ -33,9 +33,12 @@ public:
 	void setDockingLimits(DockingMode mode, DockingLimits limits);
 	DockingLimits dockingLimits(DockingMode mode) const;
 	DockingMode dockingMode() const { return m_dockingMode; }
+	DockingStateMessage::DockingState dockingState() const { return m_dockingState; }
 
 	int servoSpeedUp() const { return m_servoSpeedUp; }
+	int servoSpeedUpSlow() const { return m_servoSpeedUpSlow; }
 	int servoSpeedDown() const { return m_servoSpeedDown; }
+	int servoSpeedDownSlow() const { return m_servoSpeedDownSlow; }
 	bool autoDockingEnabled() const { return m_autoDock; }
 	bool autoUndockingEnabled() const { return m_autoUndock; }
 	bool autoSlotSelectEnabled() const { return m_autoSlotSelect; }
@@ -55,6 +58,8 @@ public:
 	int currentDockingSlot() const { return m_currentSlot; }
 
 public slots:
+	void loadHwSettings();
+	void saveHwSettings();
 	void moveDown();
 	void moveUp();
 	void stop();
@@ -63,7 +68,9 @@ public slots:
 	void setDockingMode(AutoDock::DockingMode mode);
 	void setDockingForce(qreal zForce, bool isSteady);
 	void setServoSpeedUp(int speed) { m_servoSpeedUp = speed; }
+	void setServoSpeedUpSlow(int speed) { m_servoSpeedUpSlow = speed; }
 	void setServoSpeedDown(int speed) { m_servoSpeedDown = speed; }
+	void setServoSpeedDownSlow(int speed) { m_servoSpeedDownSlow = speed; }
 	void setAutoDockingEnabled(bool enabled) { m_autoDock = enabled; }
 	void setAutoUndockingEnabled(bool enabled) { m_autoUndock = enabled; }
 	void setAutoSlotSelectEnabled(bool enabled) { m_autoSlotSelect = enabled; }
@@ -72,9 +79,12 @@ public slots:
 
 signals:
 	void zForceChanged(qreal force);
+	void dockingStateChanged(DockingStateMessage::DockingState state);
 
 private slots:
 	void onDockingStateChange(DockingStateMessage::DockingState state);
+	void onHwByteSettingChanged(quint8 key, quint8 value);
+	void onHwArraySettingChanged(quint8 key, const QByteArray &value);
 	void onTreatmentFinished();
 
 private:
@@ -89,7 +99,9 @@ private:
 	int m_currentSlot;
 	int m_targetSlot;
 	int m_servoSpeedUp;
+	int m_servoSpeedUpSlow;
 	int m_servoSpeedDown;
+	int m_servoSpeedDownSlow;
 	qreal m_zForce;
 	bool m_forceIsSteady;
 	bool m_autoDock;

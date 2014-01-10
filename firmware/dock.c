@@ -11,6 +11,7 @@
 #include "timer.h"
 #include "config.h"
 #include "protocol.h"
+#include "settings.h"
 
 #include <avr/interrupt.h>
 #include <avr/io.h>
@@ -23,6 +24,11 @@ volatile uint8_t dock_wait_update;
 
 int16_t lower_docking_limit;
 int16_t upper_docking_limit;
+
+uint8_t servo_up;
+uint8_t servo_down;
+uint8_t servo_up_slow;
+uint8_t servo_down_slow;
 
 DockingType dock_type;
 DockingState dock_state;
@@ -66,6 +72,8 @@ void set_docking_state(DockingState state)
 
 void dock_init()
 {
+	dock_load_settings();
+
 	dock_force = 0;
 	dock_force_delta = 0;
 	dock_force_steady = 0;
@@ -77,6 +85,14 @@ void dock_init()
 #if TARGET == VICTUS_DOCK_TARGET || TARGET == EITECH_DOCK_TARGET
 	uart1_write('w'); // auto-dected dock: scale must be connected during init!
 #endif
+}
+
+void dock_load_settings()
+{
+	servo_up = settings_get_byte(KeyDockServoUp);
+	servo_down = settings_get_byte(KeyDockServoDown);
+	servo_up_slow = settings_get_byte(KeyDockServoUpSlow);
+	servo_down_slow = settings_get_byte(KeyDockServoDownSlow);
 }
 
 void dock_tare()
@@ -195,7 +211,8 @@ void dock_check_limits()
 	{
 		if (dock_force > upper_docking_limit && lower_docking_limit < 0) // undock, must be fast - overshooting is ok
 		{
-			servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_DOWN);
+			//servo_set_position(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_DOWN);
+			servo_set_position(DOCK_SERVO_ZAXIS_ID, servo_down);
 			set_docking_state(DockMovingDown);
 			return;
 		}
@@ -205,7 +222,8 @@ void dock_check_limits()
 			if (dock_force_delta > DOCK_FORCE_DELTA_TRH_DEC || dock_force_steady)
 			{
 				dock_wait_update = ((upper_docking_limit - dock_force) > DOCK_FORCE_SLOWDOWN_TRH) ? 0 : 1;
-				servo_set_position_timeout(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_DOWN_SLOW, 60);
+				//servo_set_position_timeout(DOCK_SERVO_ZAXIS_ID, DOCK_SERVO_DOWN_SLOW, 60);
+				servo_set_position_timeout(DOCK_SERVO_ZAXIS_ID, servo_down_slow, 60);
 				set_docking_state(DockMovingDown);
 			}
 			return;
@@ -213,7 +231,7 @@ void dock_check_limits()
 
 		if (dock_force < lower_docking_limit && dock_force_delta < DOCK_FORCE_DELTA_TRH_INC) // increase docking pressure...
 		{
-			uint8_t speed = (dock_force_delta > 0 || ((lower_docking_limit - dock_force) < DOCK_FORCE_SLOWDOWN_TRH && dock_force > DOCK_FORCE_ZERO_TRH)) ? DOCK_SERVO_UP_SLOW : DOCK_SERVO_UP;
+			uint8_t speed = (dock_force_delta > 0 || ((lower_docking_limit - dock_force) < DOCK_FORCE_SLOWDOWN_TRH && dock_force > DOCK_FORCE_ZERO_TRH)) ? servo_up_slow : servo_up;
 			servo_set_position(DOCK_SERVO_ZAXIS_ID, speed);
 			set_docking_state(DockMovingUp);
 			return;

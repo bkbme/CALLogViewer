@@ -191,3 +191,26 @@ enum DockingState
 }
 
 Sent from the TestTool whenever the DockingState changes
+
+
+SettingsMessage:
++------+------+----------+------+--------------+-----+-------------------+----------+
+| Byte | 0    | 1        | 2    | 3            | 4   | [5 .. (size - 2)] | size - 1 |
++------+------+----------+------+--------------+-----+-------------------+----------+
+| Data | 0x0E | 0x06..16 | seq. | SettingsType | key | [value]           | checksum |
++------+------+----------+------+--------------+-----+-------------------+----------+
+
+enum SettingsType
+{
+	SettingsByte = 0x10,
+	SettingsWord = 0x20,
+	SettingsArray = 0x40 // holds up to 10 bytes
+}
+ 
+uint8_t key
+uint8_t value[]
+
+Certain settings can be changed at runtime and persitently stored in the TestTool's EEPROM. Valid keys are specified
+in "settings.h". For reading back a value from the TestTool a SettingsMessage without value (type and key only) needs
+to be send which will be answered with an AckMessage followed by a SettingsMessage containing the requested value.
+

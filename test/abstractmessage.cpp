@@ -7,6 +7,17 @@ AbstractMessage::AbstractMessage(quint8 seq) :
 {
 }
 
+AbstractMessage::AbstractMessage(const QByteArray &rawData) :
+	m_seq(rawData.size() > 3 ? rawData.at(2) : 0),
+	m_timeSent(),
+	m_data()
+{
+	if (rawData.size() > 4 && rawData.size() == rawData.at(1))
+	{
+		m_data.append(rawData.mid(3, rawData.size() - 4));
+	}
+}
+
 quint8 AbstractMessage::size() const
 {
 	return (m_data.size() + 4); // 4Byte = identifier + size + sequence + checksum
