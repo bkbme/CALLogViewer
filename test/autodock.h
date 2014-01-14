@@ -84,6 +84,7 @@ signals:
 private slots:
 	void onDockingStateChange(DockingStateMessage::DockingState state);
 	void onHwByteSettingChanged(quint8 key, quint8 value);
+	void onHwWordSettingChanged(quint8 key, quint16 value);
 	void onHwArraySettingChanged(quint8 key, const QByteArray &value);
 	void onTreatmentFinished();
 

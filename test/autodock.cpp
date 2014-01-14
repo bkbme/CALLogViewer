@@ -32,6 +32,7 @@ AutoDock::AutoDock(SysLogParser *parser, FemtoTester *tester, QObject *parent) :
 	connect(tester, SIGNAL(connectedStateChanged(bool)), this, SLOT(loadHwSettings()));
 	connect(tester, SIGNAL(dockingForceChanged(qreal,bool)), this, SLOT(setDockingForce(qreal,bool)));
 	connect(tester, SIGNAL(settingsByteChanged(quint8,quint8)), this, SLOT(onHwByteSettingChanged(quint8,quint8)));
+	connect(tester, SIGNAL(settingsWordChanged(quint8,quint16)), this, SLOT(onHwWordSettingChanged(quint8,quint16)));
 	connect(tester, SIGNAL(settingsArrayChanged(quint8,QByteArray)), this, SLOT(onHwArraySettingChanged(quint8,QByteArray)));
 	connect(tester, SIGNAL(dockingStateChanged(DockingStateMessage::DockingState)), this, SLOT(onDockingStateChange(DockingStateMessage::DockingState)));
 	connect(tester, SIGNAL(dockingStateChanged(DockingStateMessage::DockingState)), this, SIGNAL(dockingStateChanged(DockingStateMessage::DockingState)));
@@ -46,13 +47,13 @@ void AutoDock::loadSettings()
 {
 	QSettings settings;
 	settings.beginGroup("AutoDock");
-	m_softDockingLimits.lower = settings.value("lowerSoftDockingLimit", 35).toInt();
+/*	m_softDockingLimits.lower = settings.value("lowerSoftDockingLimit", 35).toInt();
 	m_softDockingLimits.upper = settings.value("upperSoftDockingLimit", 60).toInt();
 	m_zeroDockingLimits.lower = settings.value("lowerZeroDockingLimit", -100).toInt();
 	m_zeroDockingLimits.upper = settings.value("upperZeroDockingLimit", 10).toInt();
 	m_regularDockingLimits.lower = settings.value("lowerRegularDockingLimit", 300).toInt();
 	m_regularDockingLimits.upper = settings.value("upperRegularDockingLimit", 380).toInt();
-
+*/
 	m_autoDock = settings.value("autoDockEnabled", false).toBool();
 	m_autoUndock = settings.value("autoUndockEnabled", false).toBool();
 	m_autoSlotSelect = settings.value("autoSlotSelect", false).toBool();
@@ -73,6 +74,19 @@ void AutoDock::loadHwSettings()
 		foreach (const quint8 key, keys)
 		{
 			m_tester->getByteSetting(key);
+		}
+
+		keys.clear();
+		keys << FemtoTester::KeyDockLimitZeroLo
+			 << FemtoTester::KeyDockLimitZeroUp
+			 << FemtoTester::KeyDockLimitSoftLo
+			 << FemtoTester::KeyDockLimitSoftUp
+			 << FemtoTester::KeyDockLimitRegularLo
+			 << FemtoTester::KeyDockLimitRegularUp;
+
+		foreach (const quint8 key, keys)
+		{
+			m_tester->getWordSetting(key);
 		}
 	}
 }
@@ -106,6 +120,33 @@ void AutoDock::onHwByteSettingChanged(quint8 key, quint8 value)
 	}
 }
 
+void AutoDock::onHwWordSettingChanged(quint8 key, quint16 value)
+{
+	switch (key)
+	{
+		case FemtoTester::KeyDockLimitZeroLo:
+			m_zeroDockingLimits.lower = static_cast<qint16>(value);
+			break;
+		case FemtoTester::KeyDockLimitZeroUp:
+			m_zeroDockingLimits.upper = static_cast<qint16>(value);
+			break;
+		case FemtoTester::KeyDockLimitSoftLo:
+			m_softDockingLimits.lower = static_cast<qint16>(value);
+			break;
+		case FemtoTester::KeyDockLimitSoftUp:
+			m_softDockingLimits.upper = static_cast<qint16>(value);
+			break;
+		case FemtoTester::KeyDockLimitRegularLo:
+			m_regularDockingLimits.lower = static_cast<qint16>(value);
+			break;
+		case FemtoTester::KeyDockLimitRegularUp:
+			m_regularDockingLimits.upper = static_cast<qint16>(value);
+			break;
+		default:
+			break;
+	}
+}
+
 void AutoDock::onHwArraySettingChanged(quint8 key, const QByteArray &value)
 {
 	int i;
@@ -130,13 +171,13 @@ void AutoDock::saveSettings()
 {
 	QSettings settings;
 	settings.beginGroup("AutoDock");
-	settings.setValue("lowerSoftDockingLimit", m_softDockingLimits.lower);
+/*	settings.setValue("lowerSoftDockingLimit", m_softDockingLimits.lower);
 	settings.setValue("upperSoftDockingLimit", m_softDockingLimits.upper);
 	settings.setValue("lowerZeroDockingLimit", m_zeroDockingLimits.lower);
 	settings.setValue("upperZeroDockingLimit", m_zeroDockingLimits.upper);
 	settings.setValue("lowerRegularDockingLimit", m_regularDockingLimits.lower);
 	settings.setValue("upperRegularDockingLimit", m_regularDockingLimits.upper);
-
+*/
 	settings.setValue("autoDockEnabled", m_autoDock);
 	settings.setValue("autoUndockEnabled", m_autoUndock);
 	settings.setValue("autoSlotSelect", m_autoSlotSelect);
@@ -148,6 +189,13 @@ void AutoDock::saveHwSettings()
 {
 	if (m_tester->connected())
 	{
+		m_tester->setWordSetting(FemtoTester::KeyDockLimitZeroLo, static_cast<quint16>(m_zeroDockingLimits.lower));
+		m_tester->setWordSetting(FemtoTester::KeyDockLimitZeroUp, static_cast<quint16>(m_zeroDockingLimits.upper));
+		m_tester->setWordSetting(FemtoTester::KeyDockLimitSoftLo, static_cast<quint16>(m_softDockingLimits.lower));
+		m_tester->setWordSetting(FemtoTester::KeyDockLimitSoftUp, static_cast<quint16>(m_softDockingLimits.upper));
+		m_tester->setWordSetting(FemtoTester::KeyDockLimitRegularLo, static_cast<quint16>(m_regularDockingLimits.lower));
+		m_tester->setWordSetting(FemtoTester::KeyDockLimitRegularUp, static_cast<quint16>(m_regularDockingLimits.upper));
+
 		m_tester->setByteSetting(FemtoTester::KeyDockServoUp, ServoCtrlMessage::posInt2PosHw(servoSpeedUp()));
 		m_tester->setByteSetting(FemtoTester::KeyDockServoDown, ServoCtrlMessage::posInt2PosHw(servoSpeedDown()));
 		m_tester->setByteSetting(FemtoTester::KeyDockServoUpSlow, ServoCtrlMessage::posInt2PosHw(servoSpeedUpSlow()));

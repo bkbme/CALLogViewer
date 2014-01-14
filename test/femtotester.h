@@ -91,7 +91,7 @@ signals:
 	void dockingForceChanged(qreal zForce, bool isSteady);
 	void dockingStateChanged(DockingStateMessage::DockingState state);
 	void settingsByteChanged(quint8 key, quint8 value);
-	void settingsWordChanged(quint8 key, quint8 value);
+	void settingsWordChanged(quint8 key, quint16 value);
 	void settingsArrayChanged(quint8 key, const QByteArray &value);
 
 private slots:

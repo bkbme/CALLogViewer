@@ -154,8 +154,8 @@ void send_settings(uint8_t type, uint8_t key, uint8_t seq)
 			settings_get_array(key, 0x0A, &msg[5]);
 			break;
 		case SettingsWord:
-			msg[5] = (uint8_t)((settings_get_word(key) & 0xFF00) >> 8);
-			msg[6] = (uint8_t)(settings_get_word(key) & 0x00FF);
+			*(uint16_t*)(&msg[6]) = settings_get_word(key);
+			msg[5] = msg[7]; // swap to big endian, use msg[7] as buffer
 			break;
 		case SettingsByte:
 			msg[5] = settings_get_byte(key);
@@ -318,7 +318,7 @@ void handle_settings()
 				send_error(ErrorParser, message.sequence);
 				return;
 			}
-			settings_set_word(key, (uint16_t)(message.data[2] << 8) & (uint16_t)message.data[3]);
+			settings_set_word(key, (uint16_t)(message.data[2] << 8) | (uint16_t)message.data[3]);
 			break;
 		case SettingsArray:
 			settings_set_array(key, message.data_size - 2, &message.data[2]);

@@ -82,7 +82,7 @@ QVariant SettingsMessage::value() const
 		case SettingsWord:
 			if (m_data.size() == 4)
 			{
-				return QVariant(static_cast<quint16>(m_data.at(2)) << 8 & static_cast<quint8>(m_data.at(3)));
+				return QVariant(static_cast<quint16>(static_cast<quint8>(m_data.at(2)) << 8 | static_cast<quint8>(m_data.at(3))));
 			}
 			break;
 		case SettingsArray:
