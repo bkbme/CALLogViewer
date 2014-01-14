@@ -369,8 +369,10 @@ void FemtoTester::onSendMessageSuccess(AbstractMessage *msg)
 					case SettingsMessage::SettingsWord:
 						emit settingsWordChanged(sMsg->key(), static_cast<quint16>(sMsg->value().toUInt()));
 						break;
+					case SettingsMessage::SettingsArray:
+						emit settingsArrayChanged(sMsg->key(), sMsg->value().toByteArray());
+						break;
 					default:
-						/// @todo implement string type
 						break;
 				}
 			}
