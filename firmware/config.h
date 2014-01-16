@@ -15,7 +15,7 @@
 #define VICTUS_DOCK_TARGET 3
 #define EITECH_DOCK_TARGET 4
 
-#define TARGET EITECH_DOCK_TARGET	// build target
+#define TARGET VICTUS_DOCK_TARGET	// build target
 
 /***********************************
  * IO Ports                        *
