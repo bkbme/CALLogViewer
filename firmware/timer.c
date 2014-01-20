@@ -94,7 +94,7 @@ uint8_t servo_get_position(uint8_t id)
  * t_ms: 0.612 2.048 17.34 = 20ms
  * OC0:  1     x/0   0     = 50Hz PWM
  *************************************************************************/
-ISR (SIG_OUTPUT_COMPARE0A)
+ISR (TIMER0_COMPA_vect)
 {
 	switch (OCR0A) // generate 50Hz pwm for servos
 	{
